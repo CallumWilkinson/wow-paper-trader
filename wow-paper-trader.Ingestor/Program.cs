@@ -7,7 +7,7 @@ builder.Services.AddDbContext<IngestorDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("WowPaperTrader");
     options.UseSqlServer(connectionString);
-})
+});
 
 builder.Services.AddHostedService<AuctionSnapshotIngestor>();
 
