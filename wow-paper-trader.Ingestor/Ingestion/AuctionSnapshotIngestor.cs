@@ -21,6 +21,8 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             await using var scope = _scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<IngestorDbContext>();
 
+
+
             var run = new IngestionRun { Status = "HeartbeatInsert" };
             db.IngestionRuns.Add(run);
             await db.SaveChangesAsync(stoppingToken);
