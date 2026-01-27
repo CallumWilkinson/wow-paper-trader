@@ -18,4 +18,28 @@ public sealed class IngestionRunTests
         Assert.Equal(IngestionRunStatus.TokenRequested, run.Status);
         Assert.Equal(now, run.LastUpdatedAtUtc);
     }
+
+    [Fact]
+    public void TransitionTo_WhenFinished_SetsFinishedAtUtc()
+    {
+
+    }
+
+    [Fact]
+    public void TransitionTo_WhenFailed_SetsFinishedAtUtc()
+    {
+
+    }
+
+    [Fact]
+    public void MarkFailed_SetsFailedAndStoresErrorInfo()
+    {
+
+    }
+
+    [Fact]
+    public void MarkFailed_TruncatesErrorFields()
+    {
+
+    }
 }
