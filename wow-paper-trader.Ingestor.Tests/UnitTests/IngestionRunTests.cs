@@ -2,7 +2,7 @@ namespace wow_paper_trader.Ingestor.Tests;
 
 using System;
 using Xunit;
-using wow_paper_trader.Ingestor;
+
 
 
 public sealed class IngestionRunTests
@@ -22,6 +22,14 @@ public sealed class IngestionRunTests
     [Fact]
     public void TransitionTo_WhenFinished_SetsFinishedAtUtc()
     {
+        var run = new IngestionRun();
+        var now = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        run.TransitionTo(IngestionRunStatus.Finished, now);
+
+        Assert.Equal(IngestionRunStatus.Finished, run.Status);
+        Assert.Equal(now, run.LastUpdatedAtUtc);
+        Assert.Equal(now, run.FinishedAtUtc);
 
     }
 

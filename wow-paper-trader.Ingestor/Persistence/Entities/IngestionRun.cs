@@ -11,7 +11,10 @@ public sealed class IngestionRun
     public Guid Id { get; init; } = Guid.NewGuid();
 
     public DateTime StartedAtUtc { get; init; } = DateTime.UtcNow;
+
     public DateTime LastUpdatedAtUtc { get; private set; }
+
+    public DateTime FinishedAtUtc { get; private set; }
 
     public IngestionRunStatus Status { get; private set; } = IngestionRunStatus.Started;
 
@@ -19,6 +22,11 @@ public sealed class IngestionRun
     {
         Status = nextStatus;
         LastUpdatedAtUtc = utcNow;
+
+        if (Status == IngestionRunStatus.Finished)
+        {
+            FinishedAtUtc = utcNow;
+        }
     }
 
 }
