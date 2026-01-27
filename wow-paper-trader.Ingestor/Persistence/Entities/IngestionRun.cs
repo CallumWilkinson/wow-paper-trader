@@ -23,7 +23,7 @@ public sealed class IngestionRun
         Status = nextStatus;
         LastUpdatedAtUtc = utcNow;
 
-        if (Status == IngestionRunStatus.Finished)
+        if (Status == IngestionRunStatus.Finished || Status == IngestionRunStatus.Failed)
         {
             FinishedAtUtc = utcNow;
         }

@@ -36,7 +36,14 @@ public sealed class IngestionRunTests
     [Fact]
     public void TransitionTo_WhenFailed_SetsFinishedAtUtc()
     {
+        var run = new IngestionRun();
+        var now = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        run.TransitionTo(IngestionRunStatus.Failed, now);
+
+        Assert.Equal(IngestionRunStatus.Failed, run.Status);
+        Assert.Equal(now, run.LastUpdatedAtUtc);
+        Assert.Equal(now, run.FinishedAtUtc);
     }
 
     [Fact]
