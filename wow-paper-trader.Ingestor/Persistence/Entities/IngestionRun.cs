@@ -18,6 +18,10 @@ public sealed class IngestionRun
 
     public IngestionRunStatus Status { get; private set; } = IngestionRunStatus.Started;
 
+    public string? ErrorMessage { get; private set; }
+
+    public string? ErrorStack { get; private set; }
+
     public void TransitionTo(IngestionRunStatus nextStatus, DateTime utcNow)
     {
         Status = nextStatus;
@@ -27,6 +31,14 @@ public sealed class IngestionRun
         {
             FinishedAtUtc = utcNow;
         }
+    }
+
+    public void MarkFailed(Exception ex, DateTime utcNow)
+    {
+        TransitionTo(IngestionRunStatus.Failed, utcNow);
+
+        ErrorMessage = ex.Message;
+        ErrorStack = ex.ToString();
     }
 
 }

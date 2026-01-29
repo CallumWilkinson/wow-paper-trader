@@ -49,12 +49,18 @@ public sealed class IngestionRunTests
     [Fact]
     public void MarkFailed_SetsFailedAndStoresErrorInfo()
     {
+        var run = new IngestionRun();
+        var now = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var ex = new InvalidOperationException("Boom");
 
-    }
+        run.MarkFailed(ex, now);
 
-    [Fact]
-    public void MarkFailed_TruncatesErrorFields()
-    {
+        Assert.Equal(IngestionRunStatus.Failed, run.Status);
+        Assert.Equal(now, run.FinishedAtUtc);
+        Assert.NotNull(run.ErrorMessage);
+        Assert.Contains("Boom", run.ErrorMessage!, StringComparison.Ordinal);
+        Assert.NotNull(run.ErrorStack);
+        Assert.Contains("InvalidOperationException", run.ErrorStack!, StringComparison.Ordinal);
 
     }
 }
