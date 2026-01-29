@@ -2,42 +2,38 @@ using System.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-public sealed class IngestionRunPersistenceTests
+namespace wow_paper_trader.Ingestor.Tests;
+
+public sealed class IngestionRunPersistenceTests : IClassFixture<SqliteInMemoryDbFixture>
 {
+    private readonly SqliteInMemoryDbFixture _db;
+
+    public IngestionRunPersistenceTests(SqliteInMemoryDbFixture db)
+    {
+        _db = db;
+    }
+
     [Fact]
     public async Task CanPersistAndReloadIngestionRun()
     {
-        await using var connection = new SqliteConnection("DataSource=:memory:");
-        await connection.OpenAsync();
 
-        //EF Core setup
-        var options = new DbContextOptionsBuilder<IngestorDbContext>()
-            .UseSqlite(connection)
-            .Options;
-
-        await using (var db = new IngestorDbContext(options))
-        {
-            //create schema (translates model into SQL) and creates tables
-            await db.Database.EnsureCreatedAsync();
-        }
-
-        //id for row
+        //id for row in db (one ingestion run)
         var runId = Guid.Empty;
 
-        await using (var db = new IngestorDbContext(options))
+        await using (var dbContext = _db.CreateDbContext())
         {
             var run = new IngestionRun();
             run.TransitionTo(IngestionRunStatus.TokenRequested, DateTime.UtcNow);
 
-            db.IngestionRuns.Add(run);
-            await db.SaveChangesAsync();
+            dbContext.IngestionRuns.Add(run);
+            await dbContext.SaveChangesAsync();
 
             runId = run.Id;
         }
 
-        await using (var db = new IngestorDbContext(options))
+        await using (var dbContext = _db.CreateDbContext())
         {
-            var loaded = await db.IngestionRuns.SingleAsync(x => x.Id == runId);
+            var loaded = await dbContext.IngestionRuns.SingleAsync(x => x.Id == runId);
             Assert.Equal(IngestionRunStatus.TokenRequested, loaded.Status);
 
         }
