@@ -22,6 +22,40 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             var db = scope.ServiceProvider.GetRequiredService<IngestorDbContext>();
 
             var run = new IngestionRun();
+
+            //save to db before we call api to assist debugging
+            db.IngestionRuns.Add(run);
+            await db.SaveChangesAsync(stoppingToken);
+
+            try
+            {
+                var tokenRequestedAt = DateTime.UtcNow;
+                run.TransitionTo(IngestionRunStatus.TokenRequested, tokenRequestedAt);
+                await db.SaveChangesAsync(stoppingToken);
+
+                //TODO: add code to actually call the blizzard api here and save changes again
+
+
+                var finishedAtUtc = DateTime.UtcNow;
+                run.TransitionTo(IngestionRunStatus.Finished, finishedAtUtc);
+                await db.SaveChangesAsync(stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                //normal shutdown path, do not mark as failed
+                break;
+            }
+            catch (Exception ex)
+            {
+                var failedAt = DateTime.UtcNow;
+                run.MarkFailed(ex, failedAt);
+
+                _logger.LogError(ex, "Ingestion run failed. RunId={RunId}", run.Id);
+            }
+
+
+            //once data is back then add it to the db
+            //still saves even if run fails
             db.IngestionRuns.Add(run);
             await db.SaveChangesAsync(stoppingToken);
 
