@@ -2,8 +2,8 @@ namespace wow_paper_trader.Ingestor;
 
 public sealed class AuctionSnapshotIngestor : BackgroundService
 {
-    //7200 sec is 2 hours
-    private static readonly TimeSpan LoopDelay = TimeSpan.FromSeconds(7200);
+    //3600 sec is 1 hour
+    private static readonly TimeSpan LoopDelay = TimeSpan.FromSeconds(3600);
 
     private readonly ILogger<AuctionSnapshotIngestor> _logger;
 
