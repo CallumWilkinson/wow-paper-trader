@@ -51,17 +51,14 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
                 run.MarkFailed(ex, failedAt);
 
                 _logger.LogError(ex, "Ingestion run failed. RunId={RunId}", run.Id);
+                await db.SaveChangesAsync(stoppingToken);
+
             }
-
-
-            //once data is back then add it to the db
-            //still saves even if run fails
-            db.IngestionRuns.Add(run);
-            await db.SaveChangesAsync(stoppingToken);
 
             _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
 
             await Task.Delay(LoopDelay, stoppingToken);
+            break;
         }
     }
 }
