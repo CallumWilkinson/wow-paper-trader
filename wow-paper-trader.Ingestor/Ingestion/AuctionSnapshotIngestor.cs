@@ -2,7 +2,8 @@ namespace wow_paper_trader.Ingestor;
 
 public sealed class AuctionSnapshotIngestor : BackgroundService
 {
-    private static readonly TimeSpan LoopDelay = TimeSpan.FromSeconds(5);
+    //7200 sec is 2 hours
+    private static readonly TimeSpan LoopDelay = TimeSpan.FromSeconds(7200);
 
     private readonly ILogger<AuctionSnapshotIngestor> _logger;
 
@@ -58,6 +59,9 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
 
             await Task.Delay(LoopDelay, stoppingToken);
+
+            //TEMPORARY break means I only run this once, in production I will use loop delay at 2 hours to update DB at interval
+            //for now I will just be running ingestor manually once each time
             break;
         }
     }
