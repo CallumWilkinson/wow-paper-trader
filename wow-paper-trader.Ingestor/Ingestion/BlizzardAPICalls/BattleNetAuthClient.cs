@@ -7,7 +7,6 @@ public sealed class BattleNetAuthClient
 {
     public string? AccessToken { get; private set; }
 
-    //every 24 hours we will re-instantiate a new BattleNetAuthClient to get a new token
     public DateTime TokenCreatedAt { get; private set; }
 
     private readonly string _clientId;
@@ -33,26 +32,31 @@ public sealed class BattleNetAuthClient
         var basicAuthBytes = Encoding.ASCII.GetBytes($"{_clientId}:{_clientSecret}");
         var authHeaderValue = Convert.ToBase64String(basicAuthBytes);
 
-        //add to auth header
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
+        using var request = new HttpRequestMessage(HttpMethod.Post, TokenUrl);
 
-        using var form = new FormUrlEncodedContent(new Dictionary<string, string>
+        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
+        request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
         {
             ["grant_type"] = "client_credentials"
         });
 
-        using var response = await _httpClient.PostAsync(TokenUrl, form);
+        using var response = await _httpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var json = await response.Content.ReadAsStringAsync();
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
 
         using var doc = JsonDocument.Parse(json);
         var token = doc.RootElement.GetProperty("access_token").GetString();
 
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            throw new InvalidOperationException("'access_token' was empty.");
+        }
+
         AccessToken = token;
 
-        var nowUtc = DateTime.UtcNow;
-        TokenCreatedAt = nowUtc;
+        //next i want to use the actual creation time inside the json response
+        TokenCreatedAt = DateTime.UtcNow; ;
 
         return token;
     }
