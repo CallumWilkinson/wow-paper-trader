@@ -8,7 +8,7 @@ public enum IngestionRunStatus
 
 public sealed class IngestionRun
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
+    public long Id { get; private set; }
 
     public DateTime StartedAtUtc { get; init; } = DateTime.UtcNow;
 
