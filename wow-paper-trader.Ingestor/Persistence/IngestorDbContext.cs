@@ -9,4 +9,8 @@ public sealed class IngestorDbContext : DbContext
 
     public DbSet<IngestionRun> IngestionRuns { get; set; } = null!;
 
+    public DbSet<CommodityAuctionSnapshot> CommodityAuctionSnapshots { get; set; } = null!;
+
+    public DbSet<CommodityAuction> CommodityAuctions { get; set; } = null!;
+
 }

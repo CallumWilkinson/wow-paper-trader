@@ -1,4 +1,4 @@
-//note to self - when I create and save an entity instance of type <CommodityAuctionSnapshot>, 1 database row is created in the CommodityAuctionSnapshots table (the list in the db set)
+//note to self - an instance of this class is 1 row in the table called CommodityAuctionSnapshots
 
 public sealed class CommodityAuctionSnapshot
 {
