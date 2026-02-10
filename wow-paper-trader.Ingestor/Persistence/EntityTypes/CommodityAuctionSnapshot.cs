@@ -21,9 +21,15 @@ public sealed class CommodityAuctionSnapshot
 
     public CommodityAuctionSnapshot(long ingestionRunId, DateTime fetchedAtUtc, string apiEndPoint)
     {
-        ingestionRunId = IngestionRunId;
-        fetchedAtUtc = FetchedAtUtc;
-        apiEndPoint = ApiEndPoint;
+        IngestionRunId = ingestionRunId;
+        FetchedAtUtc = fetchedAtUtc;
+        ApiEndPoint = apiEndPoint;
+    }
+
+    //used when we loop the DTO during mapping
+    public void AddAuction(CommodityAuction commodityAuction)
+    {
+        CommodityAuctions.Add(commodityAuction);
     }
 
 
