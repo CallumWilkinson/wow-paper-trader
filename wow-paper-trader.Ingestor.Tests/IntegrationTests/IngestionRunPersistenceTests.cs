@@ -17,8 +17,8 @@ public sealed class IngestionRunPersistenceTests : IClassFixture<SqliteInMemoryD
     public async Task CanPersistAndReloadIngestionRun()
     {
 
-        //id for row in db (one ingestion run)
-        var runId = Guid.Empty;
+        //id for row in db (one ingestion run) so we can reload the entity in the assertion below
+        long runId;
 
         await using (var dbContext = _db.CreateDbContext())
         {
