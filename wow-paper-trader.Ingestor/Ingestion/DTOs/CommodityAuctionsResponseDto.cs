@@ -17,7 +17,7 @@ public sealed class CommodityAuctionDto
     [JsonPropertyName("quantity")]
     public int Quantity { get; init; }
 
-    [JsonPropertyName("unit_price")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public int UnitPrice { get; init; }
 
     [JsonPropertyName("time_left")]
