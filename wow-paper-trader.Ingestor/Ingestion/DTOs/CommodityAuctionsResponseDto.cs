@@ -15,10 +15,11 @@ public sealed class CommodityAuctionDto
     public required CommodityAuctionItemDto Item { get; init; }
 
     [JsonPropertyName("quantity")]
-    public int Quantity { get; init; }
+    public long Quantity { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-    public int UnitPrice { get; init; }
+    [JsonPropertyName("unit_price")]
+    public long UnitPrice { get; init; }
 
     [JsonPropertyName("time_left")]
     public required string TimeLeft { get; init; }

@@ -12,13 +12,13 @@ public sealed class CommodityAuction
 
     public long ItemId { get; private set; }
 
-    public int Quantity { get; private set; }
+    public long Quantity { get; private set; }
 
-    public int UnitPrice { get; private set; }
+    public long UnitPrice { get; private set; }
 
     public string TimeLeft { get; private set; } = string.Empty;
 
-    public CommodityAuction(long itemId, int quantity, int unitPrice, string timeLeft)
+    public CommodityAuction(long itemId, long quantity, long unitPrice, string timeLeft)
     {
         ItemId = itemId;
         Quantity = quantity;
