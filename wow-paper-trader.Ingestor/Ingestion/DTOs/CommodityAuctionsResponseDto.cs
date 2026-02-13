@@ -14,8 +14,8 @@ public sealed class CommodityAuctionDto
     [JsonPropertyName("item")]
     public required CommodityAuctionItemDto Item { get; init; }
 
-    [JsonPropertyName("quanity")]
-    public int Quanity { get; init; }
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; init; }
 
     [JsonPropertyName("unit_price")]
     public int UnitPrice { get; init; }

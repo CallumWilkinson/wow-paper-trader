@@ -22,7 +22,7 @@ public sealed class CommodityAuctionSnapshotMapper
     {
         return new CommodityAuction(
             commodityAuctionDto.Item.Id,
-            commodityAuctionDto.Quanity,
+            commodityAuctionDto.Quantity,
             commodityAuctionDto.UnitPrice,
             commodityAuctionDto.TimeLeft
         );
