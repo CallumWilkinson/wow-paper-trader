@@ -9,10 +9,23 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
 
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public AuctionSnapshotIngestor(ILogger<AuctionSnapshotIngestor> logger, IServiceScopeFactory scopeFactory)
+    //created by DI to access local user secrets for the blizzard auth api
+    private readonly IConfiguration _config;
+
+    private readonly HttpClient _httpClient;
+
+    public AuctionSnapshotIngestor(ILogger<AuctionSnapshotIngestor> logger, IServiceScopeFactory scopeFactory, IConfiguration config)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
+        _config = config;
+
+        _httpClient = new HttpClient(new SocketsHttpHandler
+        {
+            //this is to fix "stale DNS issues"
+            //I am doing this as i dont want to add a IHttpClientFactory yet
+            PooledConnectionLifetime = TimeSpan.FromMinutes(10)
+        });
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -22,7 +35,7 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             await using var scope = _scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<IngestorDbContext>();
 
-            var run = new IngestionRun();
+            IngestionRun run = new IngestionRun();
 
             //save to db before we call api to assist debugging
             db.IngestionRuns.Add(run);
@@ -30,14 +43,31 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
 
             try
             {
-                var tokenRequestedAt = DateTime.UtcNow;
+                DateTime tokenRequestedAt = DateTime.UtcNow;
                 run.TransitionTo(IngestionRunStatus.TokenRequested, tokenRequestedAt);
                 await db.SaveChangesAsync(stoppingToken);
 
-                //TODO: add code to actually call the blizzard api here and save changes again
+
+                BattleNetAuthClient authClient = new BattleNetAuthClient(_config, _httpClient);
+                string? accessToken = await authClient.RequestNewTokenAsync(stoppingToken);
+
+                if (accessToken == null)
+                {
+                    throw new InvalidOperationException("Access token is null. OAuth token acquisition likely failed.");
+                }
+
+                WowApiClient wowApiClient = new WowApiClient(_httpClient);
+                string wowRetailCommoditiesEndPoint = "https://us.api.blizzard.com/data/wow/auctions/commodities?namespace=dynamic-us&locale=en_US";
+                CommodityAuctionsResponseDto responseDto = await wowApiClient.GetAsync<CommodityAuctionsResponseDto>(wowRetailCommoditiesEndPoint, accessToken, stoppingToken);
+                DateTime finishedAtUtc = DateTime.UtcNow;
+
+                CommodityAuctionSnapshotMapper mapper = new CommodityAuctionSnapshotMapper();
+                CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(responseDto, run.Id, finishedAtUtc, wowRetailCommoditiesEndPoint);
+
+                db.CommodityAuctionSnapshots.Add(snapshotEntity);
+                await db.SaveChangesAsync(stoppingToken);
 
 
-                var finishedAtUtc = DateTime.UtcNow;
                 run.TransitionTo(IngestionRunStatus.Finished, finishedAtUtc);
                 await db.SaveChangesAsync(stoppingToken);
             }
@@ -50,9 +80,9 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             {
                 var failedAt = DateTime.UtcNow;
                 run.MarkFailed(ex, failedAt);
+                await db.SaveChangesAsync(stoppingToken);
 
                 _logger.LogError(ex, "Ingestion run failed. RunId={RunId}", run.Id);
-                await db.SaveChangesAsync(stoppingToken);
 
             }
 
@@ -64,5 +94,13 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             //for now I will just be running ingestor manually once each time
             break;
         }
+
+    }
+
+    //temp fix so no IHttpClientFactory is needed yet
+    public override void Dispose()
+    {
+        _httpClient.Dispose();
+        base.Dispose();
     }
 }
