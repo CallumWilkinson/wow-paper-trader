@@ -47,7 +47,7 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
                 run.TransitionTo(IngestionRunStatus.TokenRequested, tokenRequestedAt);
                 await db.SaveChangesAsync(stoppingToken);
 
-
+                //this is temporary, i will soon add ability to reuse an auth token for 24 hours
                 BattleNetAuthClient authClient = new BattleNetAuthClient(_config, _httpClient);
                 string? accessToken = await authClient.RequestNewTokenAsync(stoppingToken);
 
