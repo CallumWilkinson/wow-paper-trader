@@ -66,7 +66,7 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
 
                 DateTime startingSaveToDb = DateTime.UtcNow;
                 await db.SaveChangesAsync(stoppingToken);
-                _logger.LogInformation("SaveChanges took {Seconds}s", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
+                _logger.LogInformation("SaveChanges took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
 
                 run.TransitionTo(IngestionRunStatus.Finished, dataReturnedAtUtc);
