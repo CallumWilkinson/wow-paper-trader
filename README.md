@@ -26,7 +26,6 @@ The solution is structured as a multi-project .NET solution to clearly separate 
 ### Current Projects
 
 - **WowPaperTrader.Api**
-
   - ASP.NET Core Web API
   - Will expose endpoints for querying auction data, items, servers, and user portfolios
   - Will handle authentication and authorization (planned: ASP.NET Identity + JWT)
@@ -82,7 +81,7 @@ All Blizzard API data usage will comply with Blizzard’s Developer API Terms, i
 - Material UI
 - Axios
 - React Router
-- Playwrite E2E testing
+- Playwright E2E testing
 
 ### Tooling
 
@@ -95,7 +94,7 @@ All Blizzard API data usage will comply with Blizzard’s Developer API Terms, i
 
 ## Current Status
 
-🚧 **Early development**  
+**Early development**  
 The repository currently contains solution and project scaffolding.  
 Core ingestion logic, database schema, and API endpoints are under active development.
 

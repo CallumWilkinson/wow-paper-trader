@@ -2,10 +2,10 @@
 
 ## 1. Project Overview
 
-**wow-paper-trader** is a web-based analytics and simulation platform for the World of Warcraft Auction House.  
+wow-paper-trader is a web-based analytics and simulation platform for the World of Warcraft Auction House.  
 It ingests official Blizzard Auction House snapshot data, stores it in a compliant local database, and exposes tools for historical price analysis and simulated “paper trading” using virtual gold.
 
-The project is designed as a **portfolio-grade, job-ready system**, demonstrating backend engineering, data ingestion, authentication, persistence, and frontend integration using a modern C# + React stack.
+The project is designed as a portfolio-grade, job-ready system, demonstrating backend engineering, data ingestion, authentication, persistence, and frontend integration using a modern C# + React stack.
 
 ---
 
@@ -58,8 +58,8 @@ The project is designed as a **portfolio-grade, job-ready system**, demonstratin
 ### 4.1 API Usage
 
 - Use Blizzard Developer APIs only
-- Support **WoW Retail** initially
-- Start with a **single realm**:
+- Support WoW Retail initially
+- Start with a single realm:
   - Server: Area 52
 - Future extensibility for:
   - Multiple realms
@@ -67,13 +67,13 @@ The project is designed as a **portfolio-grade, job-ready system**, demonstratin
 
 ### 4.2 Data Retention Compliance
 
-- Enforce a **maximum 30-day data retention window**
+- Enforce a maximum 30-day data retention window
 - Automatically delete or expire auction data older than 30 days
 - Retention enforcement must occur server-side
 
 ### 4.3 Snapshot Handling
 
-- Auction House endpoint is treated as a **full snapshot**
+- Auction House endpoint is treated as a full snapshot
 - Each snapshot ingestion must:
   - Be timestamped
   - Be associated with a realm and game version
