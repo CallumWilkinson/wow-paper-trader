@@ -9,23 +9,20 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
 
     private readonly IServiceScopeFactory _scopeFactory;
 
-    //created by DI to access local user secrets for the blizzard auth api
-    private readonly IConfiguration _config;
+    private readonly BattleNetAuthClient _authClient;
 
-    private readonly HttpClient _httpClient;
+    private readonly WowApiClient _wowApiClient;
 
-    public AuctionSnapshotIngestor(ILogger<AuctionSnapshotIngestor> logger, IServiceScopeFactory scopeFactory, IConfiguration config)
+    public AuctionSnapshotIngestor(
+        ILogger<AuctionSnapshotIngestor> logger,
+        IServiceScopeFactory scopeFactory,
+        BattleNetAuthClient authClient,
+        WowApiClient wowApiClient)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
-        _config = config;
-
-        _httpClient = new HttpClient(new SocketsHttpHandler
-        {
-            //this is to fix "stale DNS issues"
-            //I am doing this as i dont want to add a IHttpClientFactory yet
-            PooledConnectionLifetime = TimeSpan.FromMinutes(10)
-        });
+        _authClient = authClient;
+        _wowApiClient = wowApiClient;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -37,7 +34,6 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
 
             IngestionRun run = new IngestionRun();
 
-            //save to db before we call api to assist debugging
             db.IngestionRuns.Add(run);
             await db.SaveChangesAsync(stoppingToken);
 
@@ -48,17 +44,16 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
                 await db.SaveChangesAsync(stoppingToken);
 
                 //this is temporary, i will soon add ability to reuse an auth token for 24 hours
-                BattleNetAuthClient authClient = new BattleNetAuthClient(_config, _httpClient);
-                string? accessToken = await authClient.RequestNewTokenAsync(stoppingToken);
+                string? accessToken = await _authClient.RequestNewTokenAsync(stoppingToken);
 
                 if (accessToken == null)
                 {
                     throw new InvalidOperationException("Access token is null. OAuth token acquisition likely failed.");
                 }
 
-                WowApiClient wowApiClient = new WowApiClient(_httpClient);
+
                 string wowRetailCommoditiesEndPoint = "https://us.api.blizzard.com/data/wow/auctions/commodities?namespace=dynamic-us&locale=en_US";
-                CommodityAuctionsResponseDto responseDto = await wowApiClient.GetAsync<CommodityAuctionsResponseDto>(wowRetailCommoditiesEndPoint, accessToken, stoppingToken);
+                CommodityAuctionsResponseDto responseDto = await _wowApiClient.GetAsync<CommodityAuctionsResponseDto>(wowRetailCommoditiesEndPoint, accessToken, stoppingToken);
                 DateTime finishedAtUtc = DateTime.UtcNow;
 
                 CommodityAuctionSnapshotMapper mapper = new CommodityAuctionSnapshotMapper();
@@ -73,7 +68,7 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
-                //normal shutdown path, do not mark as failed
+                //normal shutdown path, do not mark as failed, this is for user to manually cancel with Ctrl+C
                 break;
             }
             catch (Exception ex)
@@ -95,12 +90,5 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             break;
         }
 
-    }
-
-    //temp fix so no IHttpClientFactory is needed yet
-    public override void Dispose()
-    {
-        _httpClient.Dispose();
-        base.Dispose();
     }
 }

@@ -55,7 +55,7 @@ public sealed class BattleNetAuthClient
 
         AccessToken = token;
 
-        //next i want to use the actual creation time inside the json response as that is likely more "proper" even though i dont think its going to matter much
+        //in future i want to use the actual creation time inside the json response as that is likely more "proper" even though i dont think its going to matter much
         TokenCreatedAt = DateTime.UtcNow; ;
 
         return token;

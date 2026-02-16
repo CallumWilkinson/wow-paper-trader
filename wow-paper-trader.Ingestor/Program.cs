@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using wow_paper_trader.Ingestor;
+using System.Net;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -10,6 +14,21 @@ builder.Services.AddDbContext<IngestorDbContext>(options =>
 });
 
 builder.Services.AddHostedService<AuctionSnapshotIngestor>();
+
+builder.Services.AddHttpClient<BattleNetAuthClient>()
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+    });
+
+builder.Services.AddHttpClient<WowApiClient>()
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+    });
+
 
 var host = builder.Build();
 host.Run();
