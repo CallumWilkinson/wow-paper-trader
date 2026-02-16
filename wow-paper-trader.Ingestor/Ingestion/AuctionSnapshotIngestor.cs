@@ -54,16 +54,22 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
 
                 string wowRetailCommoditiesEndPoint = "https://us.api.blizzard.com/data/wow/auctions/commodities?namespace=dynamic-us&locale=en_US";
                 CommodityAuctionsResponseDto responseDto = await _wowApiClient.GetAsync<CommodityAuctionsResponseDto>(wowRetailCommoditiesEndPoint, accessToken, stoppingToken);
-                DateTime finishedAtUtc = DateTime.UtcNow;
+                DateTime dataReturnedAtUtc = DateTime.UtcNow;
+
+                int auctionsCount = responseDto.CommodityAuctions.Count;
+                _logger.LogInformation("Total Auctions Received: {Count}", auctionsCount);
 
                 CommodityAuctionSnapshotMapper mapper = new CommodityAuctionSnapshotMapper();
-                CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(responseDto, run.Id, finishedAtUtc, wowRetailCommoditiesEndPoint);
+                CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(responseDto, run.Id, dataReturnedAtUtc, wowRetailCommoditiesEndPoint);
 
                 db.CommodityAuctionSnapshots.Add(snapshotEntity);
+
+                DateTime startingSaveToDb = DateTime.UtcNow;
                 await db.SaveChangesAsync(stoppingToken);
+                _logger.LogInformation("SaveChanges took {Seconds}s", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
 
-                run.TransitionTo(IngestionRunStatus.Finished, finishedAtUtc);
+                run.TransitionTo(IngestionRunStatus.Finished, dataReturnedAtUtc);
                 await db.SaveChangesAsync(stoppingToken);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
