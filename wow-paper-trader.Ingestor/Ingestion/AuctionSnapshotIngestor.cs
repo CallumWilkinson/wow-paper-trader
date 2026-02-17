@@ -43,7 +43,7 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
                 run.TransitionTo(IngestionRunStatus.TokenRequested, tokenRequestedAt);
                 await db.SaveChangesAsync(stoppingToken);
 
-                //this is temporary, i will soon add ability to reuse an auth token for 24 hours
+                //this function internally handles 24 hour token expiry logic
                 string? accessToken = await _authClient.RequestNewTokenAsync(stoppingToken);
 
                 if (accessToken == null)

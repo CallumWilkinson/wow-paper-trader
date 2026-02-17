@@ -5,7 +5,9 @@ using System.Text.Json.Serialization;
 
 public sealed class BattleNetAuthClient
 {
-    public string? AccessToken { get; private set; }
+    private string? _accessToken = null;
+
+    private DateTime _tokenExpiresAtUtc;
 
     public DateTime TokenCreatedAt { get; private set; }
 
@@ -28,36 +30,46 @@ public sealed class BattleNetAuthClient
 
     public async Task<string?> RequestNewTokenAsync(CancellationToken cancellationToken)
     {
-        //OAuth 2.0 requires format to be Authorization: Basic base64(client_id:client_secret)
-        var basicAuthBytes = Encoding.ASCII.GetBytes($"{_clientId}:{_clientSecret}");
-        var authHeaderValue = Convert.ToBase64String(basicAuthBytes);
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, TokenUrl);
-
-        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
-        request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+        if (_accessToken == null || DateTime.UtcNow >= _tokenExpiresAtUtc)
         {
-            ["grant_type"] = "client_credentials"
-        });
+            //OAuth 2.0 requires format to be Authorization: Basic base64(client_id:client_secret)
+            var basicAuthBytes = Encoding.ASCII.GetBytes($"{_clientId}:{_clientSecret}");
+            var authHeaderValue = Convert.ToBase64String(basicAuthBytes);
 
-        using var response = await _httpClient.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
+            using var request = new HttpRequestMessage(HttpMethod.Post, TokenUrl);
 
-        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
+            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["grant_type"] = "client_credentials"
+            });
 
-        using var doc = JsonDocument.Parse(json);
-        var token = doc.RootElement.GetProperty("access_token").GetString();
+            using var response = await _httpClient.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
 
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            throw new InvalidOperationException("'access_token' was empty.");
+            var json = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            using var doc = JsonDocument.Parse(json);
+            var token = doc.RootElement.GetProperty("access_token").GetString();
+            var tokenExpiry = doc.RootElement.GetProperty("expires_in").GetDouble();
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new InvalidOperationException("'access_token' was empty.");
+            }
+
+            _accessToken = token;
+
+            //less 5 mins for safety buffer
+            _tokenExpiresAtUtc = DateTime.UtcNow.AddSeconds(tokenExpiry - 300);
+
+            TokenCreatedAt = DateTime.UtcNow;
+
+            return token;
         }
 
-        AccessToken = token;
+        return _accessToken;
 
-        //in future i want to use the actual creation time inside the json response as that is likely more "proper" even though i dont think its going to matter much
-        TokenCreatedAt = DateTime.UtcNow; ;
-
-        return token;
     }
 }
