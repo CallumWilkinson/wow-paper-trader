@@ -22,7 +22,10 @@ builder.Services.AddHttpClient<BattleNetAuthClient>()
         PooledConnectionLifetime = TimeSpan.FromMinutes(10),
     });
 
-builder.Services.AddHttpClient<WowApiClient>()
+builder.Services.AddHttpClient<WowApiClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["WowApi:BaseUrl"]!);
+})
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
     {
         AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,

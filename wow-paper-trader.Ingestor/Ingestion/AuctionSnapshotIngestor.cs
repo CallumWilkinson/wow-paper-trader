@@ -51,16 +51,13 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
                     throw new InvalidOperationException("Access token is null. OAuth token acquisition likely failed.");
                 }
 
+                WowApiClient.WowApiResult<CommodityAuctionsResponseDto> apiResult = await _wowApiClient.GetCommodityAuctionsAsync(accessToken, stoppingToken);
 
-                string wowRetailCommoditiesEndPoint = "https://us.api.blizzard.com/data/wow/auctions/commodities?namespace=dynamic-us&locale=en_US";
-                CommodityAuctionsResponseDto responseDto = await _wowApiClient.GetAsync<CommodityAuctionsResponseDto>(wowRetailCommoditiesEndPoint, accessToken, stoppingToken);
-                DateTime dataReturnedAtUtc = DateTime.UtcNow;
-
-                int auctionsCount = responseDto.CommodityAuctions.Count;
+                int auctionsCount = apiResult.Payload.CommodityAuctions.Count;
                 _logger.LogInformation("Total Auctions Received: {Count}", auctionsCount);
 
                 CommodityAuctionSnapshotMapper mapper = new CommodityAuctionSnapshotMapper();
-                CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(responseDto, run.Id, dataReturnedAtUtc, wowRetailCommoditiesEndPoint);
+                CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(apiResult.Payload, run.Id, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
 
                 db.CommodityAuctionSnapshots.Add(snapshotEntity);
 
@@ -69,7 +66,7 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
                 _logger.LogInformation("SaveChanges took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
 
-                run.TransitionTo(IngestionRunStatus.Finished, dataReturnedAtUtc);
+                run.TransitionTo(IngestionRunStatus.Finished, apiResult.DataReturnedAtUtc);
                 await db.SaveChangesAsync(stoppingToken);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)

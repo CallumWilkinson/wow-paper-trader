@@ -10,14 +10,24 @@ public sealed class WowApiClient
         //json is camelCase, C# objects are Pascal, this avoids issues when mapping to DTOs
         PropertyNameCaseInsensitive = true
     };
+
+    public sealed record WowApiResult<T>
+    (
+        T Payload,
+        DateTime DataReturnedAtUtc,
+        string Endpoint
+    );
+
+
     public WowApiClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
 
-    public async Task<T> GetAsync<T>(string requestUri, string accessToken, CancellationToken cancellationToken)
+    public async Task<WowApiResult<CommodityAuctionsResponseDto>> GetCommodityAuctionsAsync(string accessToken, CancellationToken cancellationToken)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        string endpointSuffix = "auctions/commodities?namespace=dynamic-us&locale=en_US";
+        using var request = new HttpRequestMessage(HttpMethod.Get, endpointSuffix);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
         using var response = await _httpClient.SendAsync(request, cancellationToken);
@@ -31,10 +41,12 @@ public sealed class WowApiClient
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
-        //convert JSON to C# object, <T> is the DTO
-        var result = await JsonSerializer.DeserializeAsync<T>(stream, JsonOptions, cancellationToken)
+        //convert JSON to C# object (the dto)
+        CommodityAuctionsResponseDto result = await JsonSerializer.DeserializeAsync<CommodityAuctionsResponseDto>(stream, JsonOptions, cancellationToken)
             ?? throw new JsonException("Wow API response JSON deserialized to null.");
 
-        return result;
+        string fullEndpoint = new Uri(_httpClient.BaseAddress!, endpointSuffix).ToString();
+
+        return new WowApiResult<CommodityAuctionsResponseDto>(result, DateTime.UtcNow, fullEndpoint);
     }
 }
