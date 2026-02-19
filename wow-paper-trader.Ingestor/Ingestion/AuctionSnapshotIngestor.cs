@@ -48,14 +48,14 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
         await using var scope = _scopeFactory.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<IngestorDbContext>();
 
-        IngestionRun run = new IngestionRun();
+        var run = new IngestionRun();
 
         db.IngestionRuns.Add(run);
         await db.SaveChangesAsync(cancellationToken);
 
         try
         {
-            DateTime tokenRequestedAt = DateTime.UtcNow;
+            var tokenRequestedAt = DateTime.UtcNow;
             run.TransitionTo(IngestionRunStatus.TokenRequested, tokenRequestedAt);
             await db.SaveChangesAsync(cancellationToken);
 
@@ -72,12 +72,12 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
             int auctionsCount = apiResult.Payload.CommodityAuctions.Count;
             _logger.LogInformation("Total Auctions Received: {Count}", auctionsCount);
 
-            CommodityAuctionSnapshotMapper mapper = new CommodityAuctionSnapshotMapper();
+            var mapper = new CommodityAuctionSnapshotMapper();
             CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(apiResult.Payload, run.Id, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
 
             db.CommodityAuctionSnapshots.Add(snapshotEntity);
 
-            DateTime startingSaveToDb = DateTime.UtcNow;
+            var startingSaveToDb = DateTime.UtcNow;
             await db.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("SaveChanges took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
