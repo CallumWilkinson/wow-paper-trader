@@ -42,7 +42,10 @@ public sealed class AuctionSnapshotIngestor : BackgroundService
         }
     }
 
-
+    //I am making this public so that i can test it easily
+    //I know this is not a good idea long term
+    //This function really should be private as it should not be used outside this class
+    //Considering project scope it is a worth while tradeoff
     public async Task RunOnceAsync(CancellationToken cancellationToken)
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
