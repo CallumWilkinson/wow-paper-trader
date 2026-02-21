@@ -46,6 +46,7 @@ public sealed class AuctionSnapshotIngestorTests : IClassFixture<SqliteInMemoryD
         await ingestionRunOrchestrator.RunOnceAsync(CancellationToken.None);
 
         //Assert
+        //use 1 assertdB per test (not per assertion)
         await using var assertDb = _db.CreateDbContext();
 
         //assert on the sql in memory db

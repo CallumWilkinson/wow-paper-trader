@@ -19,7 +19,6 @@ public sealed class AuctionSnapshotIngestionRunOrchestrator
         _wowApiClient = wowApiClient;
     }
 
-    //made this public to make testing easier
     public async Task RunOnceAsync(CancellationToken cancellationToken)
     {
         var run = new IngestionRun();
