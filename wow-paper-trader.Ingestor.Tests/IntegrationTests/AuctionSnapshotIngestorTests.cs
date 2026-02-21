@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using wow_paper_trader.Ingestor;
 
-public sealed class AuctionSnapshotIngestorTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class DataIngestorBackgroundServiceTests : IClassFixture<SqliteInMemoryDbFixture>
 {
     private readonly SqliteInMemoryDbFixture _db;
 
-    public AuctionSnapshotIngestorTests(SqliteInMemoryDbFixture db)
+    public DataIngestorBackgroundServiceTests(SqliteInMemoryDbFixture db)
     {
         _db = db;
     }

@@ -1,12 +1,12 @@
 namespace wow_paper_trader.Ingestor;
 
-public sealed class AuctionSnapshotIngestor : BackgroundService
+public sealed class DataIngestorBackgroundService : BackgroundService
 {
     private static readonly TimeSpan LoopDelay = TimeSpan.FromHours(1);
 
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public AuctionSnapshotIngestor(
+    public DataIngestorBackgroundService(
         IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;

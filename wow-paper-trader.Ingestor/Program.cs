@@ -14,7 +14,7 @@ builder.Services.AddDbContext<IngestorDbContext>(options =>
 });
 
 builder.Services.AddScoped<AuctionSnapshotIngestionRunOrchestrator>();
-builder.Services.AddHostedService<AuctionSnapshotIngestor>();
+builder.Services.AddHostedService<DataIngestorBackgroundService>();
 
 builder.Services.AddHttpClient<BattleNetAuthClient>()
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
