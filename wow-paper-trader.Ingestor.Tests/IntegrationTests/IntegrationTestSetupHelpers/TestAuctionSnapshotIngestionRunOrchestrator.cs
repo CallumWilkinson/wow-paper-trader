@@ -2,20 +2,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-public sealed class TestAuctionSnapshotIngestionRunOrchestrator
+public sealed class TestAuctionSnapshotIngestionRunBuilder
 {
     private readonly string _authJson;
     private readonly string _auctionsJson;
-    private readonly SqliteInMemoryDbFixture _db;
 
-    public TestAuctionSnapshotIngestionRunOrchestrator(string authJson, string auctionsJson, SqliteInMemoryDbFixture db)
+
+    public TestAuctionSnapshotIngestionRunBuilder(string authJson, string auctionsJson)
     {
         _authJson = authJson;
         _auctionsJson = auctionsJson;
-        _db = db;
     }
 
-    public AuctionSnapshotIngestionRunOrchestrator Create()
+    public AuctionSnapshotIngestionRunOrchestrator CreateOrchestrator(IngestorDbContext dbContext)
     {
         IConfiguration authConfig = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -41,7 +40,6 @@ public sealed class TestAuctionSnapshotIngestionRunOrchestrator
 
         ILogger<AuctionSnapshotIngestionRunOrchestrator> logger = NullLogger<AuctionSnapshotIngestionRunOrchestrator>.Instance;
 
-        IngestorDbContext dbContext = _db.CreateDbContext();
 
         var ingestionRunOrchestrator = new AuctionSnapshotIngestionRunOrchestrator(logger, dbContext, battleNetAuthClient, wowApiClient);
         return ingestionRunOrchestrator;

@@ -17,7 +17,6 @@ public sealed class AuctionSnapshotIngestorTests : IClassFixture<SqliteInMemoryD
     public async Task RunOnceAsync_SavesCommodityAuctionShapshotToDatabase_FromStubbedJson()
     {
         //Arrange
-
         string authJson =
         """
         {
@@ -38,8 +37,10 @@ public sealed class AuctionSnapshotIngestorTests : IClassFixture<SqliteInMemoryD
         }
         """;
 
-        var sut = new TestAuctionSnapshotIngestionRunOrchestrator(authJson, auctionsJson, _db);
-        AuctionSnapshotIngestionRunOrchestrator ingestionRunOrchestrator = sut.Create();
+        await using var dbContext = _db.CreateDbContext();
+
+        var testBuilder = new TestAuctionSnapshotIngestionRunBuilder(authJson, auctionsJson);
+        var ingestionRunOrchestrator = testBuilder.CreateOrchestrator(dbContext);
 
         //Act   
         await ingestionRunOrchestrator.RunOnceAsync(CancellationToken.None);

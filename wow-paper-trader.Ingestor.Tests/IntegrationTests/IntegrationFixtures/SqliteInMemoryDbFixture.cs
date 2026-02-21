@@ -7,6 +7,7 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
 
     public DbContextOptions<IngestorDbContext> Options { get; private set; } = default!;
 
+    //calls automatically if becuase this fixture inherits from IAsyncLifetime
     public async Task InitializeAsync()
     {
         _connection = new SqliteConnection("DataSource=:memory:");
