@@ -53,16 +53,27 @@ public sealed class IngestionRunOrchestratorTests : IClassFixture<SqliteInMemory
         await using var assertDbContext = _db.CreateDbContext();
 
         int ingestionRunRowCount = await assertDbContext.IngestionRuns.CountAsync();
-        int snapshotRowCount = await assertDbContext.CommodityAuctionSnapshots.CountAsync();
-        int auctionRowCount = await assertDbContext.CommodityAuctions.CountAsync();
+        int auctionSnapshotRowCount = await assertDbContext.CommodityAuctionSnapshots.CountAsync();
+        int commoditAuctionRowCount = await assertDbContext.CommodityAuctions.CountAsync();
         IngestionRun ingestionRunRow = await assertDbContext.IngestionRuns.SingleAsync(x => x.Id == 1);
+        CommodityAuctionSnapshot auctionSnapshotRow = await assertDbContext.CommodityAuctionSnapshots.SingleAsync(x => x.Id == 1);
+        CommodityAuction commodityAuctionRow1 = await assertDbContext.CommodityAuctions.SingleAsync(x => x.Id == 1);
 
         Assert.Equal(1, ingestionRunRowCount);
-
         Assert.Equal(IngestionRunStatus.Finished, ingestionRunRow.Status);
 
-        // Assert.Equal(1, snapshotRowCount);
-        // Assert.Equal(2, auctionRowCount);
+        Assert.Equal(1, auctionSnapshotRowCount);
+        Assert.Equal(1, auctionSnapshotRow.IngestionRunId);
+        Assert.Equal("https://example.test/auctions/commodities?namespace=dynamic-us&locale=en_US", auctionSnapshotRow.ApiEndPoint);
+
+
+        Assert.Equal(2, commoditAuctionRowCount);
+        //assert correct foreign key
+        Assert.Equal(1, commodityAuctionRow1.CommodityAuctionSnapshotId);
+        Assert.Equal(19019, commodityAuctionRow1.ItemId);
+        Assert.Equal(5, commodityAuctionRow1.Quantity);
+        Assert.Equal(123456, commodityAuctionRow1.UnitPrice);
+        Assert.Equal("LONG", commodityAuctionRow1.TimeLeft);
 
     }
 }
