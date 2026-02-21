@@ -38,44 +38,14 @@ public sealed class AuctionSnapshotIngestorTests : IClassFixture<SqliteInMemoryD
         }
         """;
 
-        //EXTRACT TO SETUP FUNCTION
-        //START
-
-        IConfiguration authConfig = new ConfigurationBuilder()
-        .AddInMemoryCollection(new Dictionary<string, string?>
-        {
-            ["Blizzard:ClientId"] = "test-client-id",
-            ["Blizzard:ClientSecret"] = "test-client-secret",
-        })
-        .Build();
-
-        var stubHandlerWithAuthJson = new StubHttpMessageHandler(authJson, System.Net.HttpStatusCode.OK);
-
-        var httpClientWithAuthStub = new HttpClient(stubHandlerWithAuthJson);
-
-        var battleNetAuthClient = new BattleNetAuthClient(authConfig, httpClientWithAuthStub);
-
-
-        var stubHandlerWithAuctionsJson = new StubHttpMessageHandler(auctionsJson, System.Net.HttpStatusCode.OK);
-
-        var httpClientWithAuctionsStub = new HttpClient(stubHandlerWithAuctionsJson);
-
-        var wowApiClient = new WowApiClient(httpClientWithAuctionsStub);
-
-
-        ILogger<AuctionSnapshotIngestionRunOrchestrator> logger = NullLogger<AuctionSnapshotIngestionRunOrchestrator>.Instance;
-
-        IngestorDbContext dbContext = _db.CreateDbContext();
-
-        var ingestionRunOrchestrator = new AuctionSnapshotIngestionRunOrchestrator(logger, dbContext, battleNetAuthClient, wowApiClient);
-
-        //END SETUP FUNCTION
+        var sut = new TestAuctionSnapshotIngestionRunOrchestrator(authJson, auctionsJson, _db);
+        AuctionSnapshotIngestionRunOrchestrator ingestionRunOrchestrator = sut.Create();
 
         //Act   
-
         await ingestionRunOrchestrator.RunOnceAsync(CancellationToken.None);
 
         //Assert
+        await using var assertDb = _db.CreateDbContext();
 
         //assert on the sql in memory db
     }
