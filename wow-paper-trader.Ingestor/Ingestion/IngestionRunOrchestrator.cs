@@ -1,14 +1,14 @@
-public sealed class AuctionSnapshotIngestionRunOrchestrator
+public sealed class IngestionRunOrchestrator
 {
-    private readonly ILogger<AuctionSnapshotIngestionRunOrchestrator> _logger;
+    private readonly ILogger<IngestionRunOrchestrator> _logger;
     private readonly IngestorDbContext _dbContext;
 
     private readonly BattleNetAuthClient _authClient;
 
     private readonly WowApiClient _wowApiClient;
 
-    public AuctionSnapshotIngestionRunOrchestrator(
-    ILogger<AuctionSnapshotIngestionRunOrchestrator> logger,
+    public IngestionRunOrchestrator(
+    ILogger<IngestionRunOrchestrator> logger,
     IngestorDbContext dbContext,
     BattleNetAuthClient authClient,
     WowApiClient wowApiClient)

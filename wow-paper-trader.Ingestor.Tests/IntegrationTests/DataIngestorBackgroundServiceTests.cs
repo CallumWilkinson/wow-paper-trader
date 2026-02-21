@@ -39,7 +39,7 @@ public sealed class DataIngestorBackgroundServiceTests : IClassFixture<SqliteInM
 
         await using var dbContext = _db.CreateDbContext();
 
-        var testBuilder = new TestAuctionSnapshotIngestionRunBuilder(authJson, auctionsJson);
+        var testBuilder = new TestBuilderForIngestionRunOrchestrator(authJson, auctionsJson);
         var ingestionRunOrchestrator = testBuilder.CreateOrchestrator(dbContext);
 
         //Act   

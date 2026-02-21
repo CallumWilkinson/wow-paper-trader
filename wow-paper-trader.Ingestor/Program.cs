@@ -13,7 +13,7 @@ builder.Services.AddDbContext<IngestorDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddScoped<AuctionSnapshotIngestionRunOrchestrator>();
+builder.Services.AddScoped<IngestionRunOrchestrator>();
 builder.Services.AddHostedService<DataIngestorBackgroundService>();
 
 builder.Services.AddHttpClient<BattleNetAuthClient>()

@@ -19,7 +19,7 @@ public sealed class DataIngestorBackgroundService : BackgroundService
             try
             {
                 await using var scope = _scopeFactory.CreateAsyncScope();
-                var ingestionRunOrchestrator = scope.ServiceProvider.GetRequiredService<AuctionSnapshotIngestionRunOrchestrator>();
+                var ingestionRunOrchestrator = scope.ServiceProvider.GetRequiredService<IngestionRunOrchestrator>();
                 await ingestionRunOrchestrator.RunOnceAsync(cancellationToken);
             }
             catch (OperationCanceledException)
