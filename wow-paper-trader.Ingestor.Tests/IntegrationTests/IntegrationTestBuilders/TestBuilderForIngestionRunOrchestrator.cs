@@ -33,7 +33,10 @@ public sealed class TestBuilderForIngestionRunOrchestrator
 
         var stubHandlerWithAuctionsJson = new StubHttpMessageHandler(_auctionsJson, System.Net.HttpStatusCode.OK);
 
-        var httpClientWithAuctionsStub = new HttpClient(stubHandlerWithAuctionsJson);
+        var httpClientWithAuctionsStub = new HttpClient(stubHandlerWithAuctionsJson)
+        {
+            BaseAddress = new Uri("https://example.test/")
+        };
 
         var wowApiClient = new WowApiClient(httpClientWithAuctionsStub);
 
