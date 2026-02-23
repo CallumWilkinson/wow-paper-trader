@@ -35,4 +35,15 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
         }
         return new IngestorDbContext(Options);
     }
+
+    public async Task ResetDatabaseAsync()
+    {
+        if (Options == null)
+        {
+            throw new InvalidOperationException("Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
+        }
+        await using var db = new IngestorDbContext(Options);
+        await db.Database.EnsureDeletedAsync();
+        await db.Database.EnsureCreatedAsync();
+    }
 }
