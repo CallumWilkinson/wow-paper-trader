@@ -15,7 +15,7 @@ public sealed class StubHttpMessageHandler : HttpMessageHandler
     }
 
     //override the transport layer so we never send data over TCP, we just intercept the "http send" to return our custom json response
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var httpResponse = new HttpResponseMessage
         {
@@ -28,7 +28,7 @@ public sealed class StubHttpMessageHandler : HttpMessageHandler
             )
         };
 
-        return Task.FromResult(httpResponse);
+        return httpResponse;
 
     }
 }
