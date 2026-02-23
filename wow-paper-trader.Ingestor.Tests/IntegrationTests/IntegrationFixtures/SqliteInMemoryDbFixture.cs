@@ -27,16 +27,19 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
         await _connection.DisposeAsync();
     }
 
-    public IngestorDbContext CreateDbContext()
+    public IngestorDbContext CreateAssertDbContext()
     {
-        if (Options == null)
-        {
-            throw new InvalidOperationException("Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
-        }
-        return new IngestorDbContext(Options);
+        return CreateDbContext();
     }
 
-    public async Task ResetDatabaseAsync()
+    //arrangeDbContext must reset the database
+    public async Task<IngestorDbContext> CreateArrangeDbContextAsync()
+    {
+        await ResetDatabaseAsync();
+        return CreateDbContext();
+    }
+
+    private async Task ResetDatabaseAsync()
     {
         if (Options == null)
         {
@@ -45,5 +48,14 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
         await using var db = new IngestorDbContext(Options);
         await db.Database.EnsureDeletedAsync();
         await db.Database.EnsureCreatedAsync();
+    }
+
+    private IngestorDbContext CreateDbContext()
+    {
+        if (Options == null)
+        {
+            throw new InvalidOperationException("Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
+        }
+        return new IngestorDbContext(Options);
     }
 }
