@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace wow_paper_trader.Ingestor.Tests;
 
@@ -16,26 +17,22 @@ public sealed class IngestionRunPersistenceTests : IClassFixture<SqliteInMemoryD
     [Fact]
     public async Task CanPersistAndReloadIngestionRun()
     {
+        //arrange
+        await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
+        var run = new IngestionRun();
+        run.TransitionTo(IngestionRunStatus.TokenRequested, DateTime.UtcNow);
+        long runId = run.Id;
 
-        //id for row in db (one ingestion run) so we can reload the entity in the assertion below
-        long runId;
+        //act
+        arrangeDbContext.IngestionRuns.Add(run);
+        await arrangeDbContext.SaveChangesAsync();
 
-        await using (var dbContext = _db.CreateDbContext())
-        {
-            var run = new IngestionRun();
-            run.TransitionTo(IngestionRunStatus.TokenRequested, DateTime.UtcNow);
 
-            dbContext.IngestionRuns.Add(run);
-            await dbContext.SaveChangesAsync();
+        //assert
+        await using var assertDbContext = _db.CreateAssertDbContext();
+        var loaded = await assertDbContext.IngestionRuns.SingleAsync();
+        Assert.Equal(IngestionRunStatus.TokenRequested, loaded.Status);
 
-            runId = run.Id;
-        }
 
-        await using (var dbContext = _db.CreateDbContext())
-        {
-            var loaded = await dbContext.IngestionRuns.SingleAsync(x => x.Id == runId);
-            Assert.Equal(IngestionRunStatus.TokenRequested, loaded.Status);
-
-        }
     }
 }
