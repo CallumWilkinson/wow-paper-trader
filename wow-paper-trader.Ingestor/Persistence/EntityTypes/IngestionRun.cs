@@ -3,7 +3,8 @@ public enum IngestionRunStatus
     Started,
     TokenRequested,
     Finished,
-    Failed
+    Failed,
+    Cancelled
 }
 
 public sealed class IngestionRun
@@ -27,7 +28,7 @@ public sealed class IngestionRun
         Status = nextStatus;
         LastUpdatedAtUtc = utcNow;
 
-        if (Status == IngestionRunStatus.Finished || Status == IngestionRunStatus.Failed)
+        if (Status == IngestionRunStatus.Finished || Status == IngestionRunStatus.Failed || Status == IngestionRunStatus.Cancelled)
         {
             FinishedAtUtc = utcNow;
         }
