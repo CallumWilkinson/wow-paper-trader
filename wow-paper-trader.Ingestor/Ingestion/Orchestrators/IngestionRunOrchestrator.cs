@@ -45,14 +45,19 @@ public sealed class IngestionRunOrchestrator
             int auctionsCount = apiResult.Payload.CommodityAuctions.Count;
             _logger.LogInformation("Total Auctions Received: {Count}", auctionsCount);
 
+
             var mapper = new CommodityAuctionSnapshotMapper();
             CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(apiResult.Payload, run.Id, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
 
+            var startingAdd = DateTime.UtcNow;
+            _logger.LogInformation("Adding to DbContext at {Time}", startingAdd);
             _dbContext.CommodityAuctionSnapshots.Add(snapshotEntity);
+            _logger.LogInformation("DbContext Add took {Seconds} Seconds", (DateTime.UtcNow - startingAdd).TotalSeconds);
 
             var startingSaveToDb = DateTime.UtcNow;
+            _logger.LogInformation("Starting SQL Write at {Time}", startingSaveToDb);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("SaveChanges took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
+            _logger.LogInformation("SQL Write took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
 
             run.TransitionTo(IngestionRunStatus.Finished, apiResult.DataReturnedAtUtc);
@@ -75,6 +80,7 @@ public sealed class IngestionRunOrchestrator
         }
 
         _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
+        _logger.LogInformation("Data recorded in database successfully");
 
     }
 
