@@ -61,7 +61,7 @@ public sealed class BattleNetAuthClient
 
             _accessToken = token;
 
-            //less 5 mins for safety buffer
+            //expiry is normally 24 hours, as determined by blizzard api docs, but we less 5 mins for safety buffer
             _tokenExpiresAtUtc = DateTime.UtcNow.AddSeconds(tokenExpiry - 300);
 
             TokenCreatedAt = DateTime.UtcNow;

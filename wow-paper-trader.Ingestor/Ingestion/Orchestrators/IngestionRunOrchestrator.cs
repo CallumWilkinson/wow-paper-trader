@@ -22,15 +22,25 @@ public sealed class IngestionRunOrchestrator
     public async Task RunOnceAsync(CancellationToken cancellationToken)
     {
         var run = new IngestionRun();
-
         _dbContext.IngestionRuns.Add(run);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await RunCommodityAuctionSnapshotDatabaseTransaction(run, cancellationToken);
+
+        _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
+        _logger.LogInformation("Data recorded in database successfully");
+
+    }
+
+
+    private async Task RunCommodityAuctionSnapshotDatabaseTransaction(IngestionRun run, CancellationToken cancellationToken)
+    {
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
             var tokenRequestedAt = DateTime.UtcNow;
             run.TransitionTo(IngestionRunStatus.TokenRequested, tokenRequestedAt);
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             //this function internally handles 24 hour token expiry logic
             string? accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);
@@ -54,33 +64,37 @@ public sealed class IngestionRunOrchestrator
             _dbContext.CommodityAuctionSnapshots.Add(snapshotEntity);
             _logger.LogInformation("DbContext Add took {Seconds} Seconds", (DateTime.UtcNow - startingAdd).TotalSeconds);
 
+            run.TransitionTo(IngestionRunStatus.Finished, apiResult.DataReturnedAtUtc);
+
             var startingSaveToDb = DateTime.UtcNow;
             _logger.LogInformation("Starting SQL Write at {Time}", startingSaveToDb);
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("SQL Write took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
 
-            run.TransitionTo(IngestionRunStatus.Finished, apiResult.DataReturnedAtUtc);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            var startingCommitTransactionToDb = DateTime.UtcNow;
+            _logger.LogInformation("Starting Database Transaction Commit at {Time}", startingCommitTransactionToDb);
+            await transaction.CommitAsync(cancellationToken);
+            _logger.LogInformation("Database Transaction Commit took {Seconds} Seconds", (DateTime.UtcNow - startingCommitTransactionToDb).TotalSeconds);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            //normal shutdown path, do not mark as failed, this is for user to manually cancel with Ctrl+C
+            await transaction.RollbackAsync(CancellationToken.None);
+
+            run.TransitionTo(IngestionRunStatus.Cancelled, DateTime.UtcNow);
             return;
         }
         catch (Exception ex)
         {
-            var failedAt = DateTime.UtcNow;
-            run.MarkFailed(ex, failedAt);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.RollbackAsync(CancellationToken.None);
+
+            run.MarkFailed(ex, DateTime.UtcNow);
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
 
             _logger.LogError(ex, "Ingestion run failed. RunId={RunId}", run.Id);
             return;
 
         }
-
-        _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
-        _logger.LogInformation("Data recorded in database successfully");
 
     }
 
