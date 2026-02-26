@@ -1,7 +1,5 @@
-using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using wow_paper_trader.Ingestor;
 
@@ -17,11 +15,7 @@ public sealed class IngestionRunOrchestratorTests : IClassFixture<SqliteInMemory
         _db = db;
     }
 
-    [Fact]
-    public async Task RunOnceAsync_SavesCommodityAuctionShapshotToDatabase_FromStubbedJson()
-    {
-        //Arrange
-        string authJson =
+    public string authJson =
         """
         {
             "access_token": "test-token",
@@ -30,8 +24,8 @@ public sealed class IngestionRunOrchestratorTests : IClassFixture<SqliteInMemory
         }
         """;
 
-        string auctionsJson =
-        """
+    public string auctionsJson =
+    """
         {
             "auctions": 
                 [
@@ -41,7 +35,11 @@ public sealed class IngestionRunOrchestratorTests : IClassFixture<SqliteInMemory
         }
         """;
 
-        await using var arrangeDbContext = _db.CreateDbContext();
+    [Fact]
+    public async Task RunOnceAsync_SavesCommodityAuctionShapshotToDatabase_FromStubbedJson()
+    {
+        //Arrange
+        await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
 
         var testBuilder = new TestBuilderForIngestionRunOrchestrator(authJson, auctionsJson);
         var ingestionRunOrchestrator = testBuilder.CreateOrchestrator(arrangeDbContext);
@@ -50,26 +48,26 @@ public sealed class IngestionRunOrchestratorTests : IClassFixture<SqliteInMemory
         await ingestionRunOrchestrator.RunOnceAsync(CancellationToken.None);
 
         //Assert
-        await using var assertDbContext = _db.CreateDbContext();
+        await using var assertDbContext = _db.CreateAssertDbContext();
 
         int ingestionRunRowCount = await assertDbContext.IngestionRuns.CountAsync();
         int auctionSnapshotRowCount = await assertDbContext.CommodityAuctionSnapshots.CountAsync();
         int commoditAuctionRowCount = await assertDbContext.CommodityAuctions.CountAsync();
-        IngestionRun ingestionRunRow = await assertDbContext.IngestionRuns.SingleAsync(x => x.Id == 1);
-        CommodityAuctionSnapshot auctionSnapshotRow = await assertDbContext.CommodityAuctionSnapshots.SingleAsync(x => x.Id == 1);
-        CommodityAuction commodityAuctionRow1 = await assertDbContext.CommodityAuctions.SingleAsync(x => x.Id == 1);
+        var ingestionRunRow = await assertDbContext.IngestionRuns.SingleAsync();
+        var auctionSnapshotRow = await assertDbContext.CommodityAuctionSnapshots.SingleAsync();
+        var commodityAuctionRow1 = await assertDbContext.CommodityAuctions.SingleAsync(x => x.ItemId == 19019);
 
         Assert.Equal(1, ingestionRunRowCount);
         Assert.Equal(IngestionRunStatus.Finished, ingestionRunRow.Status);
 
         Assert.Equal(1, auctionSnapshotRowCount);
-        Assert.Equal(1, auctionSnapshotRow.IngestionRunId);
+        Assert.Equal(ingestionRunRow.Id, auctionSnapshotRow.IngestionRunId);
         Assert.Equal("https://example.test/auctions/commodities?namespace=dynamic-us&locale=en_US", auctionSnapshotRow.ApiEndPoint);
 
 
         Assert.Equal(2, commoditAuctionRowCount);
         //assert correct foreign key
-        Assert.Equal(1, commodityAuctionRow1.CommodityAuctionSnapshotId);
+        Assert.Equal(auctionSnapshotRow.Id, commodityAuctionRow1.CommodityAuctionSnapshotId);
         Assert.Equal(19019, commodityAuctionRow1.ItemId);
         Assert.Equal(5, commodityAuctionRow1.Quantity);
         Assert.Equal(123456, commodityAuctionRow1.UnitPrice);
