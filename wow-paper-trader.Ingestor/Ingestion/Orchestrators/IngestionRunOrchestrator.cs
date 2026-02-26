@@ -21,10 +21,14 @@ public sealed class IngestionRunOrchestrator
 
     public async Task RunOnceAsync(CancellationToken cancellationToken)
     {
-        cancellationToken.Register(() =>
-        {
-            Console.Error.WriteLine("You have cancelled the program in the middle of an Ingestion Run. You may have to wait upto 10 mins for graceful shutdown");
-        });
+        CancellationTokenRegistration cancellationRegistration =
+            cancellationToken.Register(() =>
+            {
+                Console.Error.WriteLine(
+                    "You have cancelled the program in the middle of an Ingestion Run. " +
+                    "You may have to wait up to 10 minutes for graceful shutdown."
+                );
+            });
 
         var run = new IngestionRun();
         _dbContext.IngestionRuns.Add(run);
@@ -61,9 +65,9 @@ public sealed class IngestionRunOrchestrator
                 _logger.LogError("Ingestion run cancelled. RunId={RunId}", run.Id);
             }
             _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
+
+            cancellationRegistration.Dispose();
         }
-
-
 
     }
 
@@ -115,9 +119,6 @@ public sealed class IngestionRunOrchestrator
 
             //throw back up to caller's try catch
             throw;
-
         }
-
     }
-
 }
