@@ -33,6 +33,10 @@ builder.Services.AddHttpClient<WowApiClient>(client =>
         PooledConnectionLifetime = TimeSpan.FromMinutes(10),
     });
 
+builder.Services.Configure<HostOptions>(options =>
+{
+    options.ShutdownTimeout = TimeSpan.FromMinutes(10);
+});
 
 var host = builder.Build();
 host.Run();

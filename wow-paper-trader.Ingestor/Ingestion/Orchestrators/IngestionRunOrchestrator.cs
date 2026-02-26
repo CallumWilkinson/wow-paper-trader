@@ -21,14 +21,49 @@ public sealed class IngestionRunOrchestrator
 
     public async Task RunOnceAsync(CancellationToken cancellationToken)
     {
+        cancellationToken.Register(() =>
+        {
+            Console.Error.WriteLine("You have cancelled the program in the middle of an Ingestion Run. You may have to wait upto 10 mins for graceful shutdown");
+        });
+
         var run = new IngestionRun();
         _dbContext.IngestionRuns.Add(run);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        await RunCommodityAuctionSnapshotDatabaseTransaction(run, cancellationToken);
+        try
+        {
+            await RunCommodityAuctionSnapshotDatabaseTransaction(run, cancellationToken);
+            _logger.LogInformation("All Auctions have been recorded in the database successfully!");
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
 
-        _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
-        _logger.LogInformation("All Auctions have been recorded in the database successfully!");
+        catch (Exception ex)
+        {
+            _dbContext.IngestionRuns.Attach(run);
+            run.MarkFailed(ex, DateTime.UtcNow);
+
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
+            _logger.LogError(ex, "Ingestion run failed. RunId={RunId}", run.Id);
+
+            return;
+        }
+        finally
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _dbContext.IngestionRuns.Attach(run);
+                run.TransitionTo(IngestionRunStatus.Cancelled, DateTime.UtcNow);
+
+                await _dbContext.SaveChangesAsync(CancellationToken.None);
+                _logger.LogError("Ingestion run cancelled. RunId={RunId}", run.Id);
+            }
+            _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
+        }
+
+
 
     }
 
@@ -42,7 +77,6 @@ public sealed class IngestionRunOrchestrator
             var tokenRequestedAt = DateTime.UtcNow;
             run.TransitionTo(IngestionRunStatus.TokenRequested, tokenRequestedAt);
 
-            //this function internally handles 24 hour token expiry logic
             string? accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);
 
             if (accessToken == null)
@@ -74,22 +108,13 @@ public sealed class IngestionRunOrchestrator
             await transaction.CommitAsync(cancellationToken);
 
         }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        catch (Exception)
         {
             await transaction.RollbackAsync(CancellationToken.None);
+            _dbContext.ChangeTracker.Clear();
 
-            run.TransitionTo(IngestionRunStatus.Cancelled, DateTime.UtcNow);
-            return;
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync(CancellationToken.None);
-
-            run.MarkFailed(ex, DateTime.UtcNow);
-            await _dbContext.SaveChangesAsync(CancellationToken.None);
-
-            _logger.LogError(ex, "Ingestion run failed. RunId={RunId}", run.Id);
-            return;
+            //throw back up to caller's try catch
+            throw;
 
         }
 
