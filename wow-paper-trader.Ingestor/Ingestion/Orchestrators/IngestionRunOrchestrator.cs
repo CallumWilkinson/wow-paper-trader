@@ -28,7 +28,7 @@ public sealed class IngestionRunOrchestrator
         await RunCommodityAuctionSnapshotDatabaseTransaction(run, cancellationToken);
 
         _logger.LogInformation("Inserted IngestionRun row at {Time}", DateTimeOffset.Now);
-        _logger.LogInformation("Data recorded in database successfully");
+        _logger.LogInformation("All Auctions have been recorded in the database successfully!");
 
     }
 
@@ -71,11 +71,8 @@ public sealed class IngestionRunOrchestrator
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("SQL Write took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
-
-            var startingCommitTransactionToDb = DateTime.UtcNow;
-            _logger.LogInformation("Starting Database Transaction Commit at {Time}", startingCommitTransactionToDb);
             await transaction.CommitAsync(cancellationToken);
-            _logger.LogInformation("Database Transaction Commit took {Seconds} Seconds", (DateTime.UtcNow - startingCommitTransactionToDb).TotalSeconds);
+
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
