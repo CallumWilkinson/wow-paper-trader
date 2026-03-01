@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj" />
+    <ProjectReference Include="..\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

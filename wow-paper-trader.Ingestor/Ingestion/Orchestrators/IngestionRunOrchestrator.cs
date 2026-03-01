@@ -1,3 +1,6 @@
+namespace wow_paper_trader.Ingestor;
+
+
 public sealed class IngestionRunOrchestrator
 {
     private readonly ILogger<IngestionRunOrchestrator> _logger;

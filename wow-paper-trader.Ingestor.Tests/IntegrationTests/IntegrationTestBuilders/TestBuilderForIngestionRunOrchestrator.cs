@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using wow_paper_trader.Ingestor;
 
 public sealed class TestBuilderForIngestionRunOrchestrator
 {

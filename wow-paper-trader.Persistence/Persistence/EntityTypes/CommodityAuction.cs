@@ -1,5 +1,3 @@
-using wow_paper_trader.Ingestor;
-
 public sealed class CommodityAuction
 {
     public long Id { get; private set; }
