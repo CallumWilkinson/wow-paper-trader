@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Ingestor",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Ingestor.Tests", "wow-paper-trader.Ingestor.Tests\wow-paper-trader.Ingestor.Tests.csproj", "{A0FB8E12-7448-491C-B1F7-0B7CC331DF94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Application.Write", "wow-paper-trader.Application.Write\wow-paper-trader.Application.Write.csproj", "{CA52AFD5-2A62-461B-9754-D12B5AE2176F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Infrastructure", "wow-paper-trader.Infrastructure\wow-paper-trader.Infrastructure.csproj", "{BA5E640B-33AC-45EA-9469-F8FE2489677B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +59,30 @@ Global
 		{A0FB8E12-7448-491C-B1F7-0B7CC331DF94}.Release|x64.Build.0 = Release|Any CPU
 		{A0FB8E12-7448-491C-B1F7-0B7CC331DF94}.Release|x86.ActiveCfg = Release|Any CPU
 		{A0FB8E12-7448-491C-B1F7-0B7CC331DF94}.Release|x86.Build.0 = Release|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Release|x64.Build.0 = Release|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA52AFD5-2A62-461B-9754-D12B5AE2176F}.Release|x86.Build.0 = Release|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Debug|x64.Build.0 = Debug|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Release|x64.ActiveCfg = Release|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Release|x64.Build.0 = Release|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA5E640B-33AC-45EA-9469-F8FE2489677B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
