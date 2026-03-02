@@ -1,0 +1,6 @@
+@wow_paper_trader.Api.Write_HostAddress = http://localhost:5211
+
+GET {{wow_paper_trader.Api.Write_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

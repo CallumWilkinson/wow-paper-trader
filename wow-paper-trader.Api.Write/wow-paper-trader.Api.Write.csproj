@@ -4,11 +4,15 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>wow_paper_trader.Api</RootNamespace>
+    <RootNamespace>wow_paper_trader.Api.Write</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\wow-paper-trader.Application.Write\wow-paper-trader.Application.Write.csproj" />
   </ItemGroup>
 
 </Project>
