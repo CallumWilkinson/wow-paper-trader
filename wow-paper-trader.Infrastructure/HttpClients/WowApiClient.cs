@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-public sealed class WowApiClient
+public sealed class CommodityAuctionClient
 {
     private readonly HttpClient _httpClient;
 
@@ -19,7 +19,7 @@ public sealed class WowApiClient
     );
 
 
-    public WowApiClient(HttpClient httpClient)
+    public CommodityAuctionClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
