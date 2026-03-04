@@ -39,13 +39,13 @@ public sealed class TestBuilderForIngestionRunOrchestrator
             BaseAddress = new Uri("https://example.test/")
         };
 
-        var wowApiClient = new WowApiClient(httpClientWithAuctionsStub);
+        var CommodityAuctionClient = new CommodityAuctionClient(httpClientWithAuctionsStub);
 
 
         ILogger<IngestionRunOrchestrator> logger = NullLogger<IngestionRunOrchestrator>.Instance;
 
 
-        var ingestionRunOrchestrator = new IngestionRunOrchestrator(logger, dbContext, battleNetAuthClient, wowApiClient);
+        var ingestionRunOrchestrator = new IngestionRunOrchestrator(logger, dbContext, battleNetAuthClient, CommodityAuctionClient);
         return ingestionRunOrchestrator;
 
     }
