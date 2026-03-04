@@ -23,7 +23,7 @@ builder.Services.AddHttpClient<BattleNetAuthClient>()
         PooledConnectionLifetime = TimeSpan.FromMinutes(10),
     });
 
-builder.Services.AddHttpClient<WowApiClient>(client =>
+builder.Services.AddHttpClient<CommodityAuctionClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["WowApi:BaseUrl"]!);
 })
