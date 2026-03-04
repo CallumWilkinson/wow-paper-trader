@@ -1,6 +1,7 @@
-namespace wow_paper_trader.Ingestor;
+using Microsoft.Extensions.Logging;
 
-
+//should be called IngestionRunUseCase
+//background service calls this UseCase once every hour
 public sealed class IngestionRunOrchestrator
 {
     private readonly ILogger<IngestionRunOrchestrator> _logger;
@@ -8,18 +9,18 @@ public sealed class IngestionRunOrchestrator
 
     private readonly BattleNetAuthClient _authClient;
 
-    private readonly WowApiClient _wowApiClient;
+    private readonly CommodityAuctionClient _CommodityAuctionClient;
 
     public IngestionRunOrchestrator(
     ILogger<IngestionRunOrchestrator> logger,
     IngestorDbContext dbContext,
     BattleNetAuthClient authClient,
-    WowApiClient wowApiClient)
+    CommodityAuctionClient CommodityAuctionClient)
     {
         _logger = logger;
         _dbContext = dbContext;
         _authClient = authClient;
-        _wowApiClient = wowApiClient;
+        _CommodityAuctionClient = CommodityAuctionClient;
     }
 
     public async Task RunOnceAsync(CancellationToken cancellationToken)
@@ -91,14 +92,14 @@ public sealed class IngestionRunOrchestrator
                 throw new InvalidOperationException("Access token is null. OAuth token acquisition likely failed.");
             }
 
-            WowApiClient.WowApiResult<CommodityAuctionsResponseDto> apiResult = await _wowApiClient.GetCommodityAuctionsAsync(accessToken, cancellationToken);
+            CommodityAuctionClient.WowApiResult<CommodityAuctionsResponseDto> apiResult = await _CommodityAuctionClient.GetCommodityAuctionsAsync(accessToken, cancellationToken);
 
             int auctionsCount = apiResult.Payload.CommodityAuctions.Count;
             _logger.LogInformation("Total Auctions Received: {Count}", auctionsCount);
 
 
             var mapper = new CommodityAuctionSnapshotMapper();
-            CommodityAuctionSnapshot snapshotEntity = mapper.MapToEntityFromDto(apiResult.Payload, run.Id, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
+            CommodityAuctionSnapshotResult snapshotEntity = mapper.MapToEntityFromDto(apiResult.Payload, run.Id, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
 
             var startingAdd = DateTime.UtcNow;
             _logger.LogInformation("Adding to DbContext at {Time}", startingAdd);
@@ -125,3 +126,45 @@ public sealed class IngestionRunOrchestrator
         }
     }
 }
+
+
+
+// public sealed class IngestionRunOrchestrator
+// {
+//     private readonly ILogger<IngestionRunOrchestrator> _logger;
+//     private readonly IAuctionApi _auctionApi;
+//     private readonly IAuctionRepository _repository;
+
+//     public IngestionRunOrchestrator(
+//         ILogger<IngestionRunOrchestrator> logger,
+//         IAuctionApi auctionApi,
+//         IAuctionRepository repository)
+//     {
+//         _logger = logger;
+//         _auctionApi = auctionApi;
+//         _repository = repository;
+//     }
+
+//     public async Task RunOnceAsync(CancellationToken cancellationToken)
+//     {
+//         IngestionRun run = await _repository.CreateRunAsync(cancellationToken);
+
+//         try
+//         {
+//             AuctionSnapshot snapshot =
+//                 await _auctionApi.GetCommoditySnapshotAsync(cancellationToken);
+
+//             await _repository.SaveSnapshotAsync(run, snapshot, cancellationToken);
+
+//             _logger.LogInformation("Ingestion completed successfully.");
+//         }
+//         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+//         {
+//             await _repository.MarkRunCancelledAsync(run);
+//         }
+//         catch (Exception ex)
+//         {
+//             await _repository.MarkRunFailedAsync(run, ex);
+//         }
+//     }
+// }
