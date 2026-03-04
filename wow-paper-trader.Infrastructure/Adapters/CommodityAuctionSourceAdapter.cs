@@ -1,5 +1,5 @@
 
-public sealed class CommodityAuctionSourceAdapter : ICommodityAuctionSource
+public sealed class CommodityAuctionSourceAdapter : ICommodityAuctionAdapter
 {
     private readonly BattleNetAuthClient _authClient;
 

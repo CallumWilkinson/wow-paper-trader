@@ -1,6 +1,4 @@
-//do i call this ICommodityAuctionAdapter instead?
-
-public interface ICommodityAuctionSource
+public interface ICommodityAuctionAdapter
 {
     Task<CommodityAuctionSnapshotResult> GetCommodityAuctionsAsync(CancellationToken cancellationToken);
 }
