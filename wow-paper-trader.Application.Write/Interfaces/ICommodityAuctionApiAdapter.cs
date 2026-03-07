@@ -1,4 +1,15 @@
 public interface ICommodityAuctionApiAdapter
 {
-    Task<CommodityAuctionSnapshot> GetCommodityAuctionsSnapshotAsync(CancellationToken cancellationToken);
+    Task<WowApiResult<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(CancellationToken cancellationToken);
 }
+
+public sealed record AuctionSnapshot(
+    IReadOnlyList<AuctionSnapshotRow> Auctions
+);
+
+public sealed record AuctionSnapshotRow(
+    long ItemId,
+    long Quantity,
+    long UnitPrice,
+    string TimeLeft
+);
