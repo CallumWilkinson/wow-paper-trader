@@ -1,17 +1,17 @@
 public sealed class CommodityAuctionSnapshotMapper
 {
-    public CommodityAuctionSnapshot MapToEntityFromDto(
-        CommodityAuctionsResponseDto dto,
+    public CommodityAuctionSnapshot MapToEntity(
+        WowApiResult<CommodityAuctionSnapshot> apiResult,
         long ingestionRunId,
         DateTime fetchedAtUtc,
         string endpoint
     )
     {
-        CommodityAuctionSnapshot snapshot = new CommodityAuctionSnapshot(ingestionRunId, fetchedAtUtc, endpoint);
+        var snapshot = new CommodityAuctionSnapshot(ingestionRunId, fetchedAtUtc, endpoint);
 
         foreach (CommodityAuctionDto commodityAuctionDto in dto.CommodityAuctions)
         {
-            CommodityAuction commodityAuctionEntity = MapCommodityAuction(commodityAuctionDto);
+            var commodityAuctionEntity = MapCommodityAuction(commodityAuctionDto);
             snapshot.AddAuction(commodityAuctionEntity);
         }
 

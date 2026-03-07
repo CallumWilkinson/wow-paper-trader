@@ -11,20 +11,13 @@ public sealed class CommodityAuctionClient
         PropertyNameCaseInsensitive = true
     };
 
-    public sealed record WowApiResult<T>
-    (
-        T Payload,
-        DateTime DataReturnedAtUtc,
-        string Endpoint
-    );
-
 
     public CommodityAuctionClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
 
-    public async Task<WowApiResult<CommodityAuctionsResponseDto>> GetCommodityAuctionsAsync(string accessToken, CancellationToken cancellationToken)
+    public async Task<WowApiResult<AuctionSnapshot>> GetCommodityAuctionsAsync(string accessToken, CancellationToken cancellationToken)
     {
         string endpointSuffix = "auctions/commodities?namespace=dynamic-us&locale=en_US";
         using var request = new HttpRequestMessage(HttpMethod.Get, endpointSuffix);
@@ -42,11 +35,11 @@ public sealed class CommodityAuctionClient
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         //convert JSON to C# object (the dto)
-        CommodityAuctionsResponseDto result = await JsonSerializer.DeserializeAsync<CommodityAuctionsResponseDto>(stream, JsonOptions, cancellationToken)
+        var result = await JsonSerializer.DeserializeAsync<AuctionSnapshot>(stream, JsonOptions, cancellationToken)
             ?? throw new JsonException("Wow API response JSON deserialized to null.");
 
         string fullEndpoint = new Uri(_httpClient.BaseAddress!, endpointSuffix).ToString();
 
-        return new WowApiResult<CommodityAuctionsResponseDto>(result, DateTime.UtcNow, fullEndpoint);
+        return new WowApiResult<AuctionSnapshot>(result, DateTime.UtcNow, fullEndpoint);
     }
 }
