@@ -8,18 +8,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace wow_paper_trader.Ingestor.Migrations
+namespace wow_paper_trader.Persistence.Migrations
 {
-    [DbContext(typeof(IngestorDbContext))]
-    [Migration("20260213055952_ChangeUnitPriceAndQuantityToBigint")]
-    partial class ChangeUnitPriceAndQuantityToBigint
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20260309032153_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
