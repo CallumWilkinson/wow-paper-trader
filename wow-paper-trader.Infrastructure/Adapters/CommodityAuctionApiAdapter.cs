@@ -1,4 +1,5 @@
 using System.Data;
+using Microsoft.Extensions.Logging;
 
 public sealed class CommodityAuctionApiAdapter : ICommodityAuctionApiAdapter
 {
@@ -6,19 +7,36 @@ public sealed class CommodityAuctionApiAdapter : ICommodityAuctionApiAdapter
 
     private readonly CommodityAuctionClient _auctionClient;
 
-    public CommodityAuctionApiAdapter(BattleNetAuthClient authClient, CommodityAuctionClient auctionClient)
+    private readonly ILogger<CommodityAuctionApiAdapter> _logger;
+
+    public CommodityAuctionApiAdapter(BattleNetAuthClient authClient, CommodityAuctionClient auctionClient,
+    ILogger<CommodityAuctionApiAdapter> logger)
     {
         _authClient = authClient;
         _auctionClient = auctionClient;
+        _logger = logger;
     }
     public async Task<WowApiResult<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(CancellationToken cancellationToken)
     {
-        //add 24hr token refresh logic
-        string accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);
+        string? accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);
 
-        var result = await _auctionClient.GetCommodityAuctionsAsync(accessToken, cancellationToken);
+        if (accessToken == null)
+        {
+            throw new InvalidOperationException("Access token is null. OAuth token acquisition likely failed.");
+        }
 
-        return result;
+        var resultWithDto = await _auctionClient.GetCommodityAuctionsAsync(accessToken, cancellationToken);
+
+        int auctionsCount = resultWithDto.Payload.CommodityAuctions.Count;
+        _logger.LogInformation("Total Auctions Received: {Count}", auctionsCount);
+
+        var mapper = new ApplicationContractMapper();
+
+        var resultWithAuctionSnapshot = mapper.MapToContract(resultWithDto);
+
+        return resultWithAuctionSnapshot;
 
     }
+
+
 }
