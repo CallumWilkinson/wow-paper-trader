@@ -42,7 +42,9 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
         catch (Exception ex)
         {
             await MarkRunFailedAsync(run, ex);
+            throw;
         }
+
         finally
         {
             if (cancellationToken.IsCancellationRequested)
@@ -85,7 +87,6 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
             await transaction.RollbackAsync(CancellationToken.None);
             _dbContext.ChangeTracker.Clear();
 
-            //throw back up to caller's try catch
             throw;
         }
     }
