@@ -1,12 +1,12 @@
 namespace wow_paper_trader.Ingestor;
 
-public sealed class DataIngestorBackgroundService : BackgroundService
+public sealed class IngestionRunBackgroundService : BackgroundService
 {
     private static readonly TimeSpan LoopDelay = TimeSpan.FromHours(1);
 
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public DataIngestorBackgroundService(
+    public IngestionRunBackgroundService(
         IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
@@ -19,8 +19,8 @@ public sealed class DataIngestorBackgroundService : BackgroundService
             try
             {
                 await using var scope = _scopeFactory.CreateAsyncScope();
-                var ingestionRunOrchestrator = scope.ServiceProvider.GetRequiredService<IngestionRunOrchestrator>();
-                await ingestionRunOrchestrator.RunOnceAsync(cancellationToken);
+                var ingestionUseCase = scope.ServiceProvider.GetRequiredService<IngestionRunUseCase>();
+                await ingestionUseCase.RunOnceAsync(cancellationToken);
             }
             catch (OperationCanceledException)
             {
