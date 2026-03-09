@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 
-public sealed class IngestorDbContext : DbContext
+public sealed class ApplicationDbContext : DbContext
 {
-    public IngestorDbContext(DbContextOptions<IngestorDbContext> dbContextOptions) : base(dbContextOptions)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions) : base(dbContextOptions)
     {
 
     }
