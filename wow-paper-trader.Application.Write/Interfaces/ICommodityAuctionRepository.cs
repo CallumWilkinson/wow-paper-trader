@@ -4,13 +4,6 @@ public interface ICommodityAuctionRepository
 
     Task SaveSnapshotAsync(
         IngestionRun run,
-        CommodityAuctionSnapshot snapshot,
+        WowApiResult<AuctionSnapshot> wowApiResult,
         CancellationToken cancellationToken);
-
-    Task MarkRunFailedAsync(
-        IngestionRun run,
-        Exception exception);
-
-    Task MarkRunCancelledAsync(
-        IngestionRun run);
 }

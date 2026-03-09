@@ -1,0 +1,29 @@
+public sealed class CommodityAuctionSnapshotMapper
+{
+    public CommodityAuctionSnapshot MapToEntity(
+        WowApiResult<AuctionSnapshot> apiResult,
+        long ingestionRunId
+    )
+    {
+        var payload = apiResult.Payload;
+        var snapshot = new CommodityAuctionSnapshot(ingestionRunId, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
+
+        foreach (var auction in payload.Auctions)
+        {
+            var commodityAuctionEntity = MapCommodityAuction(auction);
+            snapshot.AddAuction(commodityAuctionEntity);
+        }
+
+        return snapshot;
+    }
+
+    private static CommodityAuction MapCommodityAuction(AuctionSnapshotRow auctionSnapshotRow)
+    {
+        return new CommodityAuction(
+            auctionSnapshotRow.ItemId,
+            auctionSnapshotRow.Quantity,
+            auctionSnapshotRow.UnitPrice,
+            auctionSnapshotRow.TimeLeft
+        );
+    }
+}

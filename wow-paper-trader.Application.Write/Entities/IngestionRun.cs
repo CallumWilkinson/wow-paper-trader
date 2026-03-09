@@ -1,7 +1,6 @@
 public enum IngestionRunStatus
 {
     Started,
-    TokenRequested,
     Finished,
     Failed,
     Cancelled

@@ -22,19 +22,19 @@ public sealed class IngestionRunUseCase
 
         try
         {
-            var auctionSnapshot = await _auctionApiAdapter.GetCommodityAuctionsSnapshotAsync(cancellationToken);
+            var result = await _auctionApiAdapter.GetCommodityAuctionsSnapshotAsync(cancellationToken);
 
-            await _repository.SaveSnapshotAsync(run, auctionSnapshot, cancellationToken);
+            await _repository.SaveSnapshotAsync(run, result, cancellationToken);
 
-            _logger.LogInformation("Ingestion completed successfully.");
+            _logger.LogInformation("IngestionRun UseCase completed successfully.");
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            await _repository.MarkRunCancelledAsync(run);
+            _logger.LogInformation("IngestionRun UseCase Cancelled");
         }
-        catch (Exception ex)
+        catch
         {
-            await _repository.MarkRunFailedAsync(run, ex);
+            _logger.LogInformation("IngestionRun UseCase Failed");
         }
     }
 }
