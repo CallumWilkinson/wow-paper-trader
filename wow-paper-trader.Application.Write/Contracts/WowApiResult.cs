@@ -1,6 +1,6 @@
 public sealed record WowApiResult<T>
 (
-    T DtoPayload,
+    T Payload,
     DateTime DataReturnedAtUtc,
     string Endpoint
 );
