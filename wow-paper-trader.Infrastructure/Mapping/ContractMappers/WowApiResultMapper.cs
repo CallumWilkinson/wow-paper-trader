@@ -1,6 +1,6 @@
-public sealed class ApplicationContractMapper
+public static class ApplicationContractMapper
 {
-    public WowApiResult<AuctionSnapshot> MapToContract(
+    public static WowApiResult<AuctionSnapshot> MapToContract(
         WowApiResult<CommodityAuctionsResponseDto> resultWithDto)
     {
         var dto = resultWithDto.Payload;

@@ -1,6 +1,6 @@
-public sealed class CommodityAuctionSnapshotMapper
+public static class CommodityAuctionSnapshotMapper
 {
-    public CommodityAuctionSnapshot MapToEntity(
+    public static CommodityAuctionSnapshot MapToEntity(
         WowApiResult<AuctionSnapshot> apiResult,
         long ingestionRunId
     )

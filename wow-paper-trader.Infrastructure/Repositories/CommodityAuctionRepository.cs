@@ -63,8 +63,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 
         try
         {
-            var mapper = new CommodityAuctionSnapshotMapper();
-            var snapshotEntity = mapper.MapToEntity(wowApiResult, run.Id);
+            var snapshotEntity = CommodityAuctionSnapshotMapper.MapToEntity(wowApiResult, run.Id);
 
             var startingAdd = DateTime.UtcNow;
             _logger.LogInformation("Adding to DbContext at {Time}", startingAdd);
