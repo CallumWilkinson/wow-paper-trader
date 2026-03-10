@@ -6,7 +6,7 @@ public sealed record WowApiResult<T>
 );
 
 public sealed record AuctionSnapshot(
-    IReadOnlyList<AuctionSnapshotRow> Auctions
+    List<AuctionSnapshotRow> Auctions
 );
 
 public sealed record AuctionSnapshotRow(
