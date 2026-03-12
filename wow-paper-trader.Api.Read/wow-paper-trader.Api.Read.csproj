@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\wow-paper-trader.Application.Read\wow-paper-trader.Application.Read.csproj" />
-    <ProjectReference Include="..\wow-paper-trader.Infrastructure\wow-paper-trader.Infrastructure.csproj" />
+    <ProjectReference Include="..\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,9 +19,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Persistenc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Application.Write.Tests", "wow-paper-trader.Application.Write.Tests\wow-paper-trader.Application.Write.Tests.csproj", "{76E95DD4-A5B4-4C7E-B596-5DE10E8057F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Infrastructure.Tests", "wow-paper-trader.Infrastructure.Tests\wow-paper-trader.Infrastructure.Tests.csproj", "{611997B6-B6CE-457C-806B-0755065BFB85}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Application.Read.Tests", "wow-paper-trader.Application.Read.Tests\wow-paper-trader.Application.Read.Tests.csproj", "{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Persistence.Tests", "wow-paper-trader.Persistence.Tests\wow-paper-trader.Persistence.Tests.csproj", "{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,18 +129,6 @@ Global
 		{76E95DD4-A5B4-4C7E-B596-5DE10E8057F5}.Release|x64.Build.0 = Release|Any CPU
 		{76E95DD4-A5B4-4C7E-B596-5DE10E8057F5}.Release|x86.ActiveCfg = Release|Any CPU
 		{76E95DD4-A5B4-4C7E-B596-5DE10E8057F5}.Release|x86.Build.0 = Release|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Debug|x64.Build.0 = Debug|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Debug|x86.Build.0 = Debug|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|x64.ActiveCfg = Release|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|x64.Build.0 = Release|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|x86.ActiveCfg = Release|Any CPU
-		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|x86.Build.0 = Release|Any CPU
 		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -153,6 +141,18 @@ Global
 		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|x64.Build.0 = Release|Any CPU
 		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|x86.Build.0 = Release|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Debug|x64.Build.0 = Debug|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Debug|x86.Build.0 = Debug|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Release|x64.ActiveCfg = Release|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Release|x64.Build.0 = Release|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Release|x86.ActiveCfg = Release|Any CPU
+		{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

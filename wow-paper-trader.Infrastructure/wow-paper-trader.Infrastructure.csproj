@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\wow-paper-trader.Application.Write\wow-paper-trader.Application.Write.csproj" />
-    <ProjectReference Include="..\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>
