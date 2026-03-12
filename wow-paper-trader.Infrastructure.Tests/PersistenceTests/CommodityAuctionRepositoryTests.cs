@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
-//test the transaction success, failure and cancellation paths
 public sealed class CommodityAuctionRepositoryTests : IClassFixture<SqliteInMemoryDbFixture>
 {
     private readonly SqliteInMemoryDbFixture _db;
