@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Applicatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Infrastructure.Tests", "wow-paper-trader.Infrastructure.Tests\wow-paper-trader.Infrastructure.Tests.csproj", "{611997B6-B6CE-457C-806B-0755065BFB85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wow-paper-trader.Application.Read.Tests", "wow-paper-trader.Application.Read.Tests\wow-paper-trader.Application.Read.Tests.csproj", "{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,18 @@ Global
 		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|x64.Build.0 = Release|Any CPU
 		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|x86.ActiveCfg = Release|Any CPU
 		{611997B6-B6CE-457C-806B-0755065BFB85}.Release|x86.Build.0 = Release|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|x64.Build.0 = Debug|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Debug|x86.Build.0 = Debug|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|x64.Build.0 = Release|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|x86.ActiveCfg = Release|Any CPU
+		{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
