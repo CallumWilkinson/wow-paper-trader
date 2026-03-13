@@ -1,6 +1,8 @@
-public sealed record CurrentLowestUnitPriceResult
-(
-    long ItemId,
-    long UnitPrice,
-    DateTime PriceTakenAtUtc
-);
+public sealed class CurrentLowestUnitPriceResult
+{
+    public long ItemId { get; init; }
+
+    public long UnitPrice { get; init; }
+
+    public DateTime PriceTakenAtUtc { get; init; }
+}
