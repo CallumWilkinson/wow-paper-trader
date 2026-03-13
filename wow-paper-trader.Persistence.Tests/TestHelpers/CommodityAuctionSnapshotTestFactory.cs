@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.VisualBasic;
 
 public static class CommodityAuctionSnapshotTestFactory
@@ -5,8 +6,10 @@ public static class CommodityAuctionSnapshotTestFactory
     public async static Task AddOlderSnapshotToDbAsync(ApplicationDbContext arrangeDbContext, DateTime olderTime)
     {
         var olderIngestionRun = new IngestionRun();
-        var olderSnapshot = CreateOlderAuctionSnapshot(olderIngestionRun.Id, olderTime);
         arrangeDbContext.IngestionRuns.Add(olderIngestionRun);
+        await arrangeDbContext.SaveChangesAsync();
+
+        var olderSnapshot = CreateOlderAuctionSnapshot(olderIngestionRun.Id, olderTime);
         arrangeDbContext.CommodityAuctionSnapshots.Add(olderSnapshot);
         await arrangeDbContext.SaveChangesAsync();
     }
@@ -14,8 +17,10 @@ public static class CommodityAuctionSnapshotTestFactory
     public async static Task AddNewerSnapshotToDbAsync(ApplicationDbContext arrangeDbContext, DateTime newerTime)
     {
         var newerIngestionRun = new IngestionRun();
-        var newerSnapshot = CreateNewerAuctionSnapshot(newerIngestionRun.Id, newerTime);
         arrangeDbContext.IngestionRuns.Add(newerIngestionRun);
+        await arrangeDbContext.SaveChangesAsync();
+
+        var newerSnapshot = CreateNewerAuctionSnapshot(newerIngestionRun.Id, newerTime);
         arrangeDbContext.CommodityAuctionSnapshots.Add(newerSnapshot);
         await arrangeDbContext.SaveChangesAsync();
     }

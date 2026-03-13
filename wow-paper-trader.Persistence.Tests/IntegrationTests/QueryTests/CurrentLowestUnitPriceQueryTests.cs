@@ -25,7 +25,6 @@ public sealed class CurrentLowestUnitPriceQueryTests : IClassFixture<SqliteInMem
         var newerTime = new DateTime(2026, 3, 12, 9, 0, 0, DateTimeKind.Utc);
         await CommodityAuctionSnapshotTestFactory.AddNewerSnapshotToDbAsync(arrangeDbContext, newerTime);
 
-
         //act
         var result = await query.GetAsync(copperOreItemId, CancellationToken.None);
 
