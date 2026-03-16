@@ -1,166 +1,190 @@
-# WowPaperTrader
+# wow-paper-trader
 
-WowPaperTrader is a work-in-progress web application that ingests World of Warcraft Auction House data and allows users to explore item price history and simulate gold-making strategies using a paper-trading system.
+`wow-paper-trader` is a .NET solution for ingesting World of Warcraft commodity auction data from Blizzard's API and building the backend foundation for later analysis and paper-trading features.
 
-The project is inspired by real-world stock trading platforms, but applied to the World of Warcraft economy. Users will eventually be able to give themselves a starting amount of gold, buy and sell items using historical auction data, and evaluate strategies without risking real in-game gold.
+The repository is currently centered on one implemented backend path:
 
-This repository is being built incrementally with a focus on clean architecture, test-driven development, maintainability, and real-world backend patterns.
+- authenticate against Battle.net
+- fetch the latest US commodity auction snapshot
+- persist that snapshot to SQL Server
+- query the latest snapshot for the current lowest unit price of an item
 
----
+The broader product direction in [Requirements.md](./Requirements.md) is still larger than the codebase today. This README reflects the current implementation rather than the long-term plan.
 
-## Project Goals
+## Current Status
 
-- Ingest Auction House snapshot data from the Blizzard World of Warcraft API
-- Store historical auction data in a relational database for querying
-- Allow searching item price history by server and item
-- Support multiple World of Warcraft versions in the future (Retail, Classic, etc.)
-- Provide a paper-trading system where users can simulate buying and selling items
-- Practice real-world backend and full-stack development patterns
+Implemented today:
 
----
+- background worker that ingests Blizzard US commodity auction snapshots once per hour
+- SQL Server persistence with EF Core migrations
+- ingestion run tracking with `Started`, `Finished`, `Failed`, and `Cancelled` states
+- query layer for "lowest unit price for an item from the latest snapshot"
+- persistence integration tests covering snapshot persistence and latest-snapshot price querying
 
-## Architecture Overview
+Not implemented yet:
 
-The solution is structured as a multi-project .NET solution to separate responsibilities.
+- public API endpoints for auction data
+- write API endpoints
+- paper-trading, portfolios, auth, or user accounts
+- retention cleanup for old Blizzard data
+- configurable ingestion interval
 
-### Current Projects
+Two ASP.NET Core API projects exist, but both still expose the default template `weatherforecast` endpoint and OpenAPI in development.
 
-- **wow-paper-trader.Api**
-  - ASP.NET Core Web API
-  - Currently a starter API (template endpoints + OpenAPI in Development)
-  - Planned: endpoints for querying auction data, items, realms, and user portfolios
-  - Planned: authentication and authorization (ASP.NET Identity + JWT)
+## Solution Layout
 
-- **wow-paper-trader.Ingestor**
-  - Background worker service
-  - Pulls commodity auction snapshots from the Blizzard WoW API (US region config by default)
-  - Persists snapshots into SQL Server via Entity Framework Core
-  - Runs on a loop (currently fixed at 1 hour)
+- `wow-paper-trader.Ingestor`
+  - worker service
+  - configures EF Core, HTTP clients, and the ingestion loop
+- `wow-paper-trader.Application.Write`
+  - write-side use case and domain entities for ingestion
+- `wow-paper-trader.Application.Read`
+  - read-side use case and query contract for current lowest item price
+- `wow-paper-trader.Infrastructure`
+  - Blizzard OAuth client, commodity auction HTTP client, DTOs, and mapping
+- `wow-paper-trader.Persistence`
+  - `ApplicationDbContext`, EF migrations, repository, and Dapper query
+- `wow-paper-trader.Api.Read`
+  - read API host scaffold, not wired to the read use case yet
+- `wow-paper-trader.Api.Write`
+  - write API host scaffold, not wired to application services yet
+- `wow-paper-trader.Persistence.Tests`
+  - integration tests using in-memory SQLite
+- `wow-paper-trader.Application.Read.Tests`
+  - test project exists but currently has no discovered tests
+- `wow-paper-trader.Application.Write.Tests`
+  - test project exists but currently has no discovered tests
 
-- **wow-paper-trader.Ingestor.Tests**
-  - xUnit integration tests for ingestion
-  - Uses SQLite in-memory for database assertions
+## Implemented Data Flow
 
-## Tech Stack (Planned / In Progress)
+1. `IngestionRunBackgroundService` starts an ingestion pass every hour.
+2. `BattleNetAuthClient` requests an OAuth access token using Blizzard client credentials.
+3. `CommodityAuctionClient` calls Blizzard's US commodities endpoint:
+   - base URL: `https://us.api.blizzard.com/data/wow/`
+   - endpoint suffix: `auctions/commodities?namespace=dynamic-us&locale=en_US`
+4. `CommodityAuctionApiAdapter` maps the API response into application contracts.
+5. `CommodityAuctionRepository` writes the snapshot and all auction rows in a database transaction.
+6. `CurrentLowestUnitPriceQuery` can read the minimum `UnitPrice` for an `ItemId` from the most recent snapshot in the database.
 
-### Backend
+## Data Stored
 
-- .NET (ASP.NET Core Web API)
-- Background Workers
-- Entity Framework Core
-- SQL Server
-- Unit Test Focus
-- JWT & .NET Identity
+The initial migration creates three tables:
 
-### Frontend (Planned)
+- `IngestionRuns`
+  - lifecycle and error tracking for each ingestion attempt
+- `CommodityAuctionSnapshots`
+  - snapshot metadata such as fetch timestamp and source endpoint
+- `CommodityAuctions`
+  - raw commodity auction rows for a snapshot
 
-- React
-- TypeScript
-- Material UI
-- Axios
-- React Router
-- Playwright E2E testing
+Stored auction fields currently include:
 
-### Tooling
+- `ItemId`
+- `Quantity`
+- `UnitPrice`
+- `TimeLeft`
 
-- VS Code
-- Git & GitHub
-- PowerShell
-- Swagger / OpenAPI
-
-### Planned Additions
-
-- Frontend (React + TypeScript)
-- Paper-trading domain (portfolios, trades, performance)
-- Additional data ingestion (realm auctions, item metadata, etc.)
-
----
-
-## Quickstart (Local Dev)
+## Local Setup
 
 ### Prerequisites
 
 - .NET 10 SDK
-- SQL Server (LocalDB or SQL Express is fine)
-- Blizzard API credentials (Client ID + Client Secret)
+- SQL Server instance accessible from your machine
+- Blizzard API client credentials
 
-### Configure Secrets (Ingestor)
+### Configure Blizzard credentials
 
-The ingestor reads credentials from configuration keys:
+The ingestor reads:
 
 - `Blizzard:ClientId`
 - `Blizzard:ClientSecret`
 
-Using user-secrets:
+Using user secrets:
 
 ```powershell
 dotnet user-secrets set "Blizzard:ClientId" "<your-client-id>" --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
 dotnet user-secrets set "Blizzard:ClientSecret" "<your-client-secret>" --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
 ```
 
-### Configure Database (Ingestor)
+### Configure the database connection
 
-Set `ConnectionStrings:WowPaperTrader` (for example in `wow-paper-trader.Ingestor/appsettings.Development.json`, or via an env var like `ConnectionStrings__WowPaperTrader`).
+The ingestor reads `ConnectionStrings:WowPaperTrader`.
 
-Run migrations:
+You can set it in `wow-paper-trader.Ingestor\appsettings.Development.json` or via an environment variable such as:
+
+```powershell
+$env:ConnectionStrings__WowPaperTrader="Server=localhost;Database=WowPaperTrader;Trusted_Connection=True;TrustServerCertificate=True;"
+```
+
+### Apply the database migration
+
+If `dotnet-ef` is not installed:
 
 ```powershell
 dotnet tool install --global dotnet-ef
-dotnet ef database update --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
 ```
 
-### Run
+Then update the database:
+
+```powershell
+dotnet ef database update --project .\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj --startup-project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
+```
+
+## Running the Projects
+
+Run the ingestor:
 
 ```powershell
 dotnet run --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
-dotnet run --project .\wow-paper-trader.Api\wow-paper-trader.Api.csproj
 ```
 
-Run tests:
+Run the read API scaffold:
 
 ```powershell
-dotnet test
+dotnet run --project .\wow-paper-trader.Api.Read\wow-paper-trader.Api.Read.csproj
 ```
 
----
+Default development URLs:
 
-## Data Model (Current)
+- `https://localhost:7033`
+- `http://localhost:5091`
 
-The ingestor currently writes:
+Run the write API scaffold:
 
-- `IngestionRuns` (status + errors)
-- `CommodityAuctionSnapshots` (fetched time + endpoint)
-- `CommodityAuctions` (item id, quantity, unit price, time left)
+```powershell
+dotnet run --project .\wow-paper-trader.Api.Write\wow-paper-trader.Api.Write.csproj
+```
 
----
+Default development URLs:
 
-## Data Model Philosophy
+- `https://localhost:7002`
+- `http://localhost:5211`
 
-Blizzard's Auction House APIs are snapshot-style (not historical queries). This project builds history by:
+## Tests
 
-1. Periodically ingesting snapshots
-2. Storing auction data with timestamps
-3. Querying historical prices from the local database
+Run the full solution test suite:
 
----
+```powershell
+dotnet test wow-paper-trader.sln
+```
 
-## Current Status
+Current observed result in this repository:
 
-**Active development**
+- `wow-paper-trader.Persistence.Tests`: 2 passing integration tests
+- `wow-paper-trader.Application.Read.Tests`: project builds, no discovered tests
+- `wow-paper-trader.Application.Write.Tests`: project builds, no discovered tests
 
-- API: currently implementing API to search current lowest auction price given an item ID using current data ingestor derived database
+## Notes and Gaps
 
-This project is intended to evolve over time and act as a portfolio centerpiece.
-
----
+- The ingestion interval is hard-coded to one hour in `IngestionRunBackgroundService`.
+- The current implementation is US commodities only.
+- The read and write APIs are not yet connected to the application and persistence layers.
+- The 30-day Blizzard retention requirement described in `Requirements.md` is not yet enforced in code.
 
 ## Disclaimer
 
-This project is a personal, educational project and is not affiliated with or endorsed by Blizzard Entertainment.
-World of Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc.
-
----
+This is a personal educational project and is not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc.
 
 ## License
 
-No license has been applied yet. All rights reserved by default.
+No license file is present in the repository. All rights are reserved by default.
