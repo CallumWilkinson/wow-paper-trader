@@ -1,88 +1,142 @@
 # wow-paper-trader
 
-`wow-paper-trader` is a .NET solution for ingesting World of Warcraft commodity auction data from Blizzard's API and building the backend foundation for later analysis and paper-trading features.
+`wow-paper-trader` is a .NET 10 solution for ingesting World of Warcraft commodity auction data from Blizzard's API, persisting full snapshots to SQL Server, and exposing a small read API over the latest stored snapshot.
 
-The repository is currently centered on one implemented backend path:
+The long-term product direction in [Requirements.md](./Requirements.md) is much larger than the codebase today. This README is intentionally scoped to the repository as it exists on March 17, 2026.
 
-- authenticate against Battle.net
-- fetch the latest US commodity auction snapshot
-- persist that snapshot to SQL Server
-- query the latest snapshot for the current lowest unit price of an item
+## Current Project State
 
-The broader product direction in [Requirements.md](./Requirements.md) is still larger than the codebase today. This README reflects the current implementation rather than the long-term plan.
+Implemented:
 
-## Current Status
+- worker service that starts an ingestion run immediately on startup, then repeats every hour
+- Battle.net client-credentials OAuth flow for Blizzard API access
+- ingestion of the US commodities snapshot from Blizzard's WoW data API
+- SQL Server persistence via EF Core for ingestion runs, snapshots, and auction rows
+- transactional snapshot writes to avoid partial auction persistence
+- read API endpoint for "lowest unit price for an item from the latest stored snapshot"
+- integration tests for snapshot persistence and latest-snapshot querying
 
-Implemented today:
+Partially implemented:
 
-- background worker that ingests Blizzard US commodity auction snapshots once per hour
-- SQL Server persistence with EF Core migrations
-- ingestion run tracking with `Started`, `Finished`, `Failed`, and `Cancelled` states
-- query layer for "lowest unit price for an item from the latest snapshot"
-- persistence integration tests covering snapshot persistence and latest-snapshot price querying
+- `wow-paper-trader.Api.Read` is wired to the read use case and database
+- `wow-paper-trader.Api.Write` still contains the default template `weatherforecast` endpoint only
 
 Not implemented yet:
 
-- public API endpoints for auction data
-- write API endpoints
-- paper-trading, portfolios, auth, or user accounts
-- retention cleanup for old Blizzard data
+- automated 30-day retention cleanup
 - configurable ingestion interval
-
-Two ASP.NET Core API projects exist, but both still expose the default template `weatherforecast` endpoint and OpenAPI in development.
+- historical price APIs beyond "latest snapshot lowest unit price"
+- item search, aggregated analytics, or charting APIs
+- user accounts, auth, portfolios, or paper-trading features
+- retry/backoff handling for Blizzard API failures or rate limits
 
 ## Solution Layout
 
 - `wow-paper-trader.Ingestor`
-  - worker service
-  - configures EF Core, HTTP clients, and the ingestion loop
+  - worker host
+  - configures EF Core, HTTP clients, and the hourly ingestion loop
 - `wow-paper-trader.Application.Write`
-  - write-side use case and domain entities for ingestion
+  - ingestion use case, write-side entities, and contracts
 - `wow-paper-trader.Application.Read`
-  - read-side use case and query contract for current lowest item price
+  - read-side use case and query contract for current lowest unit price
 - `wow-paper-trader.Infrastructure`
-  - Blizzard OAuth client, commodity auction HTTP client, DTOs, and mapping
+  - Blizzard auth client, commodity auction client, DTOs, and contract mapping
 - `wow-paper-trader.Persistence`
-  - `ApplicationDbContext`, EF migrations, repository, and Dapper query
+  - EF Core `ApplicationDbContext`, migration, repository, and Dapper query
 - `wow-paper-trader.Api.Read`
-  - read API host scaffold, not wired to the read use case yet
+  - ASP.NET Core API exposing the current lowest unit price endpoint
 - `wow-paper-trader.Api.Write`
-  - write API host scaffold, not wired to application services yet
+  - ASP.NET Core API scaffold with the default template endpoint
 - `wow-paper-trader.Persistence.Tests`
   - integration tests using in-memory SQLite
 - `wow-paper-trader.Application.Read.Tests`
-  - test project exists but currently has no discovered tests
+  - test project scaffold; currently no test source files
 - `wow-paper-trader.Application.Write.Tests`
-  - test project exists but currently has no discovered tests
+  - test project scaffold; currently no test source files
 
 ## Implemented Data Flow
 
-1. `IngestionRunBackgroundService` starts an ingestion pass every hour.
-2. `BattleNetAuthClient` requests an OAuth access token using Blizzard client credentials.
-3. `CommodityAuctionClient` calls Blizzard's US commodities endpoint:
+### Ingestion
+
+1. `IngestionRunBackgroundService` creates a scope and executes `IngestionRunUseCase.RunOnceAsync()`.
+2. `BattleNetAuthClient` requests or reuses an OAuth access token from `https://oauth.battle.net/token`.
+3. `CommodityAuctionClient` calls Blizzard's US commodities endpoint using:
    - base URL: `https://us.api.blizzard.com/data/wow/`
    - endpoint suffix: `auctions/commodities?namespace=dynamic-us&locale=en_US`
-4. `CommodityAuctionApiAdapter` maps the API response into application contracts.
-5. `CommodityAuctionRepository` writes the snapshot and all auction rows in a database transaction.
-6. `CurrentLowestUnitPriceQuery` can read the minimum `UnitPrice` for an `ItemId` from the most recent snapshot in the database.
+4. `CommodityAuctionApiAdapter` maps the DTO response into application contracts.
+5. `CommodityAuctionRepository` writes the ingestion run and snapshot data to SQL Server in a transaction.
+6. On success, the ingestion run transitions to `Finished`. On errors, it is marked `Failed`. If shutdown happens during persistence, it is marked `Cancelled`.
+
+### Read Path
+
+1. `GET /api/commodities/{itemId}/current-lowest-unit-price` hits `CommoditiesController`.
+2. `GetCurrentLowestUnitPriceByItemIdUseCase` validates `itemId`.
+3. `CurrentLowestUnitPriceQuery` uses Dapper against the application database.
+4. The query returns the minimum `UnitPrice` for that `ItemId` from the most recent stored snapshot only.
+
+## API Surface
+
+### Read API
+
+Project: `wow-paper-trader.Api.Read`
+
+Implemented endpoint:
+
+- `GET /api/commodities/{itemId}/current-lowest-unit-price`
+  - `400 Bad Request` if `itemId <= 0`
+  - `404 Not Found` if the latest snapshot does not contain that item
+  - `200 OK` response body:
+
+```json
+{
+  "itemId": 2770,
+  "unitPrice": 80,
+  "priceTakenAtUtc": "2026-03-12T09:00:00Z"
+}
+```
+
+Development-only tooling:
+
+- Swagger is enabled in development
+
+### Write API
+
+Project: `wow-paper-trader.Api.Write`
+
+Current state:
+
+- still the default template host
+- exposes `GET /weatherforecast`
+- maps the development OpenAPI document
+- does not yet register application, persistence, or Blizzard integration services
 
 ## Data Stored
 
-The initial migration creates three tables:
+The initial EF Core migration creates three tables:
 
 - `IngestionRuns`
-  - lifecycle and error tracking for each ingestion attempt
+  - `StartedAtUtc`
+  - `LastUpdatedAtUtc`
+  - `FinishedAtUtc`
+  - `Status`
+  - `ErrorMessage`
+  - `ErrorStack`
 - `CommodityAuctionSnapshots`
-  - snapshot metadata such as fetch timestamp and source endpoint
+  - `IngestionRunId`
+  - `FetchedAtUtc`
+  - `ApiEndPoint`
 - `CommodityAuctions`
-  - raw commodity auction rows for a snapshot
+  - `CommodityAuctionSnapshotId`
+  - `ItemId`
+  - `Quantity`
+  - `UnitPrice`
+  - `TimeLeft`
 
-Stored auction fields currently include:
+Important scope notes:
 
-- `ItemId`
-- `Quantity`
-- `UnitPrice`
-- `TimeLeft`
+- the current implementation stores commodity auction snapshots only
+- commodities are region-wide data; the current schema does not store realm-specific auction information
+- the schema does not yet store item names, historical aggregates, portfolios, or user data
 
 ## Local Setup
 
@@ -94,12 +148,12 @@ Stored auction fields currently include:
 
 ### Configure Blizzard credentials
 
-The ingestor reads:
+The ingestor requires:
 
 - `Blizzard:ClientId`
 - `Blizzard:ClientSecret`
 
-Using user secrets:
+Example using user secrets:
 
 ```powershell
 dotnet user-secrets set "Blizzard:ClientId" "<your-client-id>" --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
@@ -108,13 +162,18 @@ dotnet user-secrets set "Blizzard:ClientSecret" "<your-client-secret>" --project
 
 ### Configure the database connection
 
-The ingestor reads `ConnectionStrings:WowPaperTrader`.
+Both the ingestor and the read API require `ConnectionStrings:WowPaperTrader`.
 
-You can set it in `wow-paper-trader.Ingestor\appsettings.Development.json` or via an environment variable such as:
+Example PowerShell session:
 
 ```powershell
 $env:ConnectionStrings__WowPaperTrader="Server=localhost;Database=WowPaperTrader;Trusted_Connection=True;TrustServerCertificate=True;"
 ```
+
+Development convenience files also exist at:
+
+- `wow-paper-trader.Ingestor/appsettings.Development.json`
+- `wow-paper-trader.Api.Read/appsettings.Development.json`
 
 ### Apply the database migration
 
@@ -124,7 +183,7 @@ If `dotnet-ef` is not installed:
 dotnet tool install --global dotnet-ef
 ```
 
-Then update the database:
+Apply the current migration:
 
 ```powershell
 dotnet ef database update --project .\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj --startup-project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
@@ -138,7 +197,12 @@ Run the ingestor:
 dotnet run --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
 ```
 
-Run the read API scaffold:
+Behavior:
+
+- one ingestion run starts immediately when the worker launches
+- subsequent runs happen every hour
+
+Run the read API:
 
 ```powershell
 dotnet run --project .\wow-paper-trader.Api.Read\wow-paper-trader.Api.Read.csproj
@@ -168,18 +232,19 @@ Run the full solution test suite:
 dotnet test wow-paper-trader.sln
 ```
 
-Current observed result in this repository:
+Current verified result on March 17, 2026:
 
 - `wow-paper-trader.Persistence.Tests`: 2 passing integration tests
-- `wow-paper-trader.Application.Read.Tests`: project builds, no discovered tests
-- `wow-paper-trader.Application.Write.Tests`: project builds, no discovered tests
+- `wow-paper-trader.Application.Read.Tests`: builds, but no tests are discovered
+- `wow-paper-trader.Application.Write.Tests`: builds, but no tests are discovered
 
-## Notes and Gaps
+## Known Gaps
 
-- The ingestion interval is hard-coded to one hour in `IngestionRunBackgroundService`.
-- The current implementation is US commodities only.
-- The read and write APIs are not yet connected to the application and persistence layers.
-- The 30-day Blizzard retention requirement described in `Requirements.md` is not yet enforced in code.
+- retention cleanup is not automated; a manual helper script exists at `manual_delete_data_past_30_days_sql_script.txt`
+- the ingestion interval is hard-coded to one hour in `IngestionRunBackgroundService`
+- the current Blizzard integration is fixed to the US commodities endpoint
+- the read API only answers against the latest stored snapshot, not arbitrary history
+- the write API is still scaffold-level
 
 ## Disclaimer
 
