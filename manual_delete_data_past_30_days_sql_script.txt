@@ -1,0 +1,49 @@
+//run this first to see what gets deleted
+
+SELECT COUNT(*) AS AuctionsToDelete
+FROM CommodityAuctions ca
+JOIN CommodityAuctionSnapshots cas ON ca.CommodityAuctionSnapshotId = cas.Id
+JOIN IngestionRuns ir ON cas.IngestionRunId = ir.Id
+WHERE ir.StartedAtUtc < DATEADD(DAY, -30, GETUTCDATE());
+
+SELECT COUNT(*) AS SnapshotsToDelete
+FROM CommodityAuctionSnapshots cas
+JOIN IngestionRuns ir ON cas.IngestionRunId = ir.Id
+WHERE ir.StartedAtUtc < DATEADD(DAY, -30, GETUTCDATE());
+
+SELECT COUNT(*) AS RunsToDelete
+FROM IngestionRuns
+WHERE StartedAtUtc < DATEADD(DAY, -30, GETUTCDATE());
+
+
+
+
+
+
+
+
+//run this to delete
+
+BEGIN TRANSACTION;
+
+-- 1. Delete auctions (child)
+DELETE ca
+FROM CommodityAuctions ca
+INNER JOIN CommodityAuctionSnapshots cas
+    ON ca.CommodityAuctionSnapshotId = cas.Id
+INNER JOIN IngestionRuns ir
+    ON cas.IngestionRunId = ir.Id
+WHERE ir.StartedAtUtc < DATEADD(DAY, -30, GETUTCDATE());
+
+-- 2. Delete snapshots
+DELETE cas
+FROM CommodityAuctionSnapshots cas
+INNER JOIN IngestionRuns ir
+    ON cas.IngestionRunId = ir.Id
+WHERE ir.StartedAtUtc < DATEADD(DAY, -30, GETUTCDATE());
+
+-- 3. Delete ingestion runs (parent)
+DELETE FROM IngestionRuns
+WHERE StartedAtUtc < DATEADD(DAY, -30, GETUTCDATE());
+
+COMMIT;
