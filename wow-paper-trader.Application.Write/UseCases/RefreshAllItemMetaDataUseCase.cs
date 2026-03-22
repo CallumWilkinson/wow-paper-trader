@@ -17,13 +17,13 @@ public sealed class RefreshAllItemMetaDataUseCase
 
     public async void ExecuteAsync(CancellationToken cancellationToken)
     {
-        List<long> itemIds = await _commodityAuctionItemIdQuery.GetAllUniqueIdsAsync(cancellationToken);
+        var itemIds = await _commodityAuctionItemIdQuery.GetAllUniqueIdsAsync(cancellationToken);
 
         var itemMetaDataResults = new List<ItemMetaDataResult>();
 
         foreach (long itemId in itemIds)
         {
-            var result = await _itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId);
+            var result = await _itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
 
             itemMetaDataResults.Add(result);
         }
