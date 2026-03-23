@@ -1,4 +1,4 @@
 public interface IItemMetaDataRepository
 {
-    Task SaveMetaDataAsync(List<ItemMetaDataResult> itemMetaDataResults, CancellationToken cancellationToken);
+    Task SaveItemMetaDataAsync(List<ItemMetaDataRecord> itemMetaDataRecords, CancellationToken cancellationToken);
 }

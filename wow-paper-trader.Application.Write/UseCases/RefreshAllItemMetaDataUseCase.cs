@@ -1,8 +1,8 @@
 public sealed class RefreshAllItemMetaDataUseCase
 {
-    ICommodityAuctionItemIdQuery _commodityAuctionItemIdQuery;
-    IItemMetaDataApiAdapter _itemMetaDataApiAdapter;
-    IItemMetaDataRepository _itemMetaDataRepository;
+    private readonly ICommodityAuctionItemIdQuery _commodityAuctionItemIdQuery;
+    private readonly IItemMetaDataApiAdapter _itemMetaDataApiAdapter;
+    private readonly IItemMetaDataRepository _itemMetaDataRepository;
 
     public RefreshAllItemMetaDataUseCase(
         ICommodityAuctionItemIdQuery commodityAuctionItemIdQuery,
@@ -15,20 +15,20 @@ public sealed class RefreshAllItemMetaDataUseCase
         _itemMetaDataRepository = itemMetaDataRepository;
     }
 
-    public async void ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        var itemIds = await _commodityAuctionItemIdQuery.GetAllUniqueIdsAsync(cancellationToken);
+        var itemIds = await _commodityAuctionItemIdQuery.GetAllUniqueItemIdsAsync(cancellationToken);
 
-        var itemMetaDataResults = new List<ItemMetaDataResult>();
+        var itemMetaDataRecords = new List<ItemMetaDataRecord>();
 
         foreach (long itemId in itemIds)
         {
-            var result = await _itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
+            var record = await _itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
 
-            itemMetaDataResults.Add(result);
+            itemMetaDataRecords.Add(record);
         }
 
-        await _itemMetaDataRepository.SaveMetaDataAsync(itemMetaDataResults, cancellationToken);
+        await _itemMetaDataRepository.SaveItemMetaDataAsync(itemMetaDataRecords, cancellationToken);
     }
 
 }

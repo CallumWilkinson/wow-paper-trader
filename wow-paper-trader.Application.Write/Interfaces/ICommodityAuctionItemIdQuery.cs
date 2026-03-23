@@ -1,4 +1,4 @@
 public interface ICommodityAuctionItemIdQuery
 {
-    Task<List<long>> GetAllUniqueIdsAsync(CancellationToken cancellationToken);
+    Task<List<long>> GetAllUniqueItemIdsAsync(CancellationToken cancellationToken);
 }

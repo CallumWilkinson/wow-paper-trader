@@ -1,4 +1,4 @@
 public interface IItemMetaDataApiAdapter
 {
-    Task<ItemMetaDataResult> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken);
+    Task<ItemMetaDataRecord> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken);
 }
