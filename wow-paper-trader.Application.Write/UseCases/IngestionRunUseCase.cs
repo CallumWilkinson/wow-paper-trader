@@ -31,10 +31,12 @@ public sealed class IngestionRunUseCase
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             _logger.LogInformation("IngestionRun UseCase Cancelled");
+            throw;
         }
         catch
         {
             _logger.LogInformation("IngestionRun UseCase Failed");
+            throw;
         }
     }
 }

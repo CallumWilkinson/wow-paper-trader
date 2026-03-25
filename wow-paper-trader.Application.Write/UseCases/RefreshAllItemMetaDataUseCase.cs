@@ -43,10 +43,12 @@ public sealed class RefreshAllItemMetaDataUseCase
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             _logger.LogInformation("Refresh All Item MetaData Use Case Cancelled");
+            throw;
         }
         catch
         {
             _logger.LogInformation("Refresh All Item MetaData Use Case Failed");
+            throw;
         }
 
     }
