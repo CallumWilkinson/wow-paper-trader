@@ -13,4 +13,6 @@ public sealed class ApplicationDbContext : DbContext
 
     public DbSet<CommodityAuction> CommodityAuctions { get; set; } = null!;
 
+    public DbSet<ItemMetaData> ItemMetaData { get; set; } = null!;
+
 }
