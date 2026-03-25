@@ -1,41 +1,53 @@
+using System.Net;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("WowPaperTrader");
+    options.UseSqlServer(connectionString);
+});
+
+builder.Services.AddScoped<RefreshAllItemMetaDataUseCase>();
+builder.Services.AddScoped<ICommodityAuctionItemIdQuery, CommodityAuctionItemIdQuery>();
+builder.Services.AddScoped<IItemMetaDataApiAdapter, ItemMetaDataApiAdapter>();
+builder.Services.AddScoped<IItemMetaDataRepository, ItemMetaDataRepository>();
+
+builder.Services.AddHttpClient<BattleNetAuthClient>()
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+    });
+
+var wowApiBaseUrl = builder.Configuration["WowApi:BaseUrl"]
+?? throw new InvalidOperationException("WowApi:BaseUrl is missing.");
+
+builder.Services.AddHttpClient<ItemMetaDataClient>(client =>
+{
+    client.BaseAddress = new Uri(wowApiBaseUrl);
+})
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+    });
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
