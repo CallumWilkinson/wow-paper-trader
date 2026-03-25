@@ -1,4 +1,4 @@
-public static class ApplicationContractMapper
+public static class WowApiResultMapper
 {
     public static WowApiResult<AuctionSnapshot> MapToContract(
         WowApiResult<CommodityAuctionsResponseDto> resultWithDto)

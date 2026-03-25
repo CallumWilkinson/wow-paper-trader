@@ -30,7 +30,7 @@ public sealed class CommodityAuctionApiAdapter : ICommodityAuctionApiAdapter
         int auctionsCount = resultWithDto.Payload.CommodityAuctions.Count;
         _logger.LogInformation("Total Auctions Received: {Count}", auctionsCount);
 
-        var resultWithAuctionSnapshot = ApplicationContractMapper.MapToContract(resultWithDto);
+        var resultWithAuctionSnapshot = WowApiResultMapper.MapToContract(resultWithDto);
 
         return resultWithAuctionSnapshot;
 

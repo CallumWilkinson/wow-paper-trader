@@ -5,7 +5,7 @@ public sealed class CommodityAuctionClient
 {
     private readonly HttpClient _httpClient;
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         //json is camelCase, C# objects are Pascal, this avoids issues when mapping to DTOs
         PropertyNameCaseInsensitive = true
@@ -29,13 +29,12 @@ public sealed class CommodityAuctionClient
         {
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
             throw new HttpRequestException($"WoW API Request Failed. Status={(int)response.StatusCode} {response.ReasonPhrase}. Body={body}");
-
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         //convert JSON to C# object (the dto)
-        var result = await JsonSerializer.DeserializeAsync<CommodityAuctionsResponseDto>(stream, JsonOptions, cancellationToken)
+        var result = await JsonSerializer.DeserializeAsync<CommodityAuctionsResponseDto>(stream, _jsonOptions, cancellationToken)
             ?? throw new JsonException("Wow API response JSON deserialized to null.");
 
         string fullEndpoint = new Uri(_httpClient.BaseAddress!, endpointSuffix).ToString();
