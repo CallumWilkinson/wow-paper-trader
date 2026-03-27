@@ -33,9 +33,9 @@ public sealed class IngestionRunUseCase
             _logger.LogInformation("IngestionRun UseCase Cancelled");
             throw;
         }
-        catch
+        catch (Exception ex)
         {
-            _logger.LogInformation("IngestionRun UseCase Failed");
+            _logger.LogError(ex, "IngestionRun UseCase Failed");
             throw;
         }
     }
