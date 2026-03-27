@@ -23,6 +23,11 @@ public sealed class ItemMetaDataApiAdapter : IItemMetaDataApiAdapter
 
         var dto = await _itemMetaDataClient.GetAsync(accessToken, itemId, cancellationToken);
 
+        if (dto == null)
+        {
+            return null;
+        }
+
         var dataFetchedAtUtc = DateTime.UtcNow;
 
         var contract = ItemMetaDataRecordMapper.MapToContract(dto, dataFetchedAtUtc);

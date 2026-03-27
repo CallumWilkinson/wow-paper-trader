@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -25,6 +26,11 @@ public sealed class ItemMetaDataClient
 
         using var response = await _httpClient.SendAsync(request, cancellationToken);
 
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
         if (!response.IsSuccessStatusCode)
         {
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -34,7 +40,7 @@ public sealed class ItemMetaDataClient
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         var result = await JsonSerializer.DeserializeAsync<ItemMetaDataResponseDto>(stream, _jsonOptions, cancellationToken)
-            ?? throw new JsonException("Wow Api ItemMetaData response JSON descerialised to null.");
+            ?? throw new JsonException("Wow Api ItemMetaData response JSON deserialised to null.");
 
         return result;
     }
