@@ -12,7 +12,7 @@ public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDb
     }
 
     [Fact]
-    public async Task SaveItemMetaDataAsync_Should_CorrectlySaveAllFields_ToAnEmptyTestDb_UsingAListOfFakeItemMetaDataRecords()
+    public async Task SaveItemMetaDataAsync_Should_SaveAllFields_ToAnEmptyTestDb_UsingAListOfFakeItemMetaDataRecords()
     {
         //arrange
         await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
