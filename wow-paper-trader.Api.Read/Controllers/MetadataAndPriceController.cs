@@ -14,7 +14,7 @@ public sealed class MetadataAndPriceController : ControllerBase
         _useCase = useCase;
     }
 
-    [HttpGet("{itemId:long}/metadata-and-price")]
+    [HttpGet("{itemId:long}/get-tooltip-and-lowest-buyout-price")]
     public async Task<ActionResult<ItemMetadataAndPriceResult>> GetTooltipAndLowestBuyoutPrice(
         long itemId,
         CancellationToken cancellationToken
