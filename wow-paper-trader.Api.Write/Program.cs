@@ -39,6 +39,16 @@ builder.Services.AddHttpClient<ItemMetaDataClient>(client =>
         PooledConnectionLifetime = TimeSpan.FromMinutes(10),
     });
 
+builder.Services.AddHttpClient<ItemMediaClient>(client =>
+{
+    client.BaseAddress = new Uri(wowApiBaseUrl);
+})
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+    });
+
 
 var app = builder.Build();
 

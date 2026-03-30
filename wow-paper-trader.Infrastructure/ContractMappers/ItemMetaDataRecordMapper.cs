@@ -1,40 +1,58 @@
 public static class ItemMetaDataRecordMapper
 {
     public static ItemMetaDataRecord MapToContract(
-        ItemMetaDataResponseDto dto,
+        ItemMetaDataResponseDto metadataDto,
+        ItemMediaResponseDto mediaDto,
         DateTime lastFetchedUtc)
     {
-        if (dto == null)
+        if (metadataDto == null || mediaDto == null)
         {
-            throw new ArgumentNullException(nameof(dto));
+            throw new ArgumentNullException(nameof(metadataDto));
         }
 
         return new ItemMetaDataRecord
         {
-            ItemId = dto.Id,
-            Name = dto.Name,
-            QualityType = dto.Quality?.Type,
-            QualityName = dto.Quality?.Name,
-            Level = dto.Level,
-            RequiredLevel = dto.RequiredLevel,
-            ItemClassId = dto.ItemClass?.Id,
-            ItemClassName = dto.ItemClass?.Name,
-            ItemSubclassId = dto.ItemSubclass?.Id,
-            ItemSubclassName = dto.ItemSubclass?.Name,
-            ProfessionId = dto.PreviewItem?.Requirements?.Skill?.Profession?.Id,
-            ProfessionName = dto.PreviewItem?.Requirements?.Skill?.Profession?.Name,
-            ProfessionSkillLevel = dto.PreviewItem?.Requirements?.Skill?.Level,
-            SkillDisplayString = dto.PreviewItem?.Requirements?.Skill?.DisplayString,
-            CraftingReagent = dto.PreviewItem?.CraftingReagent,
-            InventoryType = dto.InventoryType?.Type,
-            InventoryTypeName = dto.InventoryType?.Name,
-            PurchasePrice = dto.PurchasePrice,
-            SellPrice = dto.SellPrice,
-            MaxCount = dto.MaxCount,
-            IsEquippable = dto.IsEquippable,
-            IsStackable = dto.IsStackable,
-            PurchaseQuantity = dto.PurchaseQuantity,
+            ItemId = metadataDto.Id,
+            Name = metadataDto.Name,
+            QualityType = metadataDto.Quality?.Type,
+            QualityName = metadataDto.Quality?.Name,
+            Level = metadataDto.Level,
+            RequiredLevel = metadataDto.RequiredLevel,
+            ItemClassId = metadataDto.ItemClass?.Id,
+            ItemClassName = metadataDto.ItemClass?.Name,
+            ItemSubclassId = metadataDto.ItemSubclass?.Id,
+            ItemSubclassName = metadataDto.ItemSubclass?.Name,
+            ProfessionId = metadataDto.PreviewItem?.Requirements?.Skill?.Profession?.Id,
+            ProfessionName = metadataDto.PreviewItem?.Requirements?.Skill?.Profession?.Name,
+            ProfessionSkillLevel = metadataDto.PreviewItem?.Requirements?.Skill?.Level,
+            SkillDisplayString = metadataDto.PreviewItem?.Requirements?.Skill?.DisplayString,
+            CraftingReagent = metadataDto.PreviewItem?.CraftingReagent,
+            InventoryType = metadataDto.InventoryType?.Type,
+            InventoryTypeName = metadataDto.InventoryType?.Name,
+            PurchasePrice = metadataDto.PurchasePrice,
+            SellPrice = metadataDto.SellPrice,
+            MaxCount = metadataDto.MaxCount,
+            IsEquippable = metadataDto.IsEquippable,
+            IsStackable = metadataDto.IsStackable,
+            PurchaseQuantity = metadataDto.PurchaseQuantity,
+            ImageUrl = GetIconUrl(mediaDto),
             LastFetchedUtc = lastFetchedUtc
         };
+    }
+
+    private static string? GetIconUrl(ItemMediaResponseDto dto)
+    {
+        foreach (var asset in dto.Assets)
+        {
+            bool isIcon = asset.Key == "icon";
+            bool hasValue = string.IsNullOrWhiteSpace(asset.Value) == false;
+
+            if (isIcon && hasValue)
+            {
+                return asset.Value;
+            }
+        }
+
+        return null;
     }
 }
