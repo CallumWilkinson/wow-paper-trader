@@ -17,6 +17,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<GetCurrentLowestUnitPriceByItemIdUseCase>();
 builder.Services.AddScoped<ICurrentLowestUnitPriceQuery, CurrentLowestUnitPriceQuery>();
 
+builder.Services.AddScoped<GetMetadataAndPriceByItemIdUseCase>();
+builder.Services.AddScoped<IItemMetadataAndPriceQuery, ItemMetadataAndPriceQuery>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
