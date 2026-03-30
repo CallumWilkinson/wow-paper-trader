@@ -23,5 +23,6 @@ public sealed record ItemMetaDataRecord
     public bool IsEquippable { get; init; }
     public bool IsStackable { get; init; }
     public int? PurchaseQuantity { get; init; }
+    public string? ImageUrl { get; init; }
     public DateTime LastFetchedUtc { get; init; }
 }
