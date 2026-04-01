@@ -37,5 +37,7 @@ public sealed class ItemMetaData
 
     public int? PurchaseQuantity { get; set; }
 
+    public string? ImageUrl { get; init; }
+
     public DateTime LastFetchedUtc { get; set; }
 }

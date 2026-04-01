@@ -119,6 +119,9 @@ namespace wow_paper_trader.Persistence.Migrations
                     b.Property<string>("CraftingReagent")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("InventoryType")
                         .HasColumnType("nvarchar(max)");
 

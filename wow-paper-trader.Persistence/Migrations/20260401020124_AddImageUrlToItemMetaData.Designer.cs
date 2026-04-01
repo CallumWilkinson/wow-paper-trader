@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace wow_paper_trader.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260330094450_AddImageUrlToItemMetaData")]
+    [Migration("20260401020124_AddImageUrlToItemMetaData")]
     partial class AddImageUrlToItemMetaData
     {
         /// <inheritdoc />
@@ -120,6 +120,9 @@ namespace wow_paper_trader.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CraftingReagent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InventoryType")
