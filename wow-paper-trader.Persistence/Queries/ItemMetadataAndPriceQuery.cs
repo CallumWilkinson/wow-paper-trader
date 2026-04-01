@@ -59,6 +59,7 @@ public sealed class ItemMetadataAndPriceQuery : IItemMetadataAndPriceQuery
                 meta.IsEquippable,
                 meta.IsStackable,
                 meta.PurchaseQuantity,
+                meta.ImageUrl,
                 meta.LastFetchedUtc
             FROM LowestPriceForItem price
             CROSS JOIN LatestSnapshot latest
