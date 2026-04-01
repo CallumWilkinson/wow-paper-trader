@@ -44,6 +44,8 @@ public static class ItemMetaDataMapper
 
             PurchaseQuantity = record.PurchaseQuantity,
 
+            ImageUrl = record.ImageUrl,
+
             LastFetchedUtc = record.LastFetchedUtc
         };
     }
