@@ -1,3 +1,5 @@
+namespace wow_paper_trader.Persistence.Tests;
+
 using FluentAssertions;
 
 public sealed class CommodityAuctionItemIdQueryTests : IClassFixture<SqliteInMemoryDbFixture>

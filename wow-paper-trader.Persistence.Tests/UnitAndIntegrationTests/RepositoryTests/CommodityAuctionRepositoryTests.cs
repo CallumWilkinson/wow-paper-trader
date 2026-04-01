@@ -1,3 +1,5 @@
+namespace wow_paper_trader.Persistence.Tests;
+
 using Azure.Core.Pipeline;
 using FluentAssertions;
 using Xunit;
