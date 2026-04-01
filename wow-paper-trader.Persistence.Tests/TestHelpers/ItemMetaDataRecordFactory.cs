@@ -30,6 +30,7 @@ public static class ItemMetaDataRecordFactory
                 IsEquippable = false,
                 IsStackable = true,
                 PurchaseQuantity = null,
+                ImageUrl = "fake/url/to/image",
                 LastFetchedUtc = DateTime.UtcNow
             },
 
@@ -58,6 +59,7 @@ public static class ItemMetaDataRecordFactory
                 IsEquippable = false,
                 IsStackable = true,
                 PurchaseQuantity = null,
+                ImageUrl = "fake/url/to/image",
                 LastFetchedUtc = DateTime.UtcNow
             },
 
@@ -86,6 +88,7 @@ public static class ItemMetaDataRecordFactory
                 IsEquippable = false,
                 IsStackable = true,
                 PurchaseQuantity = null,
+                ImageUrl = "fake/url/to/image",
                 LastFetchedUtc = DateTime.UtcNow
             },
 
@@ -114,6 +117,7 @@ public static class ItemMetaDataRecordFactory
                 IsEquippable = false,
                 IsStackable = true,
                 PurchaseQuantity = null,
+                ImageUrl = "fake/url/to/image",
                 LastFetchedUtc = DateTime.UtcNow
             },
 
@@ -142,6 +146,7 @@ public static class ItemMetaDataRecordFactory
                 IsEquippable = false,
                 IsStackable = true,
                 PurchaseQuantity = null,
+                ImageUrl = "fake/url/to/image",
                 LastFetchedUtc = DateTime.UtcNow
             }
         };

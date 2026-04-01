@@ -1,3 +1,5 @@
+namespace wow_paper_trader.Persistence.Tests;
+
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -12,7 +14,7 @@ public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDb
     }
 
     [Fact]
-    public async Task SaveItemMetaDataAsync_Should_SaveAllFields_ToAnEmptyTestDb_UsingAListOfFakeItemMetaDataRecords()
+    public async Task SaveItemMetaDataAsync_Should_Save_AllPersistedFields()
     {
         //arrange
         await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
@@ -29,63 +31,19 @@ public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDb
         //assert
         await using var assertDbContext = _db.CreateAssertDbContext();
 
-        var actual = await assertDbContext.ItemMetaData.OrderBy(x => x.ItemId).Select(x => new
-        {
-            x.ItemId,
-            x.Name,
-            x.QualityType,
-            x.QualityName,
-            x.Level,
-            x.RequiredLevel,
-            x.ItemClassId,
-            x.ItemClassName,
-            x.ItemSubclassId,
-            x.ItemSubclassName,
-            x.ProfessionId,
-            x.ProfessionName,
-            x.ProfessionSkillLevel,
-            x.SkillDisplayString,
-            x.CraftingReagent,
-            x.InventoryType,
-            x.InventoryTypeName,
-            x.PurchasePrice,
-            x.SellPrice,
-            x.MaxCount,
-            x.IsEquippable,
-            x.IsStackable,
-            x.PurchaseQuantity,
-            x.LastFetchedUtc
-        }).ToListAsync();
+        var actual = await assertDbContext.ItemMetaData
+            .AsNoTracking()
+            .OrderBy(x => x.ItemId)
+            .ToListAsync();
 
-        var expected = listOfRecords.OrderBy(x => x.ItemId).Select(x => new
-        {
-            x.ItemId,
-            x.Name,
-            x.QualityType,
-            x.QualityName,
-            x.Level,
-            x.RequiredLevel,
-            x.ItemClassId,
-            x.ItemClassName,
-            x.ItemSubclassId,
-            x.ItemSubclassName,
-            x.ProfessionId,
-            x.ProfessionName,
-            x.ProfessionSkillLevel,
-            x.SkillDisplayString,
-            x.CraftingReagent,
-            x.InventoryType,
-            x.InventoryTypeName,
-            x.PurchasePrice,
-            x.SellPrice,
-            x.MaxCount,
-            x.IsEquippable,
-            x.IsStackable,
-            x.PurchaseQuantity,
-            x.LastFetchedUtc
-        }).ToList();
+        var expected = listOfRecords
+            .Select(ItemMetaDataMapper.MapToEntity)
+            .OrderBy(x => x.ItemId)
+            .ToList();
 
-        actual.Should().BeEquivalentTo(expected, options => options.WithStrictOrdering());
+        actual.Should().BeEquivalentTo(expected, options => options
+                .Excluding(x => x.Id)
+                .WithStrictOrdering());
     }
 
 }

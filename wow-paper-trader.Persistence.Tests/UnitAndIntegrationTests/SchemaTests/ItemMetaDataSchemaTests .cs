@@ -1,3 +1,5 @@
+namespace wow_paper_trader.Persistence.Tests;
+
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
@@ -74,6 +76,7 @@ public sealed class ItemMetaDataSchemaTests : IClassFixture<SqliteInMemoryDbFixt
             "IsEquippable",
             "IsStackable",
             "PurchaseQuantity",
+            "ImageUrl",
             "LastFetchedUtc"
         };
     }
