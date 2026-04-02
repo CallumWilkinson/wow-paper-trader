@@ -9,42 +9,24 @@ public sealed class ItemSearchQuery : IItemSearchQuery
     {
         _dbContext = dbContext;
     }
-    public async Task<List<ItemSearchResult>> SearchByNameAsync(string ItemName, CancellationToken cancellationToken)
+    public async Task<List<ItemSearchResult>> SearchCandidatesByNameAsync(string itemName, CancellationToken cancellationToken)
     {
-        //case insenstive search
         const string sql = @"
-            WITH SearchMatches AS
-            (
-                SELECT TOP 5
-                    ItemId,
-                    Name,
-                    CASE
-                        WHEN Name COLLATE SQL_Latin1_General_CP1_CI_AS = @Name COLLATE SQL_Latin1_General_CP1_CI_AS THEN 1
-                        WHEN Name COLLATE SQL_Latin1_General_CP1_CI_AS LIKE @Name + '%' COLLATE SQL_Latin1_General_CP1_CI_AS THEN 2
-                        WHEN Name COLLATE SQL_Latin1_General_CP1_CI_AS LIKE '%' + @Name + '%' COLLATE SQL_Latin1_General_CP1_CI_AS THEN 3
-                        ELSE 4
-                    END AS MatchRank
-                FROM ItemMetaData
-                WHERE
-                    Name COLLATE SQL_Latin1_General_CP1_CI_AS LIKE @Name + '%' COLLATE SQL_Latin1_General_CP1_CI_AS
-                    OR Name COLLATE SQL_Latin1_General_CP1_CI_AS LIKE '%' + @Name + '%' COLLATE SQL_Latin1_General_CP1_CI_AS
-            )
             SELECT
                 ItemId,
                 Name
-            FROM SearchMatches
-            ORDER BY
-                MatchRank,
-                LEN(Name),
-                Name;
+            FROM ItemMetaData
+            WHERE Name LIKE '%' + @Name + '%';
         ";
 
         var connection = _dbContext.Database.GetDbConnection();
 
-        var command = new CommandDefinition(sql, new { Name = ItemName }, cancellationToken: cancellationToken);
+        var command = new CommandDefinition(sql, new { Name = itemName }, cancellationToken: cancellationToken);
 
         var results = await connection.QueryAsync<ItemSearchResult>(command);
 
         return results.ToList();
+
     }
+
 }

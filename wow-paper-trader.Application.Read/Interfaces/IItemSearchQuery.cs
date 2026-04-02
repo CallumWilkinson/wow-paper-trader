@@ -1,6 +1,6 @@
 public interface IItemSearchQuery
 {
-    Task<List<ItemSearchResult>> SearchByNameAsync(
+    Task<List<ItemSearchResult>> SearchCandidatesByNameAsync(
         string ItemName,
         CancellationToken cancellationToken
     );
