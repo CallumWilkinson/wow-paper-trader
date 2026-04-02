@@ -20,6 +20,9 @@ builder.Services.AddScoped<ICurrentLowestUnitPriceQuery, CurrentLowestUnitPriceQ
 builder.Services.AddScoped<GetMetadataAndPriceByItemIdUseCase>();
 builder.Services.AddScoped<IItemMetadataAndPriceQuery, ItemMetadataAndPriceQuery>();
 
+builder.Services.AddScoped<ItemSearchUseCase>();
+builder.Services.AddScoped<IItemSearchQuery, ItemSearchQuery>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
