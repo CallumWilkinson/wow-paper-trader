@@ -19,24 +19,6 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
 
         await using var db = new ApplicationDbContext(Options);
         await db.Database.EnsureCreatedAsync();
-
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _connection.DisposeAsync();
-    }
-
-    public ApplicationDbContext CreateAssertDbContext()
-    {
-        return CreateDbContext();
-    }
-
-    //arrangeDbContext must reset the database
-    public async Task<ApplicationDbContext> CreateArrangeDbContextAsync()
-    {
-        await ResetDatabaseAsync();
-        return CreateDbContext();
     }
 
     private async Task ResetDatabaseAsync()
@@ -50,6 +32,18 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
         await db.Database.EnsureCreatedAsync();
     }
 
+    //arrangeDbContext must reset the database
+    public async Task<ApplicationDbContext> CreateArrangeDbContextAsync()
+    {
+        await ResetDatabaseAsync();
+        return CreateDbContext();
+    }
+
+    public ApplicationDbContext CreateAssertDbContext()
+    {
+        return CreateDbContext();
+    }
+
     private ApplicationDbContext CreateDbContext()
     {
         if (Options == null)
@@ -58,4 +52,10 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
         }
         return new ApplicationDbContext(Options);
     }
+
+    public async Task DisposeAsync()
+    {
+        await _connection.DisposeAsync();
+    }
+
 }
