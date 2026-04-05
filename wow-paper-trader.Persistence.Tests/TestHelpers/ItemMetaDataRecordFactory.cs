@@ -153,4 +153,133 @@ public static class ItemMetaDataRecordFactory
 
         return fakeItems;
     }
+
+    public static List<ItemMetaDataRecord> CreateLinenSearchTestRecords()
+    {
+        return new List<ItemMetaDataRecord>
+        {
+            new ItemMetaDataRecord
+            {
+                ItemId = 2589,
+                Name = "Linen Cloth",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Trade Goods",
+                ItemSubclassName = "Cloth",
+                IsStackable = true,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 2996,
+                Name = "Bolt of Linen Cloth",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Trade Goods",
+                ItemSubclassName = "Cloth",
+                IsStackable = true,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 1251,
+                Name = "Linen Bandage",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Consumable",
+                ItemSubclassName = "Bandage",
+                IsStackable = true,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 2581,
+                Name = "Heavy Linen Bandage",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Consumable",
+                ItemSubclassName = "Bandage",
+                IsStackable = true,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 10001,
+                Name = "Heavy Linen Pants",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Armor",
+                ItemSubclassName = "Cloth",
+                IsStackable = false,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 10002,
+                Name = "Fine Linen Shirt",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Armor",
+                ItemSubclassName = "Cloth",
+                IsStackable = false,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 10003,
+                Name = "linen robe", // case variation
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Armor",
+                ItemSubclassName = "Cloth",
+                IsStackable = false,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+
+            // Noise (should NOT match "linen")
+            new ItemMetaDataRecord
+            {
+                ItemId = 2770,
+                Name = "Copper Ore",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Trade Goods",
+                ItemSubclassName = "Metal & Stone",
+                IsStackable = true,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 765,
+                Name = "Silverleaf",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Trade Goods",
+                ItemSubclassName = "Herb",
+                IsStackable = true,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            },
+            new ItemMetaDataRecord
+            {
+                ItemId = 2447,
+                Name = "Peacebloom",
+                QualityType = "COMMON",
+                QualityName = "Common",
+                ItemClassName = "Trade Goods",
+                ItemSubclassName = "Herb",
+                IsStackable = true,
+                ImageUrl = "fake/url",
+                LastFetchedUtc = DateTime.UtcNow
+            }
+        };
+    }
 }
