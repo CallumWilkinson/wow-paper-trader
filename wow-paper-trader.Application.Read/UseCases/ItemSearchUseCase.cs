@@ -9,39 +9,17 @@ public sealed class ItemSearchUseCase
 
     public async Task<List<ItemSearchResult>> ExecuteAsync(string itemName, CancellationToken cancellationToken)
     {
-        //TODO: add null check
-
-        string normalisedName = itemName.Trim();
-
-        var candidates = await _query.SearchCandidatesByNameAsync(itemName, cancellationToken);
-
-        var rankedResults = candidates
-            .OrderBy(x => GetMatchRank(x.Name, itemName))
-            .ThenBy(x => x.Name.Length)
-            .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
-            .Take(5)
-            .ToList();
-
-        return rankedResults;
-    }
-
-    private static int GetMatchRank(string candidateName, string searchText)
-    {
-        if (candidateName.Equals(searchText, StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(itemName))
         {
-            return 1;
+            throw new ArgumentNullException
+            (
+                nameof(itemName),
+                "You must enter an item name"
+            );
         }
 
-        if (candidateName.StartsWith(searchText, StringComparison.OrdinalIgnoreCase))
-        {
-            return 2;
-        }
+        var topFiveResults = await _query.SearchByNameAsync(itemName, cancellationToken);
 
-        if (candidateName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-        {
-            return 3;
-        }
-
-        return 4;
+        return topFiveResults;
     }
 }

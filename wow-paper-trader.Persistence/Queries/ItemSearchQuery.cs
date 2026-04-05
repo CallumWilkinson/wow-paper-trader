@@ -9,23 +9,33 @@ public sealed class ItemSearchQuery : IItemSearchQuery
     {
         _dbContext = dbContext;
     }
-    public async Task<List<ItemSearchResult>> SearchCandidatesByNameAsync(string itemName, CancellationToken cancellationToken)
+    public async Task<List<ItemSearchResult>> SearchByNameAsync(string itemName, CancellationToken cancellationToken)
     {
         const string sql = @"
-            SELECT
-                ItemId,
-                Name
-            FROM ItemMetaData
-            WHERE Name LIKE '%' + @Name + '%';
-        ";
+            DECLARE @Search nvarchar(4000) = TRIM(@Name);
+
+            SELECT TOP (5)
+                i.ItemId,
+                i.Name
+            FROM dbo.ItemMetaData AS i
+            WHERE i.Name COLLATE Latin1_General_100_CI_AS LIKE N'%' + @Search + N'%'
+            ORDER BY
+                CASE
+                    WHEN i.Name COLLATE Latin1_General_100_CI_AS = @Search THEN 1
+                    WHEN i.Name COLLATE Latin1_General_100_CI_AS LIKE @Search + N'%' THEN 2
+                    ELSE 3
+                END,
+                LEN(i.Name + N'.') - 1,
+                i.Name COLLATE Latin1_General_100_CI_AS;
+            ";
 
         var connection = _dbContext.Database.GetDbConnection();
 
         var command = new CommandDefinition(sql, new { Name = itemName }, cancellationToken: cancellationToken);
 
-        var results = await connection.QueryAsync<ItemSearchResult>(command);
+        var topFiveResults = await connection.QueryAsync<ItemSearchResult>(command);
 
-        return results.ToList();
+        return topFiveResults.ToList();
 
     }
 
