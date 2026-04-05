@@ -14,7 +14,7 @@ public sealed class CommoditiesController : ControllerBase
         _useCase = useCase;
     }
 
-    [HttpGet("{itemId:long}/current-lowest-unit-price")]
+    [HttpGet("{itemId:long}")]
     public async Task<ActionResult<CurrentLowestUnitPriceResult>> GetCurrentLowestUnitPrice(
         long itemId,
         CancellationToken cancellationToken

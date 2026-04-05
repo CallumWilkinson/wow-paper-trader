@@ -12,8 +12,8 @@ public sealed class ItemSearchController : ControllerBase
         _useCase = useCase;
     }
 
-    [HttpGet("search")]
-    public async Task<ActionResult<List<ItemSearchResult>>> SearchItems([FromQuery] string itemName, CancellationToken cancellationToken)
+    [HttpGet("{itemName:string}")]
+    public async Task<ActionResult<List<ItemSearchResult>>> SearchItems(string itemName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(itemName))
         {
