@@ -2,17 +2,17 @@ namespace wow_paper_trader.Persistence.Tests;
 
 using FluentAssertions;
 
-public sealed class CommodityAuctionItemIdQueryTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class ItemIdsWithoutMetadataQueryTests : IClassFixture<SqliteInMemoryDbFixture>
 {
     private readonly SqliteInMemoryDbFixture _db;
 
-    public CommodityAuctionItemIdQueryTests(SqliteInMemoryDbFixture db)
+    public ItemIdsWithoutMetadataQueryTests(SqliteInMemoryDbFixture db)
     {
         _db = db;
     }
 
     [Fact]
-    public async Task GetAllUniqueItemIdsAsync_ShouldReturn_AllUniqueItemIds_ContainedIn_CommodityAuctionsTable()
+    public async Task GetItemIdsWithoutMetadataAsync_ShouldReturn_AllUniqueItemIdsThatDoNotHaveMetadata_ContainedIn_CommodityAuctionsTable()
     {
         //arrange
         await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
@@ -21,10 +21,10 @@ public sealed class CommodityAuctionItemIdQueryTests : IClassFixture<SqliteInMem
 
         await CommodityAuctionSnapshotTestFactory.AddNewerSnapshotToDbAsync(arrangeDbContext, snapshotTime);
 
-        var query = new CommodityAuctionItemIdQuery(arrangeDbContext);
+        var query = new ItemIdsWithoutMetadataQuery(arrangeDbContext);
 
         //act
-        List<long> result = await query.GetAllUniqueItemIdsAsync(CancellationToken.None);
+        List<long> result = await query.GetItemIdsWithoutMetadataAsync(CancellationToken.None);
 
         //assert
         await using var assertDbContext = _db.CreateAssertDbContext();

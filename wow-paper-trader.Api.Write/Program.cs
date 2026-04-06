@@ -14,8 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddScoped<RefreshAllItemMetaDataUseCase>();
-builder.Services.AddScoped<ICommodityAuctionItemIdQuery, CommodityAuctionItemIdQuery>();
+builder.Services.AddScoped<UpdateItemMetaDataUseCase>();
+builder.Services.AddScoped<IItemIdsWithoutMetadataQuery, ItemIdsWithoutMetadataQuery>();
 builder.Services.AddScoped<IItemMetaDataApiAdapter, ItemMetaDataApiAdapter>();
 builder.Services.AddScoped<IItemMetaDataRepository, ItemMetaDataRepository>();
 

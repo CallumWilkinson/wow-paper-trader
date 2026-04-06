@@ -1,20 +1,20 @@
 using Microsoft.Extensions.Logging;
 
-public sealed class RefreshAllItemMetaDataUseCase
+public sealed class UpdateItemMetaDataUseCase
 {
-    private readonly ICommodityAuctionItemIdQuery _commodityAuctionItemIdQuery;
+    private readonly IItemIdsWithoutMetadataQuery _ItemIdsWithoutMetadataQuery;
     private readonly IItemMetaDataApiAdapter _itemMetaDataApiAdapter;
     private readonly IItemMetaDataRepository _itemMetaDataRepository;
-    private readonly ILogger<RefreshAllItemMetaDataUseCase> _logger;
+    private readonly ILogger<UpdateItemMetaDataUseCase> _logger;
 
-    public RefreshAllItemMetaDataUseCase(
-        ICommodityAuctionItemIdQuery commodityAuctionItemIdQuery,
+    public UpdateItemMetaDataUseCase(
+        IItemIdsWithoutMetadataQuery ItemIdsWithoutMetadataQuery,
         IItemMetaDataApiAdapter itemMetaDataApiAdapter,
         IItemMetaDataRepository itemMetaDataRepository,
-        ILogger<RefreshAllItemMetaDataUseCase> logger
+        ILogger<UpdateItemMetaDataUseCase> logger
     )
     {
-        _commodityAuctionItemIdQuery = commodityAuctionItemIdQuery;
+        _ItemIdsWithoutMetadataQuery = ItemIdsWithoutMetadataQuery;
         _itemMetaDataApiAdapter = itemMetaDataApiAdapter;
         _itemMetaDataRepository = itemMetaDataRepository;
         _logger = logger;
@@ -24,7 +24,7 @@ public sealed class RefreshAllItemMetaDataUseCase
     {
         try
         {
-            var itemIds = await _commodityAuctionItemIdQuery.GetAllUniqueItemIdsAsync(cancellationToken);
+            var itemIds = await _ItemIdsWithoutMetadataQuery.GetItemIdsWithoutMetadataAsync(cancellationToken);
 
             var itemMetaDataRecords = new List<ItemMetaDataRecord>();
 
@@ -36,6 +36,7 @@ public sealed class RefreshAllItemMetaDataUseCase
             {
                 try
                 {
+
                     var record = await _itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
 
                     if (record == null)
@@ -66,17 +67,17 @@ public sealed class RefreshAllItemMetaDataUseCase
 
             _logger.LogInformation("Items that failled on http request to blizzard: {itemIdsThatFailedOnHttpError}", string.Join(", ", itemIdsThatFailedOnHttpError));
 
-            _logger.LogInformation("Refresh All Item MetaData Use Case Completed Successfully");
+            _logger.LogInformation("Update Item MetaData Use Case Completed Successfully");
 
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            _logger.LogInformation("Refresh All Item MetaData Use Case Cancelled");
+            _logger.LogInformation("Update Item MetaData Use Case Cancelled");
             throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Refresh All Item MetaData Use Case Failed");
+            _logger.LogError(ex, "Update Item MetaData Use Case Failed");
             throw;
         }
 
