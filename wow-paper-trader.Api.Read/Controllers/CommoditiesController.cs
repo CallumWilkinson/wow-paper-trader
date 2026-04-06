@@ -4,7 +4,7 @@ namespace wow_paper_trader.Api.Read.Controllers;
 
 
 [ApiController]
-[Route("api/commodities")]
+[Route("api/items/commodities")]
 public sealed class CommoditiesController : ControllerBase
 {
     private readonly GetCurrentLowestUnitPriceByItemIdUseCase _useCase;
@@ -14,7 +14,7 @@ public sealed class CommoditiesController : ControllerBase
         _useCase = useCase;
     }
 
-    [HttpGet("{itemId:long}")]
+    [HttpGet("prices/lowest/{itemId:long}")]
     public async Task<ActionResult<CurrentLowestUnitPriceResult>> GetCurrentLowestUnitPrice(
         long itemId,
         CancellationToken cancellationToken

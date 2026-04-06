@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace wow_paper_trader.Api.Read.Controllers;
 
 [ApiController]
-[Route("api/items")]
+[Route("api/items/commodities")]
 public sealed class ItemSearchController : ControllerBase
 {
     private readonly ItemSearchUseCase _useCase;
@@ -12,8 +12,8 @@ public sealed class ItemSearchController : ControllerBase
         _useCase = useCase;
     }
 
-    [HttpGet("{itemName:string}")]
-    public async Task<ActionResult<List<ItemSearchResult>>> SearchItems(string itemName, CancellationToken cancellationToken)
+    [HttpGet("search")]
+    public async Task<ActionResult<List<ItemSearchResult>>> SearchItems([FromQuery] string itemName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(itemName))
         {

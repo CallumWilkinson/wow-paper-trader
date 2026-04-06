@@ -4,17 +4,17 @@ namespace wow_paper_trader.Api.Read.Controllers;
 
 
 [ApiController]
-[Route("api/metadata")]
-public sealed class MetadataAndPriceController : ControllerBase
+[Route("api/items/commodities")]
+public sealed class TooltipController : ControllerBase
 {
     private readonly GetMetadataAndPriceByItemIdUseCase _useCase;
 
-    public MetadataAndPriceController(GetMetadataAndPriceByItemIdUseCase useCase)
+    public TooltipController(GetMetadataAndPriceByItemIdUseCase useCase)
     {
         _useCase = useCase;
     }
 
-    [HttpGet("{itemId:long}")]
+    [HttpGet("metadata/{itemId:long}")]
     public async Task<ActionResult<ItemMetadataAndPriceResult>> GetTooltipAndLowestBuyoutPrice(
         long itemId,
         CancellationToken cancellationToken
