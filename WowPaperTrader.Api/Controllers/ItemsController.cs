@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using WowPaperTrader.Application.Read.Contracts;
+using WowPaperTrader.Application.Read.UseCases;
 
-namespace wow_paper_trader.Api.Read.Controllers;
+namespace WowPaperTrader.Api.Read.Controllers;
 
 
 [ApiController]

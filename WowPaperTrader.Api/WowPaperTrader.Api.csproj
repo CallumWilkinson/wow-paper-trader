@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>wow_paper_trader.Api.Read</RootNamespace>
+    <RootNamespace>WowPaperTrader.Api.Read</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\wow-paper-trader.Application.Read\wow-paper-trader.Application.Read.csproj" />
-    <ProjectReference Include="..\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj" />
+    <ProjectReference Include="..\WowPaperTrader.Domain\WowPaperTrader.Domain.csproj" />
+    <ProjectReference Include="..\WowPaperTrader.Infrastructure\WowPaperTrader.Infrastructure.csproj" />
+    <ProjectReference Include="..\WowPaperTrader.Persistence\WowPaperTrader.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
