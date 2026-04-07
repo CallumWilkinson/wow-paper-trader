@@ -5,11 +5,13 @@ namespace WowPaperTrader.Persistence.Tests.TestFixtures;
 public sealed class SqlServerTestDbFixture : IAsyncLifetime
 {
     private static readonly string ConnectionString =
-        Environment.GetEnvironmentVariable("WowPaperTrader_TEST_DB")
+        Environment.GetEnvironmentVariable("WOW_PAPER_TRADER_TEST_DB")
         ?? throw new InvalidOperationException(
-            "Environment variable 'WowPaperTrader_TEST_DB' is not set. " +
+            "Environment variable 'WOW_PAPER_TRADER_TEST_DB' is not set. " +
             "Set it before running integration tests."
         );
+    // copy-paste this to set environment variable to a new local test db that doesn't interact with regular project db
+    // [System.Environment]::SetEnvironmentVariable( "WOW_PAPER_TRADER_TEST_DB", "Server=CallumPC\SQLEXPRESS;Database=WowPaperTrader_TestDb;Trusted_Connection=True;TrustServerCertificate=True;", "User" )
 
     public DbContextOptions<ApplicationDbContext> Options { get; private set; } = default!;
 
