@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-WowPaperTrader.Ingestor-e452cb22-437d-4140-b2f3-04f0638a2295</UserSecretsId>
+    <UserSecretsId>dotnet-WowPaperTrader-e452cb22-437d-4140-b2f3-04f0638a2295</UserSecretsId>
     <RootNamespace>WowPaperTrader.Ingestor</RootNamespace>
   </PropertyGroup>
 
