@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "wow_paper_trader.Ingestor": {
+    "WowPaperTrader.Ingestor": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {

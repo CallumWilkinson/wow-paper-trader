@@ -1,6 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using wow_paper_trader.Ingestor;
+using WowPaperTrader.Ingestor;
 using System.Net;
+using WowPaperTrader.Application.Read.Interfaces;
+using WowPaperTrader.Application.Read.UseCases;
+using WowPaperTrader.Infrastructure.Adapters;
+using WowPaperTrader.Infrastructure.HttpClients;
+using WowPaperTrader.Persistence;
+using WowPaperTrader.Persistence.Repositories;
 
 
 var builder = Host.CreateApplicationBuilder(args);

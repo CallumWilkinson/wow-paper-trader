@@ -1,4 +1,6 @@
-namespace wow_paper_trader.Ingestor;
+using WowPaperTrader.Application.Read.UseCases;
+
+namespace WowPaperTrader.Ingestor;
 
 public sealed class IngestionRunBackgroundService : BackgroundService
 {

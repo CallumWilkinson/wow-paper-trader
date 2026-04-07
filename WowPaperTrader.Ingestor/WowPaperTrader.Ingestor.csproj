@@ -4,8 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-wow_paper_trader.Ingestor-e452cb22-437d-4140-b2f3-04f0638a2295</UserSecretsId>
-    <RootNamespace>wow_paper_trader.Ingestor</RootNamespace>
+    <UserSecretsId>dotnet-WowPaperTrader.Ingestor-e452cb22-437d-4140-b2f3-04f0638a2295</UserSecretsId>
+    <RootNamespace>WowPaperTrader.Ingestor</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\wow-paper-trader.Application.Write\wow-paper-trader.Application.Write.csproj" />
-    <ProjectReference Include="..\wow-paper-trader.Infrastructure\wow-paper-trader.Infrastructure.csproj" />
-    <ProjectReference Include="..\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj" />
+    <ProjectReference Include="..\WowPaperTrader.Infrastructure\WowPaperTrader.Infrastructure.csproj" />
+    <ProjectReference Include="..\WowPaperTrader.Persistence\WowPaperTrader.Persistence.csproj" />
   </ItemGroup>
 </Project>
