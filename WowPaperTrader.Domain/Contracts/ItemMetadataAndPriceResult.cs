@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Application.Read.Contracts;
+namespace WowPaperTrader.Domain.Contracts;
 
 public sealed class ItemMetadataAndPriceResult
 {

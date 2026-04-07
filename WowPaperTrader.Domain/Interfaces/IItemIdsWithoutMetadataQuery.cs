@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Application.Read.Interfaces;
+namespace WowPaperTrader.Domain.Interfaces;
 
 public interface IItemIdsWithoutMetadataQuery
 {

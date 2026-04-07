@@ -1,7 +1,7 @@
-using WowPaperTrader.Application.Read.Contracts;
-using WowPaperTrader.Application.Read.Entities;
+using WowPaperTrader.Domain.Contracts;
+using WowPaperTrader.Domain.Entities;
 
-namespace WowPaperTrader.Application.Read.Interfaces;
+namespace WowPaperTrader.Domain.Interfaces;
 
 public interface ICommodityAuctionRepository
 {

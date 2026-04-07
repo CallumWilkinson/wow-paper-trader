@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Application.Read.Contracts;
-using WowPaperTrader.Application.Read.Entities;
-using WowPaperTrader.Application.Read.Interfaces;
+using WowPaperTrader.Domain.Contracts;
+using WowPaperTrader.Domain.Entities;
+using WowPaperTrader.Domain.Interfaces;
 using WowPaperTrader.Persistence.EntityMappers;
 
 namespace WowPaperTrader.Persistence.Repositories;

@@ -1,7 +1,7 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Application.Read.Contracts;
-using WowPaperTrader.Application.Read.Interfaces;
+using WowPaperTrader.Domain.Contracts;
+using WowPaperTrader.Domain.Interfaces;
 
 namespace WowPaperTrader.Persistence.Queries;
 

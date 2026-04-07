@@ -1,4 +1,4 @@
-using WowPaperTrader.Application.Read.Contracts;
+using WowPaperTrader.Domain.Contracts;
 
 namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 

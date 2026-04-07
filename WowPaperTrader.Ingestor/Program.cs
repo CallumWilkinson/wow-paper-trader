@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Ingestor;
 using System.Net;
-using WowPaperTrader.Application.Read.Interfaces;
-using WowPaperTrader.Application.Read.UseCases;
+using WowPaperTrader.Domain.Interfaces;
+using WowPaperTrader.Domain.UseCases;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Persistence;

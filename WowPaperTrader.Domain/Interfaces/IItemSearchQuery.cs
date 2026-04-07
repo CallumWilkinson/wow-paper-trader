@@ -1,6 +1,6 @@
-using WowPaperTrader.Application.Read.Contracts;
+using WowPaperTrader.Domain.Contracts;
 
-namespace WowPaperTrader.Application.Read.Interfaces;
+namespace WowPaperTrader.Domain.Interfaces;
 
 public interface IItemSearchQuery
 {

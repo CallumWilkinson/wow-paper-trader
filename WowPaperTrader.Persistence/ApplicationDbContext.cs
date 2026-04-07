@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Application.Read.Entities;
+using WowPaperTrader.Domain.Entities;
 
 namespace WowPaperTrader.Persistence;
 

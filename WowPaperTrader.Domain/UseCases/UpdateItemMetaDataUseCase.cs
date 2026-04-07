@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Application.Read.Contracts;
-using WowPaperTrader.Application.Read.Interfaces;
+using WowPaperTrader.Domain.Contracts;
+using WowPaperTrader.Domain.Interfaces;
 
-namespace WowPaperTrader.Application.Read.UseCases;
+namespace WowPaperTrader.Domain.UseCases;
 
 public sealed class UpdateItemMetaDataUseCase
 {

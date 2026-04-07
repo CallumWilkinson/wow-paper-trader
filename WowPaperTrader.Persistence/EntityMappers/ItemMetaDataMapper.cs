@@ -1,5 +1,5 @@
-using WowPaperTrader.Application.Read.Contracts;
-using WowPaperTrader.Application.Read.Entities;
+using WowPaperTrader.Domain.Contracts;
+using WowPaperTrader.Domain.Entities;
 
 namespace WowPaperTrader.Persistence.EntityMappers;
 

@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Application.Read.Entities;
+namespace WowPaperTrader.Domain.Entities;
 
 public sealed class CommodityAuction
 {

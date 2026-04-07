@@ -1,4 +1,4 @@
-using WowPaperTrader.Application.Read.UseCases;
+using WowPaperTrader.Domain.UseCases;
 
 namespace WowPaperTrader.Ingestor;
 
