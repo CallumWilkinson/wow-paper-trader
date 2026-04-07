@@ -4,12 +4,11 @@ namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 
 public static class ItemMetaDataRecordFactory
 {
-
     public static List<ItemMetaDataRecord> CreateRecordsList()
     {
         var fakeItems = new List<ItemMetaDataRecord>
         {
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2770,
                 Name = "Copper Ore",
@@ -38,7 +37,7 @@ public static class ItemMetaDataRecordFactory
                 LastFetchedUtc = DateTime.UtcNow
             },
 
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 765,
                 Name = "Silverleaf",
@@ -67,7 +66,7 @@ public static class ItemMetaDataRecordFactory
                 LastFetchedUtc = DateTime.UtcNow
             },
 
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2447,
                 Name = "Peacebloom",
@@ -96,7 +95,7 @@ public static class ItemMetaDataRecordFactory
                 LastFetchedUtc = DateTime.UtcNow
             },
 
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2589,
                 Name = "Linen Cloth",
@@ -125,7 +124,7 @@ public static class ItemMetaDataRecordFactory
                 LastFetchedUtc = DateTime.UtcNow
             },
 
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2318,
                 Name = "Light Leather",
@@ -162,7 +161,7 @@ public static class ItemMetaDataRecordFactory
     {
         return new List<ItemMetaDataRecord>
         {
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2589,
                 Name = "Linen Cloth",
@@ -174,7 +173,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2996,
                 Name = "Bolt of Linen Cloth",
@@ -186,7 +185,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 1251,
                 Name = "Linen Bandage",
@@ -198,7 +197,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2581,
                 Name = "Heavy Linen Bandage",
@@ -210,7 +209,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 10001,
                 Name = "Heavy Linen Pants",
@@ -222,7 +221,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 10002,
                 Name = "Fine Linen Shirt",
@@ -234,7 +233,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 10003,
                 Name = "linen robe", // case variation
@@ -248,7 +247,7 @@ public static class ItemMetaDataRecordFactory
             },
 
             // Noise (should NOT match "linen")
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2770,
                 Name = "Copper Ore",
@@ -260,7 +259,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 765,
                 Name = "Silverleaf",
@@ -272,7 +271,7 @@ public static class ItemMetaDataRecordFactory
                 ImageUrl = "fake/url",
                 LastFetchedUtc = DateTime.UtcNow
             },
-            new ItemMetaDataRecord
+            new()
             {
                 ItemId = 2447,
                 Name = "Peacebloom",

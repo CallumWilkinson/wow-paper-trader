@@ -12,6 +12,7 @@ public sealed class ItemIdsWithoutMetadataQuery : IItemIdsWithoutMetadataQuery
     {
         _dbContext = dbContext;
     }
+
     public async Task<List<long>> GetItemIdsWithoutMetadataAsync(CancellationToken cancellationToken)
     {
         const string sql = @"
@@ -36,7 +37,5 @@ public sealed class ItemIdsWithoutMetadataQuery : IItemIdsWithoutMetadataQuery
         {
             throw new Exception("Failed to retrieve unique ItemIds from CommodityAuctions", ex);
         }
-
-
     }
 }

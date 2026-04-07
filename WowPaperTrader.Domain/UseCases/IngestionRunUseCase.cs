@@ -5,8 +5,8 @@ namespace WowPaperTrader.Domain.UseCases;
 
 public sealed class IngestionRunUseCase
 {
-    private readonly ILogger<IngestionRunUseCase> _logger;
     private readonly ICommodityAuctionApiAdapter _auctionApiAdapter;
+    private readonly ILogger<IngestionRunUseCase> _logger;
     private readonly ICommodityAuctionRepository _repository;
 
     public IngestionRunUseCase(

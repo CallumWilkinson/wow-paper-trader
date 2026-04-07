@@ -23,12 +23,16 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
         await db.Database.EnsureCreatedAsync();
     }
 
+    public async Task DisposeAsync()
+    {
+        await _connection.DisposeAsync();
+    }
+
     private async Task ResetDatabaseAsync()
     {
         if (Options == null)
-        {
-            throw new InvalidOperationException("Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
-        }
+            throw new InvalidOperationException(
+                "Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
         await using var db = new ApplicationDbContext(Options);
         await db.Database.EnsureDeletedAsync();
         await db.Database.EnsureCreatedAsync();
@@ -49,15 +53,8 @@ public sealed class SqliteInMemoryDbFixture : IAsyncLifetime
     private ApplicationDbContext CreateDbContext()
     {
         if (Options == null)
-        {
-            throw new InvalidOperationException("Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
-        }
+            throw new InvalidOperationException(
+                "Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
         return new ApplicationDbContext(Options);
     }
-
-    public async Task DisposeAsync()
-    {
-        await _connection.DisposeAsync();
-    }
-
 }

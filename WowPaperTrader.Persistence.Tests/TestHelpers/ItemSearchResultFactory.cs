@@ -9,15 +9,15 @@ public static class ItemSearchResultFactory
         return new List<ItemSearchResult>
         {
             // Exact match
-            new ItemSearchResult { ItemId = 2589, Name = "Linen Cloth" },
+            new() { ItemId = 2589, Name = "Linen Cloth" },
 
             // Starts with "linen"
-            new ItemSearchResult { ItemId = 1251, Name = "Linen Bandage" },
+            new() { ItemId = 1251, Name = "Linen Bandage" },
 
             // Contains "linen"
-            new ItemSearchResult { ItemId = 10001, Name = "Heavy Linen Pants" },
-            new ItemSearchResult { ItemId = 10002, Name = "Fine Linen Shirt" },
-            new ItemSearchResult { ItemId = 10003, Name = "linen robe" }
+            new() { ItemId = 10001, Name = "Heavy Linen Pants" },
+            new() { ItemId = 10002, Name = "Fine Linen Shirt" },
+            new() { ItemId = 10003, Name = "linen robe" }
         };
     }
 }

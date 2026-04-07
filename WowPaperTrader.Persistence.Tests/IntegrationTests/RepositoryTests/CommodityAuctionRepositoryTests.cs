@@ -70,7 +70,5 @@ public sealed class CommodityAuctionRepositoryTests : IClassFixture<SqliteInMemo
 
         savedAuctionRows.Should().NotBeNull();
         savedAuctionRows.Should().BeEquivalentTo(expectedAuctionRows);
-
     }
 }
-

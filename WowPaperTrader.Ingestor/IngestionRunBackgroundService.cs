@@ -37,8 +37,6 @@ public sealed class IngestionRunBackgroundService : BackgroundService
             {
                 return;
             }
-
         }
     }
-
 }

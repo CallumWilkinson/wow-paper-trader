@@ -29,10 +29,8 @@ public sealed class IngestionRun
         Status = nextStatus;
         LastUpdatedAtUtc = utcNow;
 
-        if (Status == IngestionRunStatus.Finished || Status == IngestionRunStatus.Failed || Status == IngestionRunStatus.Cancelled)
-        {
-            FinishedAtUtc = utcNow;
-        }
+        if (Status == IngestionRunStatus.Finished || Status == IngestionRunStatus.Failed ||
+            Status == IngestionRunStatus.Cancelled) FinishedAtUtc = utcNow;
     }
 
     public void MarkFailed(Exception ex, DateTime utcNow)
@@ -42,5 +40,4 @@ public sealed class IngestionRun
         ErrorMessage = ex.Message;
         ErrorStack = ex.ToString();
     }
-
 }

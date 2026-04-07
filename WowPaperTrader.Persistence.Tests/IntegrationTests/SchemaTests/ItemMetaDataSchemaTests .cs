@@ -1,3 +1,4 @@
+using System.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
@@ -28,10 +29,7 @@ public sealed class ItemMetaDataSchemaTests : IClassFixture<SqliteInMemoryDbFixt
     {
         var connection = dbContext.Database.GetDbConnection();
 
-        if (connection.State != System.Data.ConnectionState.Open)
-        {
-            await connection.OpenAsync();
-        }
+        if (connection.State != ConnectionState.Open) await connection.OpenAsync();
 
         await using var command = connection.CreateCommand();
         command.CommandText = $"PRAGMA table_info({tableName})";
@@ -42,7 +40,7 @@ public sealed class ItemMetaDataSchemaTests : IClassFixture<SqliteInMemoryDbFixt
 
         while (await reader.ReadAsync())
         {
-            string columnName = reader.GetString(reader.GetOrdinal("name"));
+            var columnName = reader.GetString(reader.GetOrdinal("name"));
             columnNames.Add(columnName);
         }
 

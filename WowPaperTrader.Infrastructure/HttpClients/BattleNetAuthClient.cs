@@ -7,19 +7,16 @@ namespace WowPaperTrader.Infrastructure.HttpClients;
 
 public sealed class BattleNetAuthClient
 {
-    private string? _accessToken = null;
-
-    private DateTime _tokenExpiresAtUtc;
-
-    public DateTime TokenCreatedAt { get; private set; }
-
     private readonly string _clientId;
 
     private readonly string _clientSecret;
 
-    private readonly string TokenUrl = "https://oauth.battle.net/token";
-
     private readonly HttpClient _httpClient;
+
+    private readonly string TokenUrl = "https://oauth.battle.net/token";
+    private string? _accessToken;
+
+    private DateTime _tokenExpiresAtUtc;
 
     public BattleNetAuthClient(IConfiguration config, HttpClient httpClient)
     {
@@ -27,12 +24,14 @@ public sealed class BattleNetAuthClient
 
         //access dotnet user secrets
         _clientId = config["Blizzard:ClientId"] ?? throw new InvalidOperationException("Blizzard:ClientId is missing");
-        _clientSecret = config["Blizzard:ClientSecret"] ?? throw new InvalidOperationException("Blizzard:ClientSecret is missing");
+        _clientSecret = config["Blizzard:ClientSecret"] ??
+                        throw new InvalidOperationException("Blizzard:ClientSecret is missing");
     }
+
+    public DateTime TokenCreatedAt { get; private set; }
 
     public async Task<string?> RequestNewTokenAsync(CancellationToken cancellationToken)
     {
-
         if (_accessToken == null || DateTime.UtcNow >= _tokenExpiresAtUtc)
         {
             //OAuth 2.0 requires format to be Authorization: Basic base64(client_id:client_secret)
@@ -56,10 +55,7 @@ public sealed class BattleNetAuthClient
             var token = doc.RootElement.GetProperty("access_token").GetString();
             var tokenExpiry = doc.RootElement.GetProperty("expires_in").GetDouble();
 
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                throw new InvalidOperationException("'access_token' was empty.");
-            }
+            if (string.IsNullOrWhiteSpace(token)) throw new InvalidOperationException("'access_token' was empty.");
 
             _accessToken = token;
 
@@ -72,6 +68,5 @@ public sealed class BattleNetAuthClient
         }
 
         return _accessToken;
-
     }
 }

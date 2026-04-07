@@ -20,16 +20,12 @@ public sealed class GetCurrentLowestUnitPriceByItemIdUseCase
     )
     {
         if (itemId <= 0)
-        {
             throw new ArgumentOutOfRangeException
             (
                 nameof(itemId),
                 "Invalid itemId"
             );
-        }
 
         return await _query.GetAsync(itemId, cancellationToken);
     }
-
-
 }

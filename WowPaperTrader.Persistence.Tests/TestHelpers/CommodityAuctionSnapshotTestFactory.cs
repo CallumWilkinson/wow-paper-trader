@@ -5,7 +5,7 @@ namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 
 public static class CommodityAuctionSnapshotTestFactory
 {
-    public async static Task AddOlderSnapshotToDbAsync(ApplicationDbContext arrangeDbContext, DateTime olderTime)
+    public static async Task AddOlderSnapshotToDbAsync(ApplicationDbContext arrangeDbContext, DateTime olderTime)
     {
         var logger = NullLogger<CommodityAuctionRepository>.Instance;
 
@@ -20,10 +20,9 @@ public static class CommodityAuctionSnapshotTestFactory
             result,
             CancellationToken.None
         );
-
     }
 
-    public async static Task AddNewerSnapshotToDbAsync(ApplicationDbContext arrangeDbContext, DateTime newerTime)
+    public static async Task AddNewerSnapshotToDbAsync(ApplicationDbContext arrangeDbContext, DateTime newerTime)
     {
         var logger = NullLogger<CommodityAuctionRepository>.Instance;
 
@@ -39,5 +38,4 @@ public static class CommodityAuctionSnapshotTestFactory
             CancellationToken.None
         );
     }
-
 }

@@ -8,8 +8,8 @@ public static class WowApiResultFactory
     {
         var auctions = new List<AuctionSnapshotRow>
         {
-            new AuctionSnapshotRow(19012, 5, 250000, "LONG"),
-            new AuctionSnapshotRow(19020, 10, 120000, "SHORT")
+            new(19012, 5, 250000, "LONG"),
+            new(19020, 10, 120000, "SHORT")
         };
 
         var snapshot = new AuctionSnapshot(auctions);
@@ -25,8 +25,8 @@ public static class WowApiResultFactory
     {
         var auctions = new List<AuctionSnapshotRow>
         {
-            new AuctionSnapshotRow(2770, 10, 50, "LONG"),
-            new AuctionSnapshotRow(1234, 20, 999, "SHORT")
+            new(2770, 10, 50, "LONG"),
+            new(1234, 20, 999, "SHORT")
         };
 
 
@@ -43,9 +43,9 @@ public static class WowApiResultFactory
     {
         var auctions = new List<AuctionSnapshotRow>
         {
-            new AuctionSnapshotRow(2770, 10, 120, "LONG"),
-            new AuctionSnapshotRow(2770, 5, 80, "SHORT"),
-            new AuctionSnapshotRow(9999, 1, 1, "MEDIUM"),
+            new(2770, 10, 120, "LONG"),
+            new(2770, 5, 80, "SHORT"),
+            new(9999, 1, 1, "MEDIUM")
         };
 
         var snapshot = new AuctionSnapshot(auctions);

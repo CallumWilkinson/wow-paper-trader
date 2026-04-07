@@ -13,6 +13,7 @@ public sealed class ItemMetadataAndPriceQuery : IItemMetadataAndPriceQuery
     {
         _dbContext = dbContext;
     }
+
     public async Task<ItemMetadataAndPriceResult?> GetAsync(long itemId, CancellationToken cancellationToken)
     {
         const string sql =
@@ -73,9 +74,8 @@ public sealed class ItemMetadataAndPriceQuery : IItemMetadataAndPriceQuery
 
         var connection = _dbContext.Database.GetDbConnection();
 
-        var command = new CommandDefinition(sql, new { itemId = itemId }, cancellationToken: cancellationToken);
+        var command = new CommandDefinition(sql, new { itemId }, cancellationToken: cancellationToken);
 
         return await connection.QuerySingleOrDefaultAsync<ItemMetadataAndPriceResult>(command);
-
     }
 }

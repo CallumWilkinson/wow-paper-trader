@@ -36,11 +36,9 @@ public sealed class UpdateItemMetaDataUseCase
 
             var itemIdsThatFailedOnHttpError = new List<long>();
 
-            foreach (long itemId in itemIds)
-            {
+            foreach (var itemId in itemIds)
                 try
                 {
-
                     var record = await _itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
 
                     if (record == null)
@@ -63,16 +61,16 @@ public sealed class UpdateItemMetaDataUseCase
                     _logger.LogWarning(ex, "HTTP failure while fetching metadata for item {ItemId}. Skipping.", itemId);
                 }
 
-            }
-
             await _itemMetaDataRepository.SaveItemMetaDataAsync(itemMetaDataRecords, cancellationToken);
 
-            _logger.LogInformation("Items that have auctions listed but no meta data from blizzard: {itemIdsForMetaDataNotFound}", string.Join(", ", itemIdsForMetaDataNotFound));
+            _logger.LogInformation(
+                "Items that have auctions listed but no meta data from blizzard: {itemIdsForMetaDataNotFound}",
+                string.Join(", ", itemIdsForMetaDataNotFound));
 
-            _logger.LogInformation("Items that failled on http request to blizzard: {itemIdsThatFailedOnHttpError}", string.Join(", ", itemIdsThatFailedOnHttpError));
+            _logger.LogInformation("Items that failled on http request to blizzard: {itemIdsThatFailedOnHttpError}",
+                string.Join(", ", itemIdsThatFailedOnHttpError));
 
             _logger.LogInformation("Update Item MetaData Use Case Completed Successfully");
-
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -84,7 +82,5 @@ public sealed class UpdateItemMetaDataUseCase
             _logger.LogError(ex, "Update Item MetaData Use Case Failed");
             throw;
         }
-
     }
-
 }

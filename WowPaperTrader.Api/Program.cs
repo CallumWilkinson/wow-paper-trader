@@ -40,30 +40,24 @@ builder.Services.AddHttpClient<BattleNetAuthClient>()
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
     {
         AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10)
     });
 
 var wowApiBaseUrl = builder.Configuration["WowApi:BaseUrl"]
                     ?? throw new InvalidOperationException("WowApi:BaseUrl is missing.");
 
-builder.Services.AddHttpClient<ItemMetaDataClient>(client =>
-    {
-        client.BaseAddress = new Uri(wowApiBaseUrl);
-    })
+builder.Services.AddHttpClient<ItemMetaDataClient>(client => { client.BaseAddress = new Uri(wowApiBaseUrl); })
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
     {
         AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10)
     });
 
-builder.Services.AddHttpClient<ItemMediaClient>(client =>
-    {
-        client.BaseAddress = new Uri(wowApiBaseUrl);
-    })
+builder.Services.AddHttpClient<ItemMediaClient>(client => { client.BaseAddress = new Uri(wowApiBaseUrl); })
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
     {
         AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10)
     });
 
 
@@ -79,4 +73,3 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.Run();
-

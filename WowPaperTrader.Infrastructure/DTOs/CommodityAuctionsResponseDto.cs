@@ -4,31 +4,25 @@ namespace WowPaperTrader.Infrastructure.DTOs;
 
 public sealed class CommodityAuctionsResponseDto
 {
-    [JsonPropertyName("auctions")]
-    public required List<CommodityAuctionDto> CommodityAuctions { get; init; }
+    [JsonPropertyName("auctions")] public required List<CommodityAuctionDto> CommodityAuctions { get; init; }
 }
 
 public sealed class CommodityAuctionDto
 {
-    [JsonPropertyName("id")]
-    public long Id { get; init; }
+    [JsonPropertyName("id")] public long Id { get; init; }
 
-    [JsonPropertyName("item")]
-    public required CommodityAuctionItemDto Item { get; init; }
+    [JsonPropertyName("item")] public required CommodityAuctionItemDto Item { get; init; }
 
-    [JsonPropertyName("quantity")]
-    public long Quantity { get; init; }
+    [JsonPropertyName("quantity")] public long Quantity { get; init; }
 
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     [JsonPropertyName("unit_price")]
     public long UnitPrice { get; init; }
 
-    [JsonPropertyName("time_left")]
-    public required string TimeLeft { get; init; }
+    [JsonPropertyName("time_left")] public required string TimeLeft { get; init; }
 }
 
 public sealed class CommodityAuctionItemDto
 {
-    [JsonPropertyName("id")]
-    public long Id { get; init; }
+    [JsonPropertyName("id")] public long Id { get; init; }
 }

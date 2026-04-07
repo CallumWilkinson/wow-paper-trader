@@ -7,10 +7,7 @@ public static class ItemMetaDataMapper
 {
     public static ItemMetaData MapToEntity(ItemMetaDataRecord record)
     {
-        if (record == null)
-        {
-            throw new ArgumentNullException(nameof(record));
-        }
+        if (record == null) throw new ArgumentNullException(nameof(record));
 
         return new ItemMetaData
         {

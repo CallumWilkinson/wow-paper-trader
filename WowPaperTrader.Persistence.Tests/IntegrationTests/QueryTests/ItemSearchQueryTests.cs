@@ -28,7 +28,6 @@ public sealed class ItemSearchQueryTests : IClassFixture<SqlServerTestDbFixture>
             var metaData = ItemMetaDataRecordFactory.CreateLinenSearchTestRecords();
 
             await repo.SaveItemMetaDataAsync(metaData, CancellationToken.None);
-
         }
 
         const string searchString = "linen";

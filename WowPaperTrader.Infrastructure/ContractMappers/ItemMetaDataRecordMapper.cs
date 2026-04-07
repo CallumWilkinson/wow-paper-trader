@@ -10,10 +10,7 @@ public static class ItemMetaDataRecordMapper
         ItemMediaResponseDto mediaDto,
         DateTime lastFetchedUtc)
     {
-        if (metadataDto == null || mediaDto == null)
-        {
-            throw new ArgumentNullException(nameof(metadataDto));
-        }
+        if (metadataDto == null || mediaDto == null) throw new ArgumentNullException(nameof(metadataDto));
 
         return new ItemMetaDataRecord
         {
@@ -49,13 +46,10 @@ public static class ItemMetaDataRecordMapper
     {
         foreach (var asset in dto.Assets)
         {
-            bool isIcon = asset.Key == "icon";
-            bool hasValue = string.IsNullOrWhiteSpace(asset.Value) == false;
+            var isIcon = asset.Key == "icon";
+            var hasValue = !string.IsNullOrWhiteSpace(asset.Value);
 
-            if (isIcon && hasValue)
-            {
-                return asset.Value;
-            }
+            if (isIcon && hasValue) return asset.Value;
         }
 
         return null;

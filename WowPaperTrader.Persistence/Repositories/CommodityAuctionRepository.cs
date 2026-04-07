@@ -10,6 +10,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 {
     public readonly ApplicationDbContext _dbContext;
     public readonly ILogger<CommodityAuctionRepository> _logger;
+
     public CommodityAuctionRepository(
         ApplicationDbContext dbContext,
         ILogger<CommodityAuctionRepository> logger
@@ -18,6 +19,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
         _dbContext = dbContext;
         _logger = logger;
     }
+
     public async Task<IngestionRun> CreateIngestionRunAsync(CancellationToken cancellationToken)
     {
         var run = new IngestionRun();
@@ -27,7 +29,8 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
         return run;
     }
 
-    public async Task SaveSnapshotAsync(IngestionRun run, WowApiResult<AuctionSnapshot> wowApiResult, CancellationToken cancellationToken)
+    public async Task SaveSnapshotAsync(IngestionRun run, WowApiResult<AuctionSnapshot> wowApiResult,
+        CancellationToken cancellationToken)
     {
         var cancellationRegistration =
             cancellationToken.Register(() =>
@@ -53,17 +56,14 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 
         finally
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                await MarkRunCancelledAsync(run);
-            }
+            if (cancellationToken.IsCancellationRequested) await MarkRunCancelledAsync(run);
 
             cancellationRegistration.Dispose();
         }
-
     }
 
-    private async Task RunCommodityAuctionSnapshotDatabaseTransaction(IngestionRun run, WowApiResult<AuctionSnapshot> wowApiResult, CancellationToken cancellationToken)
+    private async Task RunCommodityAuctionSnapshotDatabaseTransaction(IngestionRun run,
+        WowApiResult<AuctionSnapshot> wowApiResult, CancellationToken cancellationToken)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -74,18 +74,19 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
             var startingAdd = DateTime.UtcNow;
             _logger.LogInformation("Adding to DbContext at {Time}", startingAdd);
             _dbContext.CommodityAuctionSnapshots.Add(snapshotEntity);
-            _logger.LogInformation("DbContext Add took {Seconds} Seconds", (DateTime.UtcNow - startingAdd).TotalSeconds);
+            _logger.LogInformation("DbContext Add took {Seconds} Seconds",
+                (DateTime.UtcNow - startingAdd).TotalSeconds);
 
             var startingSaveToDb = DateTime.UtcNow;
             _logger.LogInformation("Starting SQL Write at {Time}", startingSaveToDb);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("SQL Write took {Seconds} Seconds", (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
+            _logger.LogInformation("SQL Write took {Seconds} Seconds",
+                (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
             run.TransitionTo(IngestionRunStatus.Finished, DateTime.UtcNow);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
-
         }
         catch (Exception)
         {
@@ -103,8 +104,6 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 
         await _dbContext.SaveChangesAsync(CancellationToken.None);
         _logger.LogError(exception, "Ingesion Run Failed. IngestionRunId={RunId}", run.Id);
-
-        return;
     }
 
     private async Task MarkRunCancelledAsync(IngestionRun run)
@@ -114,7 +113,5 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 
         await _dbContext.SaveChangesAsync(CancellationToken.None);
         _logger.LogError("Ingestion Run Cancelled. RunId={RunId}", run.Id);
-
-        return;
     }
 }

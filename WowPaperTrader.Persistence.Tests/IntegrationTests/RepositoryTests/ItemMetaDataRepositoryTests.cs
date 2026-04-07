@@ -46,8 +46,7 @@ public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDb
             .ToList();
 
         actual.Should().BeEquivalentTo(expected, options => options
-                .Excluding(x => x.Id)
-                .WithStrictOrdering());
+            .Excluding(x => x.Id)
+            .WithStrictOrdering());
     }
-
 }

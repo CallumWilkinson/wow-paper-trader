@@ -4,13 +4,12 @@ using WowPaperTrader.Domain.UseCases;
 
 namespace WowPaperTrader.Api.Controllers;
 
-
 [ApiController]
 [Route("api/v1/items")]
 public sealed class ItemsController : ControllerBase
 {
-    private readonly GetCurrentLowestUnitPriceByItemIdUseCase _lowestPriceUseCase;
     private readonly ItemSearchUseCase _itemSearchUseCase;
+    private readonly GetCurrentLowestUnitPriceByItemIdUseCase _lowestPriceUseCase;
     private readonly GetMetadataAndPriceByItemIdUseCase _metadataUseCase;
 
     public ItemsController(
@@ -24,12 +23,10 @@ public sealed class ItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<ItemSearchResult>>> SearchItems([FromQuery] string itemName, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<ItemSearchResult>>> SearchItems([FromQuery] string itemName,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(itemName))
-        {
-            return BadRequest("Name is required.");
-        }
+        if (string.IsNullOrWhiteSpace(itemName)) return BadRequest("Name is required.");
 
         var result = await _itemSearchUseCase.ExecuteAsync(itemName, cancellationToken);
 
@@ -38,45 +35,31 @@ public sealed class ItemsController : ControllerBase
 
     [HttpGet("{itemId:long}")]
     public async Task<ActionResult<ItemMetadataAndPriceResult>> GetTooltipAndLowestBuyoutPrice(
-    long itemId,
-    CancellationToken cancellationToken
-)
+        long itemId,
+        CancellationToken cancellationToken
+    )
     {
-        if (itemId <= 0)
-        {
-            return BadRequest("Invalid itemId.");
-        }
+        if (itemId <= 0) return BadRequest("Invalid itemId.");
 
         var result = await _metadataUseCase.ExecuteAsync(itemId, cancellationToken);
 
-        if (result is null)
-        {
-            return NotFound();
-        }
+        if (result is null) return NotFound();
 
         return Ok(result);
     }
 
     [HttpGet("{itemId:long}/auctions/lowest")]
     public async Task<ActionResult<CurrentLowestUnitPriceResult>> GetCurrentLowestUnitPrice(
-    long itemId,
-    CancellationToken cancellationToken
-)
+        long itemId,
+        CancellationToken cancellationToken
+    )
     {
-        if (itemId <= 0)
-        {
-            return BadRequest("Invalid itemId.");
-        }
+        if (itemId <= 0) return BadRequest("Invalid itemId.");
 
         var result = await _lowestPriceUseCase.ExecuteAsync(itemId, cancellationToken);
 
-        if (result is null)
-        {
-            return NotFound();
-        }
+        if (result is null) return NotFound();
 
         return Ok(result);
     }
-
-
 }

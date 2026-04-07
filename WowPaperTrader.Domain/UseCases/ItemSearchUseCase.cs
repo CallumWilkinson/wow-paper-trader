@@ -15,13 +15,11 @@ public sealed class ItemSearchUseCase
     public async Task<List<ItemSearchResult>> ExecuteAsync(string itemName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(itemName))
-        {
             throw new ArgumentNullException
             (
                 nameof(itemName),
                 "You must enter an item name"
             );
-        }
 
         var topFiveResults = await _query.SearchByNameAsync(itemName, cancellationToken);
 

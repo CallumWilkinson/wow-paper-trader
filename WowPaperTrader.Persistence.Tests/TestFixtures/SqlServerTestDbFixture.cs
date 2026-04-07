@@ -24,12 +24,20 @@ public sealed class SqlServerTestDbFixture : IAsyncLifetime
         await ResetDatabaseAsync();
     }
 
+    public async Task DisposeAsync()
+    {
+        if (Options == null) return;
+
+        await using var db = new ApplicationDbContext(Options);
+
+        await db.Database.EnsureDeletedAsync();
+    }
+
     private async Task ResetDatabaseAsync()
     {
         if (Options == null)
-        {
-            throw new InvalidOperationException("Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
-        }
+            throw new InvalidOperationException(
+                "Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
 
         await using var db = new ApplicationDbContext(Options);
 
@@ -52,22 +60,8 @@ public sealed class SqlServerTestDbFixture : IAsyncLifetime
     private ApplicationDbContext CreateDbContext()
     {
         if (Options == null)
-        {
-            throw new InvalidOperationException("Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
-        }
+            throw new InvalidOperationException(
+                "Fixture not initialized. Did you forget to use the fixture via IClassFixture?");
         return new ApplicationDbContext(Options);
     }
-
-    public async Task DisposeAsync()
-    {
-        if (Options == null)
-        {
-            return;
-        }
-
-        await using var db = new ApplicationDbContext(Options);
-
-        await db.Database.EnsureDeletedAsync();
-    }
-
 }

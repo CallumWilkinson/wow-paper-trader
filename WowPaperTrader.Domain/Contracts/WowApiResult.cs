@@ -1,7 +1,6 @@
 namespace WowPaperTrader.Domain.Contracts;
 
-public sealed record WowApiResult<T>
-(
+public sealed record WowApiResult<T>(
     T Payload,
     DateTime DataReturnedAtUtc,
     string Endpoint

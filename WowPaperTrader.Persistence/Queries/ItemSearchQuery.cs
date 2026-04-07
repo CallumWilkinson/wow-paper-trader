@@ -13,6 +13,7 @@ public sealed class ItemSearchQuery : IItemSearchQuery
     {
         _dbContext = dbContext;
     }
+
     public async Task<List<ItemSearchResult>> SearchByNameAsync(string itemName, CancellationToken cancellationToken)
     {
         const string sql = @"
@@ -40,7 +41,5 @@ public sealed class ItemSearchQuery : IItemSearchQuery
         var topFiveResults = await connection.QueryAsync<ItemSearchResult>(command);
 
         return topFiveResults.ToList();
-
     }
-
 }

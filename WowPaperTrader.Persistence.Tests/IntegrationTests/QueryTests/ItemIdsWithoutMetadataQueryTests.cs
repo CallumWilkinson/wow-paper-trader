@@ -15,7 +15,8 @@ public sealed class ItemIdsWithoutMetadataQueryTests : IClassFixture<SqliteInMem
     }
 
     [Fact]
-    public async Task GetItemIdsWithoutMetadataAsync_ShouldReturn_AllUniqueItemIdsThatDoNotHaveMetadata_ContainedIn_CommodityAuctionsTable()
+    public async Task
+        GetItemIdsWithoutMetadataAsync_ShouldReturn_AllUniqueItemIdsThatDoNotHaveMetadata_ContainedIn_CommodityAuctionsTable()
     {
         //arrange
         await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
@@ -27,7 +28,7 @@ public sealed class ItemIdsWithoutMetadataQueryTests : IClassFixture<SqliteInMem
         var query = new ItemIdsWithoutMetadataQuery(arrangeDbContext);
 
         //act
-        List<long> result = await query.GetItemIdsWithoutMetadataAsync(CancellationToken.None);
+        var result = await query.GetItemIdsWithoutMetadataAsync(CancellationToken.None);
 
         //assert
         await using var assertDbContext = _db.CreateAssertDbContext();
