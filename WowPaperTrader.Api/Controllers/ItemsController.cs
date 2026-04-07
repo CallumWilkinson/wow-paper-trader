@@ -9,17 +9,20 @@ namespace WowPaperTrader.Api.Controllers;
 public sealed class ItemsController : ControllerBase
 {
     private readonly ItemSearchUseCase _itemSearchUseCase;
-    private readonly GetCurrentLowestUnitPriceByItemIdUseCase _lowestPriceUseCase;
-    private readonly GetMetadataAndPriceByItemIdUseCase _metadataUseCase;
+    private readonly GetCurrentLowestUnitPriceByItemIdUseCase _getLowestPriceUseCase;
+    private readonly GetMetadataAndPriceByItemIdUseCase _getMetadataUseCase;
+    private readonly UpdateItemMetaDataUseCase _updateMetadataUseCase;
 
     public ItemsController(
-        GetCurrentLowestUnitPriceByItemIdUseCase lowestPriceUseCase,
+        GetCurrentLowestUnitPriceByItemIdUseCase getLowestPriceUseCase,
         ItemSearchUseCase itemSearchUseCase,
-        GetMetadataAndPriceByItemIdUseCase metadataUseCase)
+        GetMetadataAndPriceByItemIdUseCase getMetadataUseCase,
+        UpdateItemMetaDataUseCase updateMetadataUseCase)
     {
-        _lowestPriceUseCase = lowestPriceUseCase;
+        _getLowestPriceUseCase = getLowestPriceUseCase;
         _itemSearchUseCase = itemSearchUseCase;
-        _metadataUseCase = metadataUseCase;
+        _getMetadataUseCase = getMetadataUseCase;
+        _updateMetadataUseCase = updateMetadataUseCase;
     }
 
     [HttpGet]
@@ -41,7 +44,7 @@ public sealed class ItemsController : ControllerBase
     {
         if (itemId <= 0) return BadRequest("Invalid itemId.");
 
-        var result = await _metadataUseCase.ExecuteAsync(itemId, cancellationToken);
+        var result = await _getMetadataUseCase.ExecuteAsync(itemId, cancellationToken);
 
         if (result is null) return NotFound();
 
@@ -56,10 +59,18 @@ public sealed class ItemsController : ControllerBase
     {
         if (itemId <= 0) return BadRequest("Invalid itemId.");
 
-        var result = await _lowestPriceUseCase.ExecuteAsync(itemId, cancellationToken);
+        var result = await _getLowestPriceUseCase.ExecuteAsync(itemId, cancellationToken);
 
         if (result is null) return NotFound();
 
         return Ok(result);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> UpdateItemMetaData(CancellationToken cancellationToken)
+    {
+        await _updateMetadataUseCase.ExecuteAsync(cancellationToken);
+
+        return Ok();
     }
 }
