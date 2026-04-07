@@ -5,7 +5,7 @@ namespace WowPaperTrader.Api.Controllers;
 
 
 [ApiController]
-[Route("api/metadata")]
+[Route("api/v1/items")]
 public sealed class UpdateItemMetaDataController : ControllerBase
 {
     private readonly UpdateItemMetaDataUseCase _useCase;
@@ -15,7 +15,7 @@ public sealed class UpdateItemMetaDataController : ControllerBase
         _useCase = useCase;
     }
 
-    [HttpPost("update")]
+    [HttpPost()]
     public async Task<IActionResult> UpdateItemMetaData(CancellationToken cancellationToken)
     {
         await _useCase.ExecuteAsync(cancellationToken);
