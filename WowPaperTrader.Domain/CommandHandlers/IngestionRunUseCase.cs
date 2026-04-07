@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using WowPaperTrader.Domain.Interfaces;
 
-namespace WowPaperTrader.Domain.UseCases;
+namespace WowPaperTrader.Domain.CommandHandlers;
 
 public sealed class IngestionRunUseCase
 {

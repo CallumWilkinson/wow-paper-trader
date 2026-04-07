@@ -1,20 +1,18 @@
 using WowPaperTrader.Domain.Contracts;
 using WowPaperTrader.Domain.Interfaces;
 
-namespace WowPaperTrader.Domain.UseCases;
+namespace WowPaperTrader.Domain.RequestHandlers;
 
-public sealed class GetCurrentLowestUnitPriceByItemIdUseCase
+public sealed class GetMetadataAndPriceByItemIdUseCase
 {
-    private readonly ICurrentLowestUnitPriceQuery _query;
+    private readonly IItemMetadataAndPriceQuery _query;
 
-    public GetCurrentLowestUnitPriceByItemIdUseCase(
-        ICurrentLowestUnitPriceQuery query
-    )
+    public GetMetadataAndPriceByItemIdUseCase(IItemMetadataAndPriceQuery query)
     {
         _query = query;
     }
 
-    public async Task<CurrentLowestUnitPriceResult?> ExecuteAsync(
+    public async Task<ItemMetadataAndPriceResult?> ExecuteAsync(
         long itemId,
         CancellationToken cancellationToken
     )

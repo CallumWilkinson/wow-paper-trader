@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using WowPaperTrader.Domain.CommandHandlers;
 using WowPaperTrader.Domain.Contracts;
-using WowPaperTrader.Domain.UseCases;
+using WowPaperTrader.Domain.RequestHandlers;
 
 namespace WowPaperTrader.Api.Controllers;
 

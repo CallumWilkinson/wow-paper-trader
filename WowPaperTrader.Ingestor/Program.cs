@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
+using WowPaperTrader.Domain.CommandHandlers;
 using WowPaperTrader.Domain.Interfaces;
-using WowPaperTrader.Domain.UseCases;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Ingestor;

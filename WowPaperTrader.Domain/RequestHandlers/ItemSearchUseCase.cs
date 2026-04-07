@@ -1,7 +1,7 @@
 using WowPaperTrader.Domain.Contracts;
 using WowPaperTrader.Domain.Interfaces;
 
-namespace WowPaperTrader.Domain.UseCases;
+namespace WowPaperTrader.Domain.RequestHandlers;
 
 public sealed class ItemSearchUseCase
 {
