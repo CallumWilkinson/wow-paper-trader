@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Domain.Contracts;
+namespace WowPaperTrader.Domain.ResponseTypes;
 
 public sealed class ItemSearchResult
 {

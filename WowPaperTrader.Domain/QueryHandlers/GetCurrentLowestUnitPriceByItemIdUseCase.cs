@@ -1,5 +1,5 @@
-using WowPaperTrader.Domain.Contracts;
 using WowPaperTrader.Domain.Interfaces;
+using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Domain.QueryHandlers;
 

@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using WowPaperTrader.Domain.Contracts;
+using WowPaperTrader.Domain.ResponseTypes;
 using WowPaperTrader.Persistence.Queries;
 using WowPaperTrader.Persistence.Repositories;
 using WowPaperTrader.Persistence.Tests.TestFixtures;

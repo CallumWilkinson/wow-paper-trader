@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Domain.Contracts;
 using WowPaperTrader.Domain.Interfaces;
+using WowPaperTrader.Domain.ResponseTypes;
 using WowPaperTrader.Infrastructure.ContractMappers;
 using WowPaperTrader.Infrastructure.HttpClients;
 

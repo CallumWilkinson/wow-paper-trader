@@ -1,5 +1,5 @@
-using WowPaperTrader.Domain.Contracts;
 using WowPaperTrader.Domain.Entities;
+using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Persistence.EntityMappers;
 

@@ -1,10 +1,8 @@
-namespace WowPaperTrader.Domain.Contracts;
+namespace WowPaperTrader.Domain.ResponseTypes;
 
-public sealed class ItemMetadataAndPriceResult
+public sealed record ItemMetaDataRecord
 {
     public long ItemId { get; init; }
-    public long UnitPrice { get; init; }
-    public DateTime PriceTakenAtUtc { get; init; }
     public string Name { get; init; } = string.Empty;
     public string? QualityType { get; init; }
     public string? QualityName { get; init; }
@@ -28,5 +26,5 @@ public sealed class ItemMetadataAndPriceResult
     public bool IsStackable { get; init; }
     public int? PurchaseQuantity { get; init; }
     public string? ImageUrl { get; init; }
-    public DateTime MetadataLastFetchedUtc { get; init; }
+    public DateTime LastFetchedUtc { get; init; }
 }

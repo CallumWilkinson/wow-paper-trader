@@ -1,4 +1,4 @@
-using WowPaperTrader.Domain.Contracts;
+using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Domain.Interfaces;
 
