@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Architecture;
 
-public interface ICommand
+public interface ICommand<TResponse>
 {
     
 }
