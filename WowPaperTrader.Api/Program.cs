@@ -31,7 +31,7 @@ builder.Services.AddScoped<GetMetadataAndPriceByItemIdUseCase>();
 builder.Services.AddScoped<IItemMetadataAndPriceQuery, ItemMetadataAndPriceQuery>();
 
 builder.Services.AddScoped<ItemSearchUseCase>();
-builder.Services.AddScoped<IItemSearchQuery, ItemSearchQuery>();
+builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();
 
 builder.Services.AddScoped<UpdateItemMetaDataUseCase>();
 builder.Services.AddScoped<IItemIdsWithoutMetadataQuery, ItemIdsWithoutMetadataQuery>();

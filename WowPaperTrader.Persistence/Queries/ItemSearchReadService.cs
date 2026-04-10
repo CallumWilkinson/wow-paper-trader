@@ -6,11 +6,11 @@ using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Persistence.Queries;
 
-public sealed class ItemSearchQuery : IItemSearchQuery
+public sealed class ItemSearchReadService : IItemSearchReadService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public ItemSearchQuery(ApplicationDbContext dbContext)
+    public ItemSearchReadService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

@@ -9,11 +9,11 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class ItemSearchQueryTests : IClassFixture<SqlServerTestDbFixture>
+public sealed class ItemSearchReadServiceTests : IClassFixture<SqlServerTestDbFixture>
 {
     private readonly SqlServerTestDbFixture _db;
 
-    public ItemSearchQueryTests(SqlServerTestDbFixture db)
+    public ItemSearchReadServiceTests(SqlServerTestDbFixture db)
     {
         _db = db;
     }
@@ -38,7 +38,7 @@ public sealed class ItemSearchQueryTests : IClassFixture<SqlServerTestDbFixture>
 
         await using (var actDbContext = _db.CreateAssertDbContext())
         {
-            var query = new ItemSearchQuery(actDbContext);
+            var query = new ItemSearchReadService(actDbContext);
 
             results = await query.SearchByNameAsync(searchString, CancellationToken.None);
         }

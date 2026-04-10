@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Features.ItemSearch;
 
-public interface IItemSearchQuery
+public interface IItemSearchReadService
 {
     Task<List<ItemSearchResult>> SearchByNameAsync(
         string ItemName,
