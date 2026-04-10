@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Architecture\"/>
         <Folder Include="Features\ItemSearch\"/>
     </ItemGroup>
 

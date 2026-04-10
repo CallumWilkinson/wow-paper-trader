@@ -1,7 +1,7 @@
 using WowPaperTrader.Domain.Contracts;
 using WowPaperTrader.Domain.Interfaces;
 
-namespace WowPaperTrader.Domain.RequestHandlers;
+namespace WowPaperTrader.Domain.QueryHandlers;
 
 public sealed class GetMetadataAndPriceByItemIdUseCase
 {
