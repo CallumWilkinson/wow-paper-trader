@@ -6,7 +6,7 @@ using WowPaperTrader.Persistence.Repositories;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
 using WowPaperTrader.Persistence.Tests.TestHelpers;
 
-namespace WowPaperTrader.Persistence.Tests.IntegrationTests.RepositoryTests;
+namespace WowPaperTrader.Persistence.Tests.IntegrationTests.CommandTests;
 
 public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDbFixture>
 {
