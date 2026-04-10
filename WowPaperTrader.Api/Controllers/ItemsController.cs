@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WowPaperTrader.Domain.CommandHandlers;
+using WowPaperTrader.Domain.Features.ItemSearch;
 using WowPaperTrader.Domain.QueryHandlers;
 using WowPaperTrader.Domain.ResponseTypes;
 

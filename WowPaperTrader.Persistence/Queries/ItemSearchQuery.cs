@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using WowPaperTrader.Domain.Features.ItemSearch;
 using WowPaperTrader.Domain.Interfaces;
 using WowPaperTrader.Domain.ResponseTypes;
 

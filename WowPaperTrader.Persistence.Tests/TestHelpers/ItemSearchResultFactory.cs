@@ -1,3 +1,4 @@
+using WowPaperTrader.Domain.Features.ItemSearch;
 using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Persistence.Tests.TestHelpers;
