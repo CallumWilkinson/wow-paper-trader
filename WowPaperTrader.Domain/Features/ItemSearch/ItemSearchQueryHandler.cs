@@ -1,25 +1,22 @@
+using WowPaperTrader.Domain.Architecture;
+
 namespace WowPaperTrader.Domain.Features.ItemSearch;
 
-public sealed class ItemSearchQueryHandler
+public sealed class ItemSearchQueryHandler(IItemSearchReadService readService)
+    : IQueryHandler<ItemSearchQuery, List<ItemSearchResponse>>
 {
-    private readonly IItemSearchReadService _readService;
-
-    public ItemSearchQueryHandler(IItemSearchReadService readService)
+    public async Task<List<ItemSearchResponse>> HandleAsync(ItemSearchQuery query, CancellationToken cancellationToken)
     {
-        _readService = readService;
-    }
-
-    public async Task<List<ItemSearchResponse>> ExecuteAsync(string itemName, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(itemName))
+        if (string.IsNullOrWhiteSpace(query.ItemName))
             throw new ArgumentNullException
             (
-                nameof(itemName),
+                nameof(query.ItemName),
                 "You must enter an item name"
             );
 
-        var topFiveResults = await _readService.SearchByNameAsync(itemName, cancellationToken);
+        var topFiveResults = await readService.SearchByNameAsync(query.ItemName, cancellationToken);
 
         return topFiveResults;
     }
+    
 }
