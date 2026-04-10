@@ -10,19 +10,19 @@ namespace WowPaperTrader.Api.Controllers;
 [Route("api/v1/items")]
 public sealed class ItemsController : ControllerBase
 {
-    private readonly ItemSearchUseCase _itemSearchUseCase;
+    private readonly ItemSearchQueryHandler _itemSearchQueryHandler;
     private readonly GetCurrentLowestUnitPriceByItemIdUseCase _getLowestPriceUseCase;
     private readonly GetMetadataAndPriceByItemIdUseCase _getMetadataUseCase;
     private readonly UpdateItemMetaDataUseCase _updateMetadataUseCase;
 
     public ItemsController(
         GetCurrentLowestUnitPriceByItemIdUseCase getLowestPriceUseCase,
-        ItemSearchUseCase itemSearchUseCase,
+        ItemSearchQueryHandler itemSearchQueryHandler,
         GetMetadataAndPriceByItemIdUseCase getMetadataUseCase,
         UpdateItemMetaDataUseCase updateMetadataUseCase)
     {
         _getLowestPriceUseCase = getLowestPriceUseCase;
-        _itemSearchUseCase = itemSearchUseCase;
+        _itemSearchQueryHandler = itemSearchQueryHandler;
         _getMetadataUseCase = getMetadataUseCase;
         _updateMetadataUseCase = updateMetadataUseCase;
     }
@@ -33,7 +33,7 @@ public sealed class ItemsController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(itemName)) return BadRequest("Name is required.");
 
-        var result = await _itemSearchUseCase.ExecuteAsync(itemName, cancellationToken);
+        var result = await _itemSearchQueryHandler.ExecuteAsync(itemName, cancellationToken);
 
         return Ok(result);
     }

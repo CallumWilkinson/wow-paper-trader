@@ -1,10 +1,10 @@
 namespace WowPaperTrader.Domain.Features.ItemSearch;
 
-public sealed class ItemSearchUseCase
+public sealed class ItemSearchQueryHandler
 {
     private readonly IItemSearchReadService _readService;
 
-    public ItemSearchUseCase(IItemSearchReadService readService)
+    public ItemSearchQueryHandler(IItemSearchReadService readService)
     {
         _readService = readService;
     }

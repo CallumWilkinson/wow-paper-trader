@@ -30,7 +30,7 @@ builder.Services.AddScoped<ICurrentLowestUnitPriceReadService, CurrentLowestUnit
 builder.Services.AddScoped<GetMetadataAndPriceByItemIdUseCase>();
 builder.Services.AddScoped<IItemMetadataAndPriceReadService, ItemMetadataAndPriceReadService>();
 
-builder.Services.AddScoped<ItemSearchUseCase>();
+builder.Services.AddScoped<ItemSearchQueryHandler>();
 builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();
 
 builder.Services.AddScoped<UpdateItemMetaDataUseCase>();
