@@ -5,10 +5,10 @@ namespace WowPaperTrader.Domain.QueryHandlers;
 
 public sealed class GetCurrentLowestUnitPriceByItemIdUseCase
 {
-    private readonly ICurrentLowestUnitPriceQuery _query;
+    private readonly ICurrentLowestUnitPriceReadService _query;
 
     public GetCurrentLowestUnitPriceByItemIdUseCase(
-        ICurrentLowestUnitPriceQuery query
+        ICurrentLowestUnitPriceReadService query
     )
     {
         _query = query;

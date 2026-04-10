@@ -1,15 +1,15 @@
 using FluentAssertions;
-using WowPaperTrader.Persistence.Queries;
+using WowPaperTrader.Persistence.ReadServices;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
 using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class ItemIdsWithoutMetadataQueryTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class ItemIdsWithoutMetadataReadServiceTests : IClassFixture<SqliteInMemoryDbFixture>
 {
     private readonly SqliteInMemoryDbFixture _db;
 
-    public ItemIdsWithoutMetadataQueryTests(SqliteInMemoryDbFixture db)
+    public ItemIdsWithoutMetadataReadServiceTests(SqliteInMemoryDbFixture db)
     {
         _db = db;
     }
@@ -25,7 +25,7 @@ public sealed class ItemIdsWithoutMetadataQueryTests : IClassFixture<SqliteInMem
 
         await CommodityAuctionSnapshotTestFactory.AddNewerSnapshotToDbAsync(arrangeDbContext, snapshotTime);
 
-        var query = new ItemIdsWithoutMetadataQuery(arrangeDbContext);
+        var query = new ItemIdsWithoutMetadataReadService(arrangeDbContext);
 
         //act
         var result = await query.GetItemIdsWithoutMetadataAsync(CancellationToken.None);

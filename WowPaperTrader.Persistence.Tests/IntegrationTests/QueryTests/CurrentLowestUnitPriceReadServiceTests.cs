@@ -1,15 +1,15 @@
 using FluentAssertions;
-using WowPaperTrader.Persistence.Queries;
+using WowPaperTrader.Persistence.ReadServices;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
 using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class CurrentLowestUnitPriceQueryTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class CurrentLowestUnitPriceReadServiceTests : IClassFixture<SqliteInMemoryDbFixture>
 {
     private readonly SqliteInMemoryDbFixture _db;
 
-    public CurrentLowestUnitPriceQueryTests(SqliteInMemoryDbFixture db)
+    public CurrentLowestUnitPriceReadServiceTests(SqliteInMemoryDbFixture db)
     {
         _db = db;
     }
@@ -20,7 +20,7 @@ public sealed class CurrentLowestUnitPriceQueryTests : IClassFixture<SqliteInMem
         //arrange
         await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
 
-        var query = new CurrentLowestUnitPriceQuery(arrangeDbContext);
+        var query = new CurrentLowestUnitPriceReadService(arrangeDbContext);
 
         const long copperOreItemId = 2770;
 

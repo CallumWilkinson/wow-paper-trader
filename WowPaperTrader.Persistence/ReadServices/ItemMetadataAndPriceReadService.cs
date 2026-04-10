@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Domain.Interfaces;
 using WowPaperTrader.Domain.ResponseTypes;
 
-namespace WowPaperTrader.Persistence.Queries;
+namespace WowPaperTrader.Persistence.ReadServices;
 
-public sealed class ItemMetadataAndPriceQuery : IItemMetadataAndPriceQuery
+public sealed class ItemMetadataAndPriceReadService : IItemMetadataAndPriceReadService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public ItemMetadataAndPriceQuery(ApplicationDbContext dbContext)
+    public ItemMetadataAndPriceReadService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Interfaces;
 
-public interface IItemIdsWithoutMetadataQuery
+public interface IItemIdsWithoutMetadataReadService
 {
     Task<List<long>> GetItemIdsWithoutMetadataAsync(CancellationToken cancellationToken);
 }

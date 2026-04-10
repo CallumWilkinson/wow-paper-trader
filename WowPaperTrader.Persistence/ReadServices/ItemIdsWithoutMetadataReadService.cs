@@ -2,13 +2,13 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Domain.Interfaces;
 
-namespace WowPaperTrader.Persistence.Queries;
+namespace WowPaperTrader.Persistence.ReadServices;
 
-public sealed class ItemIdsWithoutMetadataQuery : IItemIdsWithoutMetadataQuery
+public sealed class ItemIdsWithoutMetadataReadService : IItemIdsWithoutMetadataReadService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public ItemIdsWithoutMetadataQuery(ApplicationDbContext dbContext)
+    public ItemIdsWithoutMetadataReadService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

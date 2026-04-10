@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Domain.Interfaces;
 using WowPaperTrader.Domain.ResponseTypes;
 
-namespace WowPaperTrader.Persistence.Queries;
+namespace WowPaperTrader.Persistence.ReadServices;
 
-public sealed class CurrentLowestUnitPriceQuery : ICurrentLowestUnitPriceQuery
+public sealed class CurrentLowestUnitPriceReadService : ICurrentLowestUnitPriceReadService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public CurrentLowestUnitPriceQuery(ApplicationDbContext dbContext)
+    public CurrentLowestUnitPriceReadService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

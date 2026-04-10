@@ -2,9 +2,9 @@ using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Domain.Interfaces;
 
-public interface IItemMetadataAndPriceQuery
+public interface ICurrentLowestUnitPriceReadService
 {
-    Task<ItemMetadataAndPriceResult?> GetAsync(
+    Task<CurrentLowestUnitPriceResult?> GetAsync(
         long itemId,
         CancellationToken cancellationToken
     );

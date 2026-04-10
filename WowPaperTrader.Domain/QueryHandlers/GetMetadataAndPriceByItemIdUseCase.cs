@@ -5,11 +5,11 @@ namespace WowPaperTrader.Domain.QueryHandlers;
 
 public sealed class GetMetadataAndPriceByItemIdUseCase
 {
-    private readonly IItemMetadataAndPriceQuery _query;
+    private readonly IItemMetadataAndPriceReadService _readService;
 
-    public GetMetadataAndPriceByItemIdUseCase(IItemMetadataAndPriceQuery query)
+    public GetMetadataAndPriceByItemIdUseCase(IItemMetadataAndPriceReadService readService)
     {
-        _query = query;
+        _readService = readService;
     }
 
     public async Task<ItemMetadataAndPriceResult?> ExecuteAsync(
@@ -24,6 +24,6 @@ public sealed class GetMetadataAndPriceByItemIdUseCase
                 "Invalid itemId"
             );
 
-        return await _query.GetAsync(itemId, cancellationToken);
+        return await _readService.GetAsync(itemId, cancellationToken);
     }
 }

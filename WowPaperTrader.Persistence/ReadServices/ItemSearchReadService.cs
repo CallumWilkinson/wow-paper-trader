@@ -1,10 +1,8 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Domain.Features.ItemSearch;
-using WowPaperTrader.Domain.Interfaces;
-using WowPaperTrader.Domain.ResponseTypes;
 
-namespace WowPaperTrader.Persistence.Queries;
+namespace WowPaperTrader.Persistence.ReadServices;
 
 public sealed class ItemSearchReadService : IItemSearchReadService
 {

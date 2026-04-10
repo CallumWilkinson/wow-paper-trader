@@ -7,7 +7,7 @@ using WowPaperTrader.Domain.QueryHandlers;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Persistence;
-using WowPaperTrader.Persistence.Queries;
+using WowPaperTrader.Persistence.ReadServices;
 using WowPaperTrader.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,16 +25,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddScoped<GetCurrentLowestUnitPriceByItemIdUseCase>();
-builder.Services.AddScoped<ICurrentLowestUnitPriceQuery, CurrentLowestUnitPriceQuery>();
+builder.Services.AddScoped<ICurrentLowestUnitPriceReadService, CurrentLowestUnitPriceReadService>();
 
 builder.Services.AddScoped<GetMetadataAndPriceByItemIdUseCase>();
-builder.Services.AddScoped<IItemMetadataAndPriceQuery, ItemMetadataAndPriceQuery>();
+builder.Services.AddScoped<IItemMetadataAndPriceReadService, ItemMetadataAndPriceReadService>();
 
 builder.Services.AddScoped<ItemSearchUseCase>();
 builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();
 
 builder.Services.AddScoped<UpdateItemMetaDataUseCase>();
-builder.Services.AddScoped<IItemIdsWithoutMetadataQuery, ItemIdsWithoutMetadataQuery>();
+builder.Services.AddScoped<IItemIdsWithoutMetadataReadService, ItemIdsWithoutMetadataReadService>();
 builder.Services.AddScoped<IItemMetaDataApiAdapter, ItemMetaDataApiAdapter>();
 builder.Services.AddScoped<IItemMetaDataRepository, ItemMetaDataRepository>();
 

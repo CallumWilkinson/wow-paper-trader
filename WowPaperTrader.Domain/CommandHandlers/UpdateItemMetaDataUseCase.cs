@@ -6,19 +6,19 @@ namespace WowPaperTrader.Domain.CommandHandlers;
 
 public sealed class UpdateItemMetaDataUseCase
 {
-    private readonly IItemIdsWithoutMetadataQuery _ItemIdsWithoutMetadataQuery;
+    private readonly IItemIdsWithoutMetadataReadService _itemIdsWithoutMetadataReadService;
     private readonly IItemMetaDataApiAdapter _itemMetaDataApiAdapter;
     private readonly IItemMetaDataRepository _itemMetaDataRepository;
     private readonly ILogger<UpdateItemMetaDataUseCase> _logger;
 
     public UpdateItemMetaDataUseCase(
-        IItemIdsWithoutMetadataQuery ItemIdsWithoutMetadataQuery,
+        IItemIdsWithoutMetadataReadService itemIdsWithoutMetadataReadService,
         IItemMetaDataApiAdapter itemMetaDataApiAdapter,
         IItemMetaDataRepository itemMetaDataRepository,
         ILogger<UpdateItemMetaDataUseCase> logger
     )
     {
-        _ItemIdsWithoutMetadataQuery = ItemIdsWithoutMetadataQuery;
+        _itemIdsWithoutMetadataReadService = itemIdsWithoutMetadataReadService;
         _itemMetaDataApiAdapter = itemMetaDataApiAdapter;
         _itemMetaDataRepository = itemMetaDataRepository;
         _logger = logger;
@@ -28,7 +28,7 @@ public sealed class UpdateItemMetaDataUseCase
     {
         try
         {
-            var itemIds = await _ItemIdsWithoutMetadataQuery.GetItemIdsWithoutMetadataAsync(cancellationToken);
+            var itemIds = await _itemIdsWithoutMetadataReadService.GetItemIdsWithoutMetadataAsync(cancellationToken);
 
             var itemMetaDataRecords = new List<ItemMetaDataRecord>();
 
