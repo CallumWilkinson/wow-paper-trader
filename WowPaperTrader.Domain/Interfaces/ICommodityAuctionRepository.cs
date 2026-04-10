@@ -9,6 +9,6 @@ public interface ICommodityAuctionRepository
 
     Task SaveSnapshotAsync(
         IngestionRun run,
-        WowApiResult<AuctionSnapshot> wowApiResult,
+        WowApiResponse<AuctionSnapshot> wowApiResponse,
         CancellationToken cancellationToken);
 }

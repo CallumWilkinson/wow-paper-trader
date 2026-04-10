@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.ResponseTypes;
 
-public sealed class CurrentLowestUnitPriceResult
+public sealed class CurrentLowestUnitPriceResponse
 {
     public long ItemId { get; init; }
 

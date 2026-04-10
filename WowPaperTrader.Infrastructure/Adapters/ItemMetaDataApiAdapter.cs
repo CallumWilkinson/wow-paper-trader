@@ -25,7 +25,7 @@ public sealed class ItemMetaDataApiAdapter : IItemMetaDataApiAdapter
         _logger = logger;
     }
 
-    public async Task<ItemMetaDataRecord> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken)
+    public async Task<ItemMetaDataRecordResponse> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken)
     {
         var accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);
 

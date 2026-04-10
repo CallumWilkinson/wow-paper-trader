@@ -4,5 +4,5 @@ namespace WowPaperTrader.Domain.Interfaces;
 
 public interface IItemMetaDataApiAdapter
 {
-    Task<ItemMetaDataRecord> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken);
+    Task<ItemMetaDataRecordResponse> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken);
 }

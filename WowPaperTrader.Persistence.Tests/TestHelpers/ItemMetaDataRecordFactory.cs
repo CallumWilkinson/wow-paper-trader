@@ -4,9 +4,9 @@ namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 
 public static class ItemMetaDataRecordFactory
 {
-    public static List<ItemMetaDataRecord> CreateRecordsList()
+    public static List<ItemMetaDataRecordResponse> CreateRecordsList()
     {
-        var fakeItems = new List<ItemMetaDataRecord>
+        var fakeItems = new List<ItemMetaDataRecordResponse>
         {
             new()
             {
@@ -157,9 +157,9 @@ public static class ItemMetaDataRecordFactory
         return fakeItems;
     }
 
-    public static List<ItemMetaDataRecord> CreateLinenSearchTestRecords()
+    public static List<ItemMetaDataRecordResponse> CreateLinenSearchTestRecords()
     {
-        return new List<ItemMetaDataRecord>
+        return new List<ItemMetaDataRecordResponse>
         {
             new()
             {

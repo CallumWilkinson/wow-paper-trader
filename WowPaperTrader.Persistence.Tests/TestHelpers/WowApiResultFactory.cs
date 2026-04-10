@@ -4,7 +4,7 @@ namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 
 public static class WowApiResultFactory
 {
-    public static WowApiResult<AuctionSnapshot> Create()
+    public static WowApiResponse<AuctionSnapshot> Create()
     {
         var auctions = new List<AuctionSnapshotRow>
         {
@@ -14,14 +14,14 @@ public static class WowApiResultFactory
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResult<AuctionSnapshot>(
+        return new WowApiResponse<AuctionSnapshot>(
             snapshot,
             DateTime.UtcNow,
             "/commodities"
         );
     }
 
-    public static WowApiResult<AuctionSnapshot> CreateOlderApiResult(DateTime olderTime)
+    public static WowApiResponse<AuctionSnapshot> CreateOlderApiResult(DateTime olderTime)
     {
         var auctions = new List<AuctionSnapshotRow>
         {
@@ -32,14 +32,14 @@ public static class WowApiResultFactory
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResult<AuctionSnapshot>(
+        return new WowApiResponse<AuctionSnapshot>(
             snapshot,
             olderTime,
             "/commodities"
         );
     }
 
-    public static WowApiResult<AuctionSnapshot> CreateNewerApiResult(DateTime newerTime)
+    public static WowApiResponse<AuctionSnapshot> CreateNewerApiResult(DateTime newerTime)
     {
         var auctions = new List<AuctionSnapshotRow>
         {
@@ -50,7 +50,7 @@ public static class WowApiResultFactory
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResult<AuctionSnapshot>(
+        return new WowApiResponse<AuctionSnapshot>(
             snapshot,
             newerTime,
             "/commodities"

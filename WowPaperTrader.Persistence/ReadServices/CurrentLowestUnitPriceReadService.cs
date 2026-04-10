@@ -14,7 +14,7 @@ public sealed class CurrentLowestUnitPriceReadService : ICurrentLowestUnitPriceR
         _dbContext = dbContext;
     }
 
-    public async Task<CurrentLowestUnitPriceResult?> GetAsync(long itemId, CancellationToken cancellationToken)
+    public async Task<CurrentLowestUnitPriceResponse?> GetAsync(long itemId, CancellationToken cancellationToken)
     {
         const string sql =
             """
@@ -35,7 +35,7 @@ public sealed class CurrentLowestUnitPriceReadService : ICurrentLowestUnitPriceR
 
         var connection = _dbContext.Database.GetDbConnection();
 
-        return await connection.QuerySingleOrDefaultAsync<CurrentLowestUnitPriceResult>(
+        return await connection.QuerySingleOrDefaultAsync<CurrentLowestUnitPriceResponse>(
             new CommandDefinition(
                 sql,
                 new { ItemId = itemId },

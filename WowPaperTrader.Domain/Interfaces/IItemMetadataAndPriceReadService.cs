@@ -4,7 +4,7 @@ namespace WowPaperTrader.Domain.Interfaces;
 
 public interface IItemMetadataAndPriceReadService
 {
-    Task<ItemMetadataAndPriceResult?> GetAsync(
+    Task<ItemMetadataAndPriceResponse?> GetAsync(
         long itemId,
         CancellationToken cancellationToken
     );

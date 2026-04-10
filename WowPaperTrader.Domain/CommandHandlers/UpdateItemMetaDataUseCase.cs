@@ -30,7 +30,7 @@ public sealed class UpdateItemMetaDataUseCase
         {
             var itemIds = await _itemIdsWithoutMetadataReadService.GetItemIdsWithoutMetadataAsync(cancellationToken);
 
-            var itemMetaDataRecords = new List<ItemMetaDataRecord>();
+            var itemMetaDataRecords = new List<ItemMetaDataRecordResponse>();
 
             var itemIdsForMetaDataNotFound = new List<long>();
 

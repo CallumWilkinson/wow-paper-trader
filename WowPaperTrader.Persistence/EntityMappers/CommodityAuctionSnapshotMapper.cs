@@ -6,12 +6,12 @@ namespace WowPaperTrader.Persistence.EntityMappers;
 public static class CommodityAuctionSnapshotMapper
 {
     public static CommodityAuctionSnapshot MapToEntity(
-        WowApiResult<AuctionSnapshot> apiResult,
+        WowApiResponse<AuctionSnapshot> apiResponse,
         long ingestionRunId
     )
     {
-        var payload = apiResult.Payload;
-        var snapshot = new CommodityAuctionSnapshot(ingestionRunId, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
+        var payload = apiResponse.Payload;
+        var snapshot = new CommodityAuctionSnapshot(ingestionRunId, apiResponse.DataReturnedAtUtc, apiResponse.Endpoint);
 
         foreach (var auction in payload.Auctions)
         {

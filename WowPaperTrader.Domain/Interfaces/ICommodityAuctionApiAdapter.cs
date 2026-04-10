@@ -4,5 +4,5 @@ namespace WowPaperTrader.Domain.Interfaces;
 
 public interface ICommodityAuctionApiAdapter
 {
-    Task<WowApiResult<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(CancellationToken cancellationToken);
+    Task<WowApiResponse<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(CancellationToken cancellationToken);
 }

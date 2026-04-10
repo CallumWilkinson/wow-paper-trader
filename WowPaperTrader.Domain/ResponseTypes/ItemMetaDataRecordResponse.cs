@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.ResponseTypes;
 
-public sealed record ItemMetaDataRecord
+public sealed record ItemMetaDataRecordResponse
 {
     public long ItemId { get; init; }
     public string Name { get; init; } = string.Empty;

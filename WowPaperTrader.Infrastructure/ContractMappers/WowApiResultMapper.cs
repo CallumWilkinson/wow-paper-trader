@@ -5,10 +5,10 @@ namespace WowPaperTrader.Infrastructure.ContractMappers;
 
 public static class WowApiResultMapper
 {
-    public static WowApiResult<AuctionSnapshot> MapToContract(
-        WowApiResult<CommodityAuctionsResponseDto> resultWithDto)
+    public static WowApiResponse<AuctionSnapshot> MapToContract(
+        WowApiResponse<CommodityAuctionsResponseDto> responseWithDto)
     {
-        var dto = resultWithDto.Payload;
+        var dto = responseWithDto.Payload;
 
         var auctions = dto.CommodityAuctions
             .Select(MapSnapshotRow)
@@ -16,10 +16,10 @@ public static class WowApiResultMapper
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResult<AuctionSnapshot>(
+        return new WowApiResponse<AuctionSnapshot>(
             snapshot,
-            resultWithDto.DataReturnedAtUtc,
-            resultWithDto.Endpoint
+            responseWithDto.DataReturnedAtUtc,
+            responseWithDto.Endpoint
         );
     }
 

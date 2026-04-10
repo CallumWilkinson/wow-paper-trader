@@ -39,7 +39,7 @@ public sealed class ItemsController : ControllerBase
     }
 
     [HttpGet("{itemId:long}")]
-    public async Task<ActionResult<ItemMetadataAndPriceResult>> GetTooltipAndLowestBuyoutPrice(
+    public async Task<ActionResult<ItemMetadataAndPriceResponse>> GetTooltipAndLowestBuyoutPrice(
         long itemId,
         CancellationToken cancellationToken
     )
@@ -54,7 +54,7 @@ public sealed class ItemsController : ControllerBase
     }
 
     [HttpGet("{itemId:long}/auctions/lowest")]
-    public async Task<ActionResult<CurrentLowestUnitPriceResult>> GetCurrentLowestUnitPrice(
+    public async Task<ActionResult<CurrentLowestUnitPriceResponse>> GetCurrentLowestUnitPrice(
         long itemId,
         CancellationToken cancellationToken
     )

@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.ResponseTypes;
 
-public sealed class ItemMetadataAndPriceResult
+public sealed class ItemMetadataAndPriceResponse
 {
     public long ItemId { get; init; }
     public long UnitPrice { get; init; }

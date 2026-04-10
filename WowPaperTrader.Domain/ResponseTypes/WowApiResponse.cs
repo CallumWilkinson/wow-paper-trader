@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.ResponseTypes;
 
-public sealed record WowApiResult<T>(
+public sealed record WowApiResponse<T>(
     T Payload,
     DateTime DataReturnedAtUtc,
     string Endpoint

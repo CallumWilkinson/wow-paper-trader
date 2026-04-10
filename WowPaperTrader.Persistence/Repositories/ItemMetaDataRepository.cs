@@ -16,7 +16,7 @@ public class ItemMetaDataRepository : IItemMetaDataRepository
         _logger = logger;
     }
 
-    public async Task SaveItemMetaDataAsync(List<ItemMetaDataRecord> itemMetaDataRecords,
+    public async Task SaveItemMetaDataAsync(List<ItemMetaDataRecordResponse> itemMetaDataRecords,
         CancellationToken cancellationToken)
     {
         var startingAdd = DateTime.UtcNow;

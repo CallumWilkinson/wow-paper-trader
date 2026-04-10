@@ -4,5 +4,5 @@ namespace WowPaperTrader.Domain.Interfaces;
 
 public interface IItemMetaDataRepository
 {
-    Task SaveItemMetaDataAsync(List<ItemMetaDataRecord> itemMetaDataRecords, CancellationToken cancellationToken);
+    Task SaveItemMetaDataAsync(List<ItemMetaDataRecordResponse> itemMetaDataRecords, CancellationToken cancellationToken);
 }

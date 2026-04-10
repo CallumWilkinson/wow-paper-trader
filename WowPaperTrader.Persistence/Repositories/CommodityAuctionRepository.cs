@@ -29,7 +29,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
         return run;
     }
 
-    public async Task SaveSnapshotAsync(IngestionRun run, WowApiResult<AuctionSnapshot> wowApiResult,
+    public async Task SaveSnapshotAsync(IngestionRun run, WowApiResponse<AuctionSnapshot> wowApiResponse,
         CancellationToken cancellationToken)
     {
         var cancellationRegistration =
@@ -43,7 +43,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 
         try
         {
-            await RunCommodityAuctionSnapshotDatabaseTransaction(run, wowApiResult, cancellationToken);
+            await RunCommodityAuctionSnapshotDatabaseTransaction(run, wowApiResponse, cancellationToken);
 
             _logger.LogInformation("All Auctions have been recorded in the database successfully!");
         }
@@ -63,13 +63,13 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
     }
 
     private async Task RunCommodityAuctionSnapshotDatabaseTransaction(IngestionRun run,
-        WowApiResult<AuctionSnapshot> wowApiResult, CancellationToken cancellationToken)
+        WowApiResponse<AuctionSnapshot> wowApiResponse, CancellationToken cancellationToken)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var snapshotEntity = CommodityAuctionSnapshotMapper.MapToEntity(wowApiResult, run.Id);
+            var snapshotEntity = CommodityAuctionSnapshotMapper.MapToEntity(wowApiResponse, run.Id);
 
             var startingAdd = DateTime.UtcNow;
             _logger.LogInformation("Adding to DbContext at {Time}", startingAdd);

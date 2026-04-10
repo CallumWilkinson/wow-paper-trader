@@ -21,7 +21,7 @@ public sealed class CommodityAuctionApiAdapter : ICommodityAuctionApiAdapter
         _logger = logger;
     }
 
-    public async Task<WowApiResult<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(
+    public async Task<WowApiResponse<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(
         CancellationToken cancellationToken)
     {
         var accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);

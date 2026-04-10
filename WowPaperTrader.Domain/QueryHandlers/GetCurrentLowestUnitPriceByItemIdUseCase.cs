@@ -14,7 +14,7 @@ public sealed class GetCurrentLowestUnitPriceByItemIdUseCase
         _query = query;
     }
 
-    public async Task<CurrentLowestUnitPriceResult?> ExecuteAsync(
+    public async Task<CurrentLowestUnitPriceResponse?> ExecuteAsync(
         long itemId,
         CancellationToken cancellationToken
     )

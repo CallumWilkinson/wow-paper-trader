@@ -5,50 +5,50 @@ namespace WowPaperTrader.Persistence.EntityMappers;
 
 public static class ItemMetaDataMapper
 {
-    public static ItemMetaData MapToEntity(ItemMetaDataRecord record)
+    public static ItemMetaData MapToEntity(ItemMetaDataRecordResponse recordResponse)
     {
-        if (record == null) throw new ArgumentNullException(nameof(record));
+        if (recordResponse == null) throw new ArgumentNullException(nameof(recordResponse));
 
         return new ItemMetaData
         {
-            ItemId = record.ItemId,
-            Name = record.Name,
+            ItemId = recordResponse.ItemId,
+            Name = recordResponse.Name,
 
-            QualityType = record.QualityType,
-            QualityName = record.QualityName,
+            QualityType = recordResponse.QualityType,
+            QualityName = recordResponse.QualityName,
 
-            Level = record.Level,
-            RequiredLevel = record.RequiredLevel,
+            Level = recordResponse.Level,
+            RequiredLevel = recordResponse.RequiredLevel,
 
-            ItemClassId = record.ItemClassId,
-            ItemClassName = record.ItemClassName,
+            ItemClassId = recordResponse.ItemClassId,
+            ItemClassName = recordResponse.ItemClassName,
 
-            ItemSubclassId = record.ItemSubclassId,
-            ItemSubclassName = record.ItemSubclassName,
+            ItemSubclassId = recordResponse.ItemSubclassId,
+            ItemSubclassName = recordResponse.ItemSubclassName,
 
-            ProfessionId = record.ProfessionId,
-            ProfessionName = record.ProfessionName,
-            ProfessionSkillLevel = record.ProfessionSkillLevel,
-            SkillDisplayString = record.SkillDisplayString,
+            ProfessionId = recordResponse.ProfessionId,
+            ProfessionName = recordResponse.ProfessionName,
+            ProfessionSkillLevel = recordResponse.ProfessionSkillLevel,
+            SkillDisplayString = recordResponse.SkillDisplayString,
 
-            CraftingReagent = record.CraftingReagent,
+            CraftingReagent = recordResponse.CraftingReagent,
 
-            InventoryType = record.InventoryType,
-            InventoryTypeName = record.InventoryTypeName,
+            InventoryType = recordResponse.InventoryType,
+            InventoryTypeName = recordResponse.InventoryTypeName,
 
-            PurchasePrice = record.PurchasePrice,
-            SellPrice = record.SellPrice,
+            PurchasePrice = recordResponse.PurchasePrice,
+            SellPrice = recordResponse.SellPrice,
 
-            MaxCount = record.MaxCount,
+            MaxCount = recordResponse.MaxCount,
 
-            IsEquippable = record.IsEquippable,
-            IsStackable = record.IsStackable,
+            IsEquippable = recordResponse.IsEquippable,
+            IsStackable = recordResponse.IsStackable,
 
-            PurchaseQuantity = record.PurchaseQuantity,
+            PurchaseQuantity = recordResponse.PurchaseQuantity,
 
-            ImageUrl = record.ImageUrl,
+            ImageUrl = recordResponse.ImageUrl,
 
-            LastFetchedUtc = record.LastFetchedUtc
+            LastFetchedUtc = recordResponse.LastFetchedUtc
         };
     }
 }
