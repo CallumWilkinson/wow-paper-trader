@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Architecture;
 
-public interface IQuery
+public interface IQuery<TResponse>
 {
     
 }

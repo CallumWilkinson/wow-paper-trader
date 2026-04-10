@@ -1,6 +1,7 @@
 namespace WowPaperTrader.Domain.Architecture;
 
-public interface IQueryHandler<in IQuery, TResponse>
+public interface IQueryHandler<in TQuery, TResponse>
+    where TQuery : IQuery<TResponse>
 {
-    Task<TResponse> ExecuteAsync(IQuery query, CancellationToken cancellationToken);
+    Task<TResponse> HandleAsync(TQuery query, CancellationToken cancellationToken);
 }
