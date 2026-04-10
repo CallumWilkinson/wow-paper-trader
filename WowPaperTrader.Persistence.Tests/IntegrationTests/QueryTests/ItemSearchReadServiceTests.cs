@@ -34,7 +34,7 @@ public sealed class ItemSearchReadServiceTests : IClassFixture<SqlServerTestDbFi
         const string searchString = "linen";
 
         //act
-        List<ItemSearchResult> results;
+        List<ItemSearchResponse> results;
 
         await using (var actDbContext = _db.CreateAssertDbContext())
         {

@@ -28,7 +28,7 @@ public sealed class ItemsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<ItemSearchResult>>> SearchItems([FromQuery] string itemName,
+    public async Task<ActionResult<List<ItemSearchResponse>>> SearchItems([FromQuery] string itemName,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(itemName)) return BadRequest("Name is required.");

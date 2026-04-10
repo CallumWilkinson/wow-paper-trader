@@ -9,7 +9,7 @@ public sealed class ItemSearchQueryHandler
         _readService = readService;
     }
 
-    public async Task<List<ItemSearchResult>> ExecuteAsync(string itemName, CancellationToken cancellationToken)
+    public async Task<List<ItemSearchResponse>> ExecuteAsync(string itemName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(itemName))
             throw new ArgumentNullException

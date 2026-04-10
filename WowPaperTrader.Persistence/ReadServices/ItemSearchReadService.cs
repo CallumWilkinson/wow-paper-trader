@@ -13,7 +13,7 @@ public sealed class ItemSearchReadService : IItemSearchReadService
         _dbContext = dbContext;
     }
 
-    public async Task<List<ItemSearchResult>> SearchByNameAsync(string itemName, CancellationToken cancellationToken)
+    public async Task<List<ItemSearchResponse>> SearchByNameAsync(string itemName, CancellationToken cancellationToken)
     {
         const string sql = @"
             DECLARE @Search nvarchar(4000) = TRIM(@Name);
@@ -37,7 +37,7 @@ public sealed class ItemSearchReadService : IItemSearchReadService
 
         var command = new CommandDefinition(sql, new { Name = itemName }, cancellationToken: cancellationToken);
 
-        var topFiveResults = await connection.QueryAsync<ItemSearchResult>(command);
+        var topFiveResults = await connection.QueryAsync<ItemSearchResponse>(command);
 
         return topFiveResults.ToList();
     }

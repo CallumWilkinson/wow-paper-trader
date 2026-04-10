@@ -5,9 +5,9 @@ namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 
 public static class ItemSearchResultFactory
 {
-    public static List<ItemSearchResult> CreateExpectedLinenResults()
+    public static List<ItemSearchResponse> CreateExpectedLinenResults()
     {
-        return new List<ItemSearchResult>
+        return new List<ItemSearchResponse>
         {
             // Exact match
             new() { ItemId = 2589, Name = "Linen Cloth" },
