@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using WowPaperTrader.Domain.CommandHandlers;
-using WowPaperTrader.Domain.Features.ItemSearch;
-using WowPaperTrader.Domain.QueryHandlers;
+using WowPaperTrader.Domain.Features.Read.GetTooltip;
+using WowPaperTrader.Domain.Features.Read.ItemSearch;
+using WowPaperTrader.Domain.Features.Read.LowestPrice;
 using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Api.Controllers;

@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Domain.Features.ItemSearch;
+namespace WowPaperTrader.Domain.Features.Read.ItemSearch;
 
 public sealed class ItemSearchResponse
 {

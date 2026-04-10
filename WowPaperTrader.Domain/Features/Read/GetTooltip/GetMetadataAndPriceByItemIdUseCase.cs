@@ -1,7 +1,7 @@
 using WowPaperTrader.Domain.Interfaces;
 using WowPaperTrader.Domain.ResponseTypes;
 
-namespace WowPaperTrader.Domain.QueryHandlers;
+namespace WowPaperTrader.Domain.Features.Read.GetTooltip;
 
 public sealed class GetMetadataAndPriceByItemIdUseCase
 {

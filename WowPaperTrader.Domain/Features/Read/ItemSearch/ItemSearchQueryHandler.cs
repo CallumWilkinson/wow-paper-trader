@@ -1,6 +1,6 @@
 using WowPaperTrader.Domain.Architecture;
 
-namespace WowPaperTrader.Domain.Features.ItemSearch;
+namespace WowPaperTrader.Domain.Features.Read.ItemSearch;
 
 public sealed class ItemSearchQueryHandler(IItemSearchReadService readService)
     : IQueryHandler<ItemSearchQuery, List<ItemSearchResponse>>

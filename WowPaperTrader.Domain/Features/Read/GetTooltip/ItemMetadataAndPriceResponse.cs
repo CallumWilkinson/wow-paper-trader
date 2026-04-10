@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Domain.ResponseTypes;
+namespace WowPaperTrader.Domain.Features.Read.GetTooltip;
 
 public sealed class ItemMetadataAndPriceResponse
 {

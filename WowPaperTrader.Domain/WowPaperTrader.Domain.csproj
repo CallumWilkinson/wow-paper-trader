@@ -12,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Read\" />
-      <Folder Include="Features\Write\" />
+      <Folder Include="Features\Write\AuctionHouseSnapshot\" />
+      <Folder Include="Features\Write\UpdateItems\" />
     </ItemGroup>
 
 </Project>

@@ -1,7 +1,4 @@
-using WowPaperTrader.Domain.Interfaces;
-using WowPaperTrader.Domain.ResponseTypes;
-
-namespace WowPaperTrader.Domain.QueryHandlers;
+namespace WowPaperTrader.Domain.Features.Read.LowestPrice;
 
 public sealed class GetCurrentLowestUnitPriceByItemIdUseCase
 {

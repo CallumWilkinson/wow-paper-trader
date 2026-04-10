@@ -1,6 +1,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Features.ItemSearch;
+using WowPaperTrader.Domain.Features.Read.ItemSearch;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 

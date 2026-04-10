@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using WowPaperTrader.Domain.Features.Read.LowestPrice;
 using WowPaperTrader.Domain.Interfaces;
 using WowPaperTrader.Domain.ResponseTypes;
 
