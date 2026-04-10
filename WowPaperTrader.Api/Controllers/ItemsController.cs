@@ -32,8 +32,10 @@ public sealed class ItemsController : ControllerBase
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(itemName)) return BadRequest("Name is required.");
+        
+        var query = new ItemSearchQuery(itemName);
 
-        var result = await _itemSearchQueryHandler.ExecuteAsync(itemName, cancellationToken);
+        var result = await _itemSearchQueryHandler.HandleAsync(query, cancellationToken);
 
         return Ok(result);
     }
