@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using WowPaperTrader.Domain.Features.Read.GetTooltip;
+using WowPaperTrader.Domain.Features.Read.GetMetadata;
 using WowPaperTrader.Domain.Features.Read.ItemSearch;
 using WowPaperTrader.Domain.Features.Read.LowestPrice;
 using WowPaperTrader.Domain.Features.Write.UpdateItems;
@@ -12,13 +12,13 @@ public sealed class ItemsController : ControllerBase
 {
     private readonly ItemSearchQueryHandler _itemSearchQueryHandler;
     private readonly GetCurrentLowestUnitPriceByItemIdUseCase _getLowestPriceUseCase;
-    private readonly GetMetadataAndPriceByItemIdUseCase _getMetadataUseCase;
+    private readonly GetMetadataQueryHandler _getMetadataUseCase;
     private readonly UpdateItemMetaDataUseCase _updateMetadataUseCase;
 
     public ItemsController(
         GetCurrentLowestUnitPriceByItemIdUseCase getLowestPriceUseCase,
         ItemSearchQueryHandler itemSearchQueryHandler,
-        GetMetadataAndPriceByItemIdUseCase getMetadataUseCase,
+        GetMetadataQueryHandler getMetadataUseCase,
         UpdateItemMetaDataUseCase updateMetadataUseCase)
     {
         _getLowestPriceUseCase = getLowestPriceUseCase;
@@ -41,7 +41,7 @@ public sealed class ItemsController : ControllerBase
     }
 
     [HttpGet("{itemId:long}")]
-    public async Task<ActionResult<TooltipResponse>> GetTooltipAndLowestBuyoutPrice(
+    public async Task<ActionResult<MetadataResponse>> GetTooltipAndLowestBuyoutPrice(
         long itemId,
         CancellationToken cancellationToken
     )

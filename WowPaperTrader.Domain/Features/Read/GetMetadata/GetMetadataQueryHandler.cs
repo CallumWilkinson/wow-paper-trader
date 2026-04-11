@@ -1,15 +1,15 @@
-namespace WowPaperTrader.Domain.Features.Read.GetTooltip;
+namespace WowPaperTrader.Domain.Features.Read.GetMetadata;
 
-public sealed class GetMetadataAndPriceByItemIdUseCase
+public sealed class GetMetadataQueryHandler
 {
-    private readonly IItemMetadataAndPriceReadService _readService;
+    private readonly IMetadataReadService _readService;
 
-    public GetMetadataAndPriceByItemIdUseCase(IItemMetadataAndPriceReadService readService)
+    public GetMetadataQueryHandler(IMetadataReadService readService)
     {
         _readService = readService;
     }
 
-    public async Task<TooltipResponse?> ExecuteAsync(
+    public async Task<MetadataResponse?> ExecuteAsync(
         long itemId,
         CancellationToken cancellationToken
     )

@@ -1,6 +1,6 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Features.Read.GetTooltip;
+using WowPaperTrader.Domain.Features.Read.GetMetadata;
 using WowPaperTrader.Domain.Features.Read.ItemSearch;
 using WowPaperTrader.Domain.Features.Read.LowestPrice;
 using WowPaperTrader.Domain.Features.Write.UpdateItems;
@@ -27,8 +27,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<GetCurrentLowestUnitPriceByItemIdUseCase>();
 builder.Services.AddScoped<ICurrentLowestUnitPriceReadService, CurrentLowestUnitPriceReadService>();
 
-builder.Services.AddScoped<GetMetadataAndPriceByItemIdUseCase>();
-builder.Services.AddScoped<IItemMetadataAndPriceReadService, ItemMetadataAndPriceReadService>();
+builder.Services.AddScoped<GetMetadataQueryHandler>();
+builder.Services.AddScoped<MetadataReadService, MetadataReadService>();
 
 builder.Services.AddScoped<ItemSearchQueryHandler>();
 builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();

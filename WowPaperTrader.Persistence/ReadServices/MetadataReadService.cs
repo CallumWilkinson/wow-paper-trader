@@ -1,19 +1,19 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Features.Read.GetTooltip;
+using WowPaperTrader.Domain.Features.Read.GetMetadata;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 
-public sealed class ItemMetadataAndPriceReadService : IItemMetadataAndPriceReadService
+public sealed class MetadataReadService : IMetadataReadService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public ItemMetadataAndPriceReadService(ApplicationDbContext dbContext)
+    public MetadataReadService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<TooltipResponse?> GetAsync(long itemId, CancellationToken cancellationToken)
+    public async Task<MetadataResponse?> GetAsync(long itemId, CancellationToken cancellationToken)
     {
         const string sql =
             """
@@ -75,6 +75,6 @@ public sealed class ItemMetadataAndPriceReadService : IItemMetadataAndPriceReadS
 
         var command = new CommandDefinition(sql, new { itemId }, cancellationToken: cancellationToken);
 
-        return await connection.QuerySingleOrDefaultAsync<TooltipResponse>(command);
+        return await connection.QuerySingleOrDefaultAsync<MetadataResponse>(command);
     }
 }
