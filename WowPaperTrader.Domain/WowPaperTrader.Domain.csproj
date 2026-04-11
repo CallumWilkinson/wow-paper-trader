@@ -12,8 +12,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Write\AuctionHouseSnapshot\" />
-      <Folder Include="Features\Write\UpdateItems\" />
+      <Folder Include="CommandHandlers\" />
+      <Folder Include="Entities\" />
+      <Folder Include="Interfaces\" />
+      <Folder Include="ResponseTypes\" />
     </ItemGroup>
 
 </Project>

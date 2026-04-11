@@ -7,7 +7,7 @@ public sealed class ItemMetaData
     public long ItemId { get; set; }
     public string Name { get; set; } = string.Empty;
 
-    public string? QualityType { get; set; }
+    public string? QualityType { get; set; }        
     public string? QualityName { get; set; }
 
     public int Level { get; set; }
