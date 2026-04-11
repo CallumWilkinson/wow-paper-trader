@@ -9,7 +9,7 @@ public sealed class GetMetadataAndPriceByItemIdUseCase
         _readService = readService;
     }
 
-    public async Task<ItemMetadataAndPriceResponse?> ExecuteAsync(
+    public async Task<TooltipResponse?> ExecuteAsync(
         long itemId,
         CancellationToken cancellationToken
     )

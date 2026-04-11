@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Features.Read.GetTooltip;
 
-public sealed class ItemMetadataAndPriceResponse
+public sealed class TooltipResponse
 {
     public long ItemId { get; init; }
     public long UnitPrice { get; init; }

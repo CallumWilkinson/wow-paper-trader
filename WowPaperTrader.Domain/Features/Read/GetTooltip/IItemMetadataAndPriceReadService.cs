@@ -2,7 +2,7 @@ namespace WowPaperTrader.Domain.Features.Read.GetTooltip;
 
 public interface IItemMetadataAndPriceReadService
 {
-    Task<ItemMetadataAndPriceResponse?> GetAsync(
+    Task<TooltipResponse?> GetAsync(
         long itemId,
         CancellationToken cancellationToken
     );
