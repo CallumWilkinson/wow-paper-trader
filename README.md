@@ -1,142 +1,309 @@
-# wow-paper-trader
+# WowPaperTrader
 
-`wow-paper-trader` is a .NET 10 solution for ingesting World of Warcraft commodity auction data from Blizzard's API, persisting full snapshots to SQL Server, and exposing a small read API over the latest stored snapshot.
+`WowPaperTrader` is a .NET 10 solution for collecting World of Warcraft commodity auction data from Blizzard's API, storing auction snapshots in SQL Server, enriching known item ids with Blizzard item metadata, and exposing a small REST API for item search, metadata, and current lowest auction price queries.
 
-The long-term product direction in [Requirements.md](./Requirements.md) is much larger than the codebase today. This README is intentionally scoped to the repository as it exists on March 17, 2026.
+The long-term product direction in [Requirements.md](./Requirements.md) is larger than the codebase today. This README describes the repository as it exists on April 11, 2026.
 
 ## Current Project State
 
 Implemented:
 
-- worker service that starts an ingestion run immediately on startup, then repeats every hour
-- Battle.net client-credentials OAuth flow for Blizzard API access
-- ingestion of the US commodities snapshot from Blizzard's WoW data API
-- SQL Server persistence via EF Core for ingestion runs, snapshots, and auction rows
-- transactional snapshot writes to avoid partial auction persistence
-- read API endpoint for "lowest unit price for an item from the latest stored snapshot"
-- integration tests for snapshot persistence and latest-snapshot querying
+- hourly background ingestion of the US commodity auction snapshot
+- Battle.net client-credentials OAuth flow with token reuse
+- Blizzard API clients for commodity auctions, item metadata, and item media
+- SQL Server persistence with EF Core migrations
+- transactional snapshot writes for auction ingestion
+- item metadata storage, including icon image URLs from the media endpoint
+- CQRS-style application layer with explicit command/query contracts and handlers
+- Dapper-based read services for query-oriented API responses
+- REST API under `/api/v1/items`
+- persistence integration tests using SQLite fixtures
 
 Partially implemented:
 
-- `wow-paper-trader.Api.Read` is wired to the read use case and database
-- `wow-paper-trader.Api.Write` still contains the default template `weatherforecast` endpoint only
+- item metadata refresh is exposed as a manual API command endpoint, not automated
+- read APIs query the latest auction snapshot only
+- CQRS boundaries are present in code, but handler registration is still manual in host projects
 
 Not implemented yet:
 
 - automated 30-day retention cleanup
 - configurable ingestion interval
-- historical price APIs beyond "latest snapshot lowest unit price"
-- item search, aggregated analytics, or charting APIs
-- user accounts, auth, portfolios, or paper-trading features
-- retry/backoff handling for Blizzard API failures or rate limits
+- historical price APIs beyond latest-snapshot reads
+- realm-specific auction data
+- user accounts, authentication, portfolios, or paper-trading workflows
+- retry/backoff policies for Blizzard API failures or rate limits
 
 ## Solution Layout
 
-- `wow-paper-trader.Ingestor`
-  - worker host
-  - configures EF Core, HTTP clients, and the hourly ingestion loop
-- `wow-paper-trader.Application.Write`
-  - ingestion use case, write-side entities, and contracts
-- `wow-paper-trader.Application.Read`
-  - read-side use case and query contract for current lowest unit price
-- `wow-paper-trader.Infrastructure`
-  - Blizzard auth client, commodity auction client, DTOs, and contract mapping
-- `wow-paper-trader.Persistence`
-  - EF Core `ApplicationDbContext`, migration, repository, and Dapper query
-- `wow-paper-trader.Api.Read`
-  - ASP.NET Core API exposing the current lowest unit price endpoint
-- `wow-paper-trader.Api.Write`
-  - ASP.NET Core API scaffold with the default template endpoint
-- `wow-paper-trader.Persistence.Tests`
-  - integration tests using in-memory SQLite
-- `wow-paper-trader.Application.Read.Tests`
-  - test project scaffold; currently no test source files
-- `wow-paper-trader.Application.Write.Tests`
-  - test project scaffold; currently no test source files
+- `WowPaperTrader.Api`
+  - ASP.NET Core REST API
+  - registers query handlers, read services, metadata update command handler, EF Core, Swagger, and Blizzard item clients
+  - exposes all current HTTP endpoints through `ItemsController`
+- `WowPaperTrader.Ingestor`
+  - worker service
+  - starts an auction ingestion command immediately, then repeats every hour
+  - registers EF Core, the auction ingestion command handler, the Blizzard auction adapter, and repository
+- `WowPaperTrader.Application`
+  - application contracts and use cases
+  - contains `ICommand`, `ICommandHandler<TCommand>`, `IQuery<TResponse>`, and `IQueryHandler<TQuery, TResponse>`
+  - organizes features into `Features/Read` and `Features/Write`
+- `WowPaperTrader.Infrastructure`
+  - Blizzard OAuth and API HTTP clients
+  - adapter implementations for application-facing API contracts
+  - DTO-to-application contract mappers
+- `WowPaperTrader.Persistence`
+  - EF Core `ApplicationDbContext`
+  - migrations, write repositories, entity mappers, and Dapper read services
+- `WowPaperTrader.Application.Tests`
+  - application test project scaffold
+- `WowPaperTrader.Persistence.Tests`
+  - integration tests for repositories, read services, and schema behavior
 
-## Implemented Data Flow
+## Dependency Graph
 
-### Ingestion
+Project references:
 
-1. `IngestionRunBackgroundService` creates a scope and executes `IngestionRunUseCase.RunOnceAsync()`.
-2. `BattleNetAuthClient` requests or reuses an OAuth access token from `https://oauth.battle.net/token`.
-3. `CommodityAuctionClient` calls Blizzard's US commodities endpoint using:
-   - base URL: `https://us.api.blizzard.com/data/wow/`
-   - endpoint suffix: `auctions/commodities?namespace=dynamic-us&locale=en_US`
-4. `CommodityAuctionApiAdapter` maps the DTO response into application contracts.
-5. `CommodityAuctionRepository` writes the ingestion run and snapshot data to SQL Server in a transaction.
-6. On success, the ingestion run transitions to `Finished`. On errors, it is marked `Failed`. If shutdown happens during persistence, it is marked `Cancelled`.
+```text
+WowPaperTrader.Api
+  -> WowPaperTrader.Application
+  -> WowPaperTrader.Infrastructure
+  -> WowPaperTrader.Persistence
+
+WowPaperTrader.Ingestor
+  -> WowPaperTrader.Infrastructure
+  -> WowPaperTrader.Persistence
+
+WowPaperTrader.Infrastructure
+  -> WowPaperTrader.Application
+
+WowPaperTrader.Persistence
+  -> WowPaperTrader.Application
+
+WowPaperTrader.Application.Tests
+  -> WowPaperTrader.Application
+
+WowPaperTrader.Persistence.Tests
+  -> WowPaperTrader.Persistence
+```
+
+Architectural direction:
+
+```text
+Hosts
+  Api / Ingestor
+    -> Application
+       -> contracts for reads, writes, and external services
+    -> Infrastructure
+       -> Blizzard HTTP adapters implementing application contracts
+    -> Persistence
+       -> SQL Server repositories and read services implementing application contracts
+```
+
+`Application` is the center of the solution. It owns feature contracts and use-case orchestration, while `Infrastructure` and `Persistence` depend inward on those contracts. The host projects compose the concrete implementations.
+
+## CQRS Focus
+
+The solution is intentionally organized around commands and queries:
+
+- queries implement `IQuery<TResponse>` and are handled by `IQueryHandler<TQuery, TResponse>`
+- commands implement `ICommand` and are handled by `ICommandHandler<TCommand>`
+- read features live under `WowPaperTrader.Application/Features/Read`
+- write features live under `WowPaperTrader.Application/Features/Write`
+- read services are application contracts implemented in `WowPaperTrader.Persistence/ReadServices`
+- write repositories are application contracts implemented in `WowPaperTrader.Persistence/Repositories`
+
+Current query features:
+
+- `ItemSearchQuery`
+  - searches `ItemMetaData` by name and returns the top five matches
+- `GetMetadataQuery`
+  - returns item metadata joined with latest-snapshot lowest price information
+- `LowestPriceQuery`
+  - returns the lowest unit price for an item from the latest stored snapshot
+
+Current command features:
+
+- `PostAuctionDataCommand`
+  - fetches the Blizzard commodity auction snapshot and persists it
+  - executed by `WowPaperTrader.Ingestor`
+- `UpdateItemsCommand`
+  - finds item ids that appear in auction data but do not have metadata yet
+  - fetches metadata and media from Blizzard
+  - persists new metadata records
+  - currently triggered manually through the API
+
+Persistence follows the CQRS split pragmatically:
+
+- write paths use EF Core repositories because they create and persist aggregate-shaped data
+- read paths use Dapper and SQL tailored to the response shape
+- the metadata update command uses a read service to discover missing metadata ids, then writes through a repository
+
+## Runtime Data Flow
+
+### Auction Ingestion
+
+1. `AuctionDataBackgroundService` creates a scoped service provider.
+2. The worker resolves `PostAuctionDataCommandHandler`.
+3. The handler creates an `IngestionRun`.
+4. `CommodityAuctionApiAdapter` requests an OAuth token through `BattleNetAuthClient`.
+5. `CommodityAuctionClient` calls:
+
+```text
+GET https://us.api.blizzard.com/data/wow/auctions/commodities?namespace=dynamic-us&locale=en_US
+```
+
+6. Infrastructure maps Blizzard DTOs to application contracts.
+7. `CommodityAuctionRepository` writes the snapshot and auction rows in a database transaction.
+8. The ingestion run is marked `Finished`, `Failed`, or `Cancelled`.
+
+### Metadata Update
+
+1. `POST /api/v1/items` reaches `ItemsController.UpdateItemMetaData`.
+2. The controller dispatches `UpdateItemsCommand`.
+3. `ItemIdsWithoutMetadataReadService` finds distinct auction item ids missing from `ItemMetaData`.
+4. `ItemMetadataApiAdapter` fetches item metadata and media from Blizzard:
+
+```text
+GET item/{itemId}?namespace=static-us&locale=en_US
+GET media/item/{itemId}?namespace=static-us&locale=en_US
+```
+
+5. Infrastructure maps the DTOs into `ItemMetadataRecord`.
+6. `ItemMetadataRepository` saves the metadata rows through EF Core.
 
 ### Read Path
 
-1. `GET /api/commodities/{itemId}/current-lowest-unit-price` hits `CommoditiesController`.
-2. `GetCurrentLowestUnitPriceByItemIdUseCase` validates `itemId`.
-3. `CurrentLowestUnitPriceQuery` uses Dapper against the application database.
-4. The query returns the minimum `UnitPrice` for that `ItemId` from the most recent stored snapshot only.
+1. A client calls a `GET /api/v1/items...` endpoint.
+2. `ItemsController` validates route or query parameters.
+3. The controller constructs an application query.
+4. The matching query handler validates the query and calls its read-service contract.
+5. The persistence read service executes Dapper SQL against the application database.
+6. The controller returns `200 OK`, `400 Bad Request`, or `404 Not Found` depending on the request and result.
 
-## API Surface
+## REST API Design
 
-### Read API
+The API is versioned at the route level with `/api/v1`. Item-related resources are grouped under `/api/v1/items`.
 
-Project: `wow-paper-trader.Api.Read`
+Development tooling:
 
-Implemented endpoint:
+- Swagger/OpenAPI is enabled in development
+- default development URLs are `https://localhost:7033` and `http://localhost:5091`
 
-- `GET /api/commodities/{itemId}/current-lowest-unit-price`
-  - `400 Bad Request` if `itemId <= 0`
-  - `404 Not Found` if the latest snapshot does not contain that item
-  - `200 OK` response body:
+### Search Items
+
+```http
+GET /api/v1/items?itemName=thorium
+```
+
+Behavior:
+
+- returns `400 Bad Request` when `itemName` is empty or whitespace
+- returns `200 OK` with up to five matches
+
+Example response:
+
+```json
+[
+  {
+    "itemId": 10620,
+    "name": "Thorium Ore"
+  }
+]
+```
+
+### Get Item Metadata
+
+```http
+GET /api/v1/items/{itemId}
+```
+
+Behavior:
+
+- returns `400 Bad Request` when `itemId <= 0`
+- returns `404 Not Found` when the item is not present in the latest auction snapshot result
+- returns `200 OK` with item metadata and latest lowest-price information
+
+Example response:
 
 ```json
 {
-  "itemId": 2770,
-  "unitPrice": 80,
-  "priceTakenAtUtc": "2026-03-12T09:00:00Z"
+  "itemId": 10620,
+  "unitPrice": 19000,
+  "priceTakenAtUtc": "2026-04-11T08:00:00Z",
+  "name": "Thorium Ore",
+  "qualityType": "COMMON",
+  "qualityName": "Common",
+  "level": 40,
+  "requiredLevel": 0,
+  "itemClassId": 7,
+  "itemClassName": "Tradeskill",
+  "itemSubclassId": 7,
+  "itemSubclassName": "Metal & Stone",
+  "imageUrl": "https://render.worldofwarcraft.com/us/icons/56/inv_ore_thorium_02.jpg",
+  "metadataLastFetchedUtc": "2026-04-11T08:05:00Z"
 }
 ```
 
-Development-only tooling:
+### Get Lowest Auction Price
 
-- Swagger is enabled in development
+```http
+GET /api/v1/items/{itemId}/auctions/lowest
+```
 
-### Write API
+Behavior:
 
-Project: `wow-paper-trader.Api.Write`
+- returns `400 Bad Request` when `itemId <= 0`
+- returns `404 Not Found` when the latest stored snapshot does not contain that item
+- returns `200 OK` with the minimum `UnitPrice` from the latest stored snapshot
 
-Current state:
+Example response:
 
-- still the default template host
-- exposes `GET /weatherforecast`
-- maps the development OpenAPI document
-- does not yet register application, persistence, or Blizzard integration services
+```json
+{
+  "itemId": 10620,
+  "unitPrice": 19000,
+  "priceTakenAtUtc": "2026-04-11T08:00:00Z"
+}
+```
+
+### Update Missing Item Metadata
+
+```http
+POST /api/v1/items
+```
+
+Behavior:
+
+- triggers `UpdateItemsCommand`
+- fetches metadata only for item ids that have auction rows but no existing metadata row
+- returns `200 OK` after the command completes
+
+This endpoint is currently an operational command exposed through the item collection. It is useful during development, but it is not yet a background job or admin-only maintenance route.
 
 ## Data Stored
 
-The initial EF Core migration creates three tables:
+The EF Core migrations currently define these tables:
 
 - `IngestionRuns`
-  - `StartedAtUtc`
-  - `LastUpdatedAtUtc`
-  - `FinishedAtUtc`
-  - `Status`
-  - `ErrorMessage`
-  - `ErrorStack`
+  - tracks ingestion lifecycle, status, finish time, and error details
 - `CommodityAuctionSnapshots`
-  - `IngestionRunId`
-  - `FetchedAtUtc`
-  - `ApiEndPoint`
+  - stores one row per fetched commodity snapshot
+  - links to `IngestionRuns`
+  - stores `FetchedAtUtc` and the Blizzard API endpoint used
 - `CommodityAuctions`
-  - `CommodityAuctionSnapshotId`
-  - `ItemId`
-  - `Quantity`
-  - `UnitPrice`
-  - `TimeLeft`
+  - stores auction rows for each snapshot
+  - stores `ItemId`, `Quantity`, `UnitPrice`, and `TimeLeft`
+- `ItemMetaData`
+  - stores Blizzard item metadata for item ids observed in auction data
+  - includes item name, quality, item class, subclass, profession requirement fields, prices, stack/equip flags, purchase quantity, image URL, and metadata fetch time
 
 Important scope notes:
 
-- the current implementation stores commodity auction snapshots only
-- commodities are region-wide data; the current schema does not store realm-specific auction information
-- the schema does not yet store item names, historical aggregates, portfolios, or user data
+- auction data is commodity-only and region-wide
+- the schema does not store realm-specific auction information
+- read APIs are built around the latest commodity snapshot
+- metadata is stored separately from auction rows and may lag behind newly ingested auction item ids until the metadata update command runs
 
 ## Local Setup
 
@@ -146,23 +313,23 @@ Important scope notes:
 - SQL Server instance accessible from your machine
 - Blizzard API client credentials
 
-### Configure Blizzard credentials
+### Configure Blizzard Credentials
 
-The ingestor requires:
+Both the ingestor and the API use the same user-secrets id. The Blizzard integration requires:
 
 - `Blizzard:ClientId`
 - `Blizzard:ClientSecret`
 
-Example using user secrets:
+Example:
 
 ```powershell
-dotnet user-secrets set "Blizzard:ClientId" "<your-client-id>" --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
-dotnet user-secrets set "Blizzard:ClientSecret" "<your-client-secret>" --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
+dotnet user-secrets set "Blizzard:ClientId" "<your-client-id>" --project .\WowPaperTrader.Api\WowPaperTrader.Api.csproj
+dotnet user-secrets set "Blizzard:ClientSecret" "<your-client-secret>" --project .\WowPaperTrader.Api\WowPaperTrader.Api.csproj
 ```
 
-### Configure the database connection
+### Configure Database Connection
 
-Both the ingestor and the read API require `ConnectionStrings:WowPaperTrader`.
+The API and ingestor require `ConnectionStrings:WowPaperTrader`.
 
 Example PowerShell session:
 
@@ -170,12 +337,24 @@ Example PowerShell session:
 $env:ConnectionStrings__WowPaperTrader="Server=localhost;Database=WowPaperTrader;Trusted_Connection=True;TrustServerCertificate=True;"
 ```
 
-Development convenience files also exist at:
+Development settings files also exist at:
 
-- `wow-paper-trader.Ingestor/appsettings.Development.json`
-- `wow-paper-trader.Api.Read/appsettings.Development.json`
+- `WowPaperTrader.Api/appsettings.Development.json`
+- `WowPaperTrader.Ingestor/appsettings.Development.json`
 
-### Apply the database migration
+### Configure Blizzard API Base URL
+
+Both hosts read `WowApi:BaseUrl`. The default in `appsettings.json` is:
+
+```json
+{
+  "WowApi": {
+    "BaseUrl": "https://us.api.blizzard.com/data/wow/"
+  }
+}
+```
+
+### Apply Database Migrations
 
 If `dotnet-ef` is not installed:
 
@@ -183,10 +362,10 @@ If `dotnet-ef` is not installed:
 dotnet tool install --global dotnet-ef
 ```
 
-Apply the current migration:
+Apply the current migrations:
 
 ```powershell
-dotnet ef database update --project .\wow-paper-trader.Persistence\wow-paper-trader.Persistence.csproj --startup-project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
+dotnet ef database update --project .\WowPaperTrader.Persistence\WowPaperTrader.Persistence.csproj --startup-project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj
 ```
 
 ## Running the Projects
@@ -194,18 +373,19 @@ dotnet ef database update --project .\wow-paper-trader.Persistence\wow-paper-tra
 Run the ingestor:
 
 ```powershell
-dotnet run --project .\wow-paper-trader.Ingestor\wow-paper-trader.Ingestor.csproj
+dotnet run --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj
 ```
 
 Behavior:
 
 - one ingestion run starts immediately when the worker launches
 - subsequent runs happen every hour
+- graceful shutdown timeout is configured to 10 minutes
 
-Run the read API:
+Run the API:
 
 ```powershell
-dotnet run --project .\wow-paper-trader.Api.Read\wow-paper-trader.Api.Read.csproj
+dotnet run --project .\WowPaperTrader.Api\WowPaperTrader.Api.csproj
 ```
 
 Default development URLs:
@@ -213,38 +393,32 @@ Default development URLs:
 - `https://localhost:7033`
 - `http://localhost:5091`
 
-Run the write API scaffold:
-
-```powershell
-dotnet run --project .\wow-paper-trader.Api.Write\wow-paper-trader.Api.Write.csproj
-```
-
-Default development URLs:
-
-- `https://localhost:7002`
-- `http://localhost:5211`
-
 ## Tests
 
 Run the full solution test suite:
 
 ```powershell
-dotnet test wow-paper-trader.sln
+dotnet test .\WowPaperTrader.sln
 ```
 
-Current verified result on March 17, 2026:
+Current test structure:
 
-- `wow-paper-trader.Persistence.Tests`: 2 passing integration tests
-- `wow-paper-trader.Application.Read.Tests`: builds, but no tests are discovered
-- `wow-paper-trader.Application.Write.Tests`: builds, but no tests are discovered
+- `WowPaperTrader.Persistence.Tests`
+  - repository integration tests
+  - Dapper read-service tests
+  - schema-focused tests
+- `WowPaperTrader.Application.Tests`
+  - project scaffold currently contains no source test files
 
 ## Known Gaps
 
 - retention cleanup is not automated; a manual helper script exists at `manual_delete_data_past_30_days_sql_script.txt`
-- the ingestion interval is hard-coded to one hour in `IngestionRunBackgroundService`
-- the current Blizzard integration is fixed to the US commodities endpoint
-- the read API only answers against the latest stored snapshot, not arbitrary history
-- the write API is still scaffold-level
+- the ingestion interval is hard-coded to one hour in `AuctionDataBackgroundService`
+- Blizzard API calls are fixed to the US region and `en_US` locale
+- metadata update is manual and synchronous through the API
+- no API authentication or authorization is configured
+- read APIs do not expose historical price ranges or aggregates
+- item metadata does not currently enforce a unique database constraint on `ItemId`
 
 ## Disclaimer
 
