@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Domain.Interfaces;
-using WowPaperTrader.Domain.ResponseTypes;
 
-namespace WowPaperTrader.Domain.CommandHandlers;
+namespace WowPaperTrader.Domain.Features.Write.UpdateItems;
 
 public sealed class UpdateItemMetaDataUseCase
 {

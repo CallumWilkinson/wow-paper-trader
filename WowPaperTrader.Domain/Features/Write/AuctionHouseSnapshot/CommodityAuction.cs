@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Domain.Entities;
+namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
 public sealed class CommodityAuction
 {

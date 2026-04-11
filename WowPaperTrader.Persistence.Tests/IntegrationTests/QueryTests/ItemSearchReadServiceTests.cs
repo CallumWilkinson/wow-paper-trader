@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using WowPaperTrader.Domain.Features.Read.ItemSearch;
-using WowPaperTrader.Domain.ResponseTypes;
 using WowPaperTrader.Persistence.ReadServices;
 using WowPaperTrader.Persistence.Repositories;
 using WowPaperTrader.Persistence.Tests.TestFixtures;

@@ -1,4 +1,4 @@
-using WowPaperTrader.Domain.ResponseTypes;
+using WowPaperTrader.Domain.Features.Write.UpdateItems;
 using WowPaperTrader.Infrastructure.DTOs;
 
 namespace WowPaperTrader.Infrastructure.ContractMappers;

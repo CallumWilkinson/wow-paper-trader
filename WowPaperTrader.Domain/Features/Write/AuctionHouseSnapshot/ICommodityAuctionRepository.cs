@@ -1,7 +1,4 @@
-using WowPaperTrader.Domain.Entities;
-using WowPaperTrader.Domain.ResponseTypes;
-
-namespace WowPaperTrader.Domain.Interfaces;
+namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
 public interface ICommodityAuctionRepository
 {

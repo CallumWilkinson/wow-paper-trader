@@ -1,4 +1,4 @@
-using WowPaperTrader.Domain.CommandHandlers;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
 namespace WowPaperTrader.Ingestor;
 

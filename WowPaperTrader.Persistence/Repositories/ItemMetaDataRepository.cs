@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Domain.Interfaces;
-using WowPaperTrader.Domain.ResponseTypes;
+using WowPaperTrader.Domain.Features.Write.UpdateItems;
 using WowPaperTrader.Persistence.EntityMappers;
 
 namespace WowPaperTrader.Persistence.Repositories;

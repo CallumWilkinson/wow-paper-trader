@@ -1,8 +1,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Domain.Features.Read.GetTooltip;
-using WowPaperTrader.Domain.Interfaces;
-using WowPaperTrader.Domain.ResponseTypes;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 

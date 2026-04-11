@@ -1,6 +1,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Interfaces;
+using WowPaperTrader.Domain.Features.Write.UpdateItems;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 

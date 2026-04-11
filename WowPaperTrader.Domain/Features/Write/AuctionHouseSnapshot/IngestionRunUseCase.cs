@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Domain.Interfaces;
 
-namespace WowPaperTrader.Domain.CommandHandlers;
+namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
 public sealed class IngestionRunUseCase
 {

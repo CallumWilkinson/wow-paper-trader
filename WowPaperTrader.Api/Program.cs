@@ -1,10 +1,9 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.CommandHandlers;
 using WowPaperTrader.Domain.Features.Read.GetTooltip;
 using WowPaperTrader.Domain.Features.Read.ItemSearch;
 using WowPaperTrader.Domain.Features.Read.LowestPrice;
-using WowPaperTrader.Domain.Interfaces;
+using WowPaperTrader.Domain.Features.Write.UpdateItems;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Persistence;
