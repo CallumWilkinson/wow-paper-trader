@@ -19,16 +19,16 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
         _logger = logger;
     }
 
-    public async Task<IngestionRunEntity> CreateIngestionRunAsync(CancellationToken cancellationToken)
+    public async Task<IngestionRun> CreateIngestionRunAsync(CancellationToken cancellationToken)
     {
-        var run = new IngestionRunEntity();
+        var run = new IngestionRun();
         _dbContext.IngestionRuns.Add(run);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return run;
     }
 
-    public async Task SaveSnapshotAsync(IngestionRunEntity runEntity, WowApiResult<AuctionSnapshot> wowApiResult,
+    public async Task SaveSnapshotAsync(IngestionRun run, WowApiResult<AuctionSnapshot> wowApiResult,
         CancellationToken cancellationToken)
     {
         var cancellationRegistration =
@@ -42,33 +42,33 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 
         try
         {
-            await RunCommodityAuctionSnapshotDatabaseTransaction(runEntity, wowApiResult, cancellationToken);
+            await RunCommodityAuctionSnapshotDatabaseTransaction(run, wowApiResult, cancellationToken);
 
             _logger.LogInformation("All Auctions have been recorded in the database successfully!");
         }
 
         catch (Exception ex)
         {
-            await MarkRunFailedAsync(runEntity, ex);
+            await MarkRunFailedAsync(run, ex);
             throw;
         }
 
         finally
         {
-            if (cancellationToken.IsCancellationRequested) await MarkRunCancelledAsync(runEntity);
+            if (cancellationToken.IsCancellationRequested) await MarkRunCancelledAsync(run);
 
             cancellationRegistration.Dispose();
         }
     }
 
-    private async Task RunCommodityAuctionSnapshotDatabaseTransaction(IngestionRunEntity runEntity,
+    private async Task RunCommodityAuctionSnapshotDatabaseTransaction(IngestionRun run,
         WowApiResult<AuctionSnapshot> wowApiResult, CancellationToken cancellationToken)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var snapshotEntity = CommodityAuctionSnapshotMapper.MapToEntity(wowApiResult, runEntity.Id);
+            var snapshotEntity = CommodityAuctionSnapshotMapper.MapToEntity(wowApiResult, run.Id);
 
             var startingAdd = DateTime.UtcNow;
             _logger.LogInformation("Adding to DbContext at {Time}", startingAdd);
@@ -82,7 +82,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
             _logger.LogInformation("SQL Write took {Seconds} Seconds",
                 (DateTime.UtcNow - startingSaveToDb).TotalSeconds);
 
-            runEntity.TransitionTo(IngestionRunStatus.Finished, DateTime.UtcNow);
+            run.TransitionTo(IngestionRunStatus.Finished, DateTime.UtcNow);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
@@ -96,21 +96,21 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
         }
     }
 
-    private async Task MarkRunFailedAsync(IngestionRunEntity runEntity, Exception exception)
+    private async Task MarkRunFailedAsync(IngestionRun run, Exception exception)
     {
-        _dbContext.IngestionRuns.Attach(runEntity);
-        runEntity.MarkFailed(exception, DateTime.UtcNow);
+        _dbContext.IngestionRuns.Attach(run);
+        run.MarkFailed(exception, DateTime.UtcNow);
 
         await _dbContext.SaveChangesAsync(CancellationToken.None);
-        _logger.LogError(exception, "Ingesion Run Failed. IngestionRunId={RunId}", runEntity.Id);
+        _logger.LogError(exception, "Ingesion Run Failed. IngestionRunId={RunId}", run.Id);
     }
 
-    private async Task MarkRunCancelledAsync(IngestionRunEntity runEntity)
+    private async Task MarkRunCancelledAsync(IngestionRun run)
     {
-        _dbContext.IngestionRuns.Attach(runEntity);
-        runEntity.TransitionTo(IngestionRunStatus.Cancelled, DateTime.UtcNow);
+        _dbContext.IngestionRuns.Attach(run);
+        run.TransitionTo(IngestionRunStatus.Cancelled, DateTime.UtcNow);
 
         await _dbContext.SaveChangesAsync(CancellationToken.None);
-        _logger.LogError("Ingestion Run Cancelled. RunId={RunId}", runEntity.Id);
+        _logger.LogError("Ingestion Run Cancelled. RunId={RunId}", run.Id);
     }
 }

@@ -4,10 +4,10 @@ namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
 public interface ICommodityAuctionRepository
 {
-    Task<IngestionRunEntity> CreateIngestionRunAsync(CancellationToken cancellationToken);
+    Task<IngestionRun> CreateIngestionRunAsync(CancellationToken cancellationToken);
 
     Task SaveSnapshotAsync(
-        IngestionRunEntity runEntity,
+        IngestionRun run,
         WowApiResult<AuctionSnapshot> wowApiResult,
         CancellationToken cancellationToken);
 }

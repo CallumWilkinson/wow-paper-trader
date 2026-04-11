@@ -36,14 +36,14 @@ public sealed class ItemMetaDataClient
         {
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
             throw new HttpRequestException(
-                $"WoW API ItemMetaDataEntity Request Failed during HTTP call. Status={(int)response.StatusCode} {response.ReasonPhrase}. Body={body}");
+                $"WoW API ItemMetaData Request Failed during HTTP call. Status={(int)response.StatusCode} {response.ReasonPhrase}. Body={body}");
         }
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         var result =
             await JsonSerializer.DeserializeAsync<ItemMetaDataResponseDto>(stream, _jsonOptions, cancellationToken)
-            ?? throw new JsonException("Wow Api ItemMetaDataEntity response JSON deserialised to null.");
+            ?? throw new JsonException("Wow Api ItemMetaData response JSON deserialised to null.");
 
         return result;
     }

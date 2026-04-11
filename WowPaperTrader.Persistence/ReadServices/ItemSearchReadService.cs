@@ -21,7 +21,7 @@ public sealed class ItemSearchReadService : IItemSearchReadService
             SELECT TOP (5)
                 i.ItemId,
                 i.Name
-            FROM dbo.ItemMetaDataEntity AS i
+            FROM dbo.ItemMetaData AS i
             WHERE i.Name COLLATE Latin1_General_100_CI_AS LIKE N'%' + @Search + N'%'
             ORDER BY
                 CASE

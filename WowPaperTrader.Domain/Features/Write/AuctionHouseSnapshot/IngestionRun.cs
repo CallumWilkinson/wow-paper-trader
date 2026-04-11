@@ -8,7 +8,7 @@ public enum IngestionRunStatus
     Cancelled
 }
 
-public sealed class IngestionRunEntity
+public sealed class IngestionRun
 {
     public long Id { get; private set; }
 

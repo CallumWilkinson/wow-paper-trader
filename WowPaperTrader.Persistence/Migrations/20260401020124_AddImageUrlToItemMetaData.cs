@@ -12,7 +12,7 @@ namespace WowPaperTrader.Persistence.Migrations
         {
             migrationBuilder.AddColumn<string>(
                 name: "ImageUrl",
-                table: "ItemMetaDataEntity",
+                table: "ItemMetaData",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -22,7 +22,7 @@ namespace WowPaperTrader.Persistence.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "ImageUrl",
-                table: "ItemMetaDataEntity");
+                table: "ItemMetaData");
         }
     }
 }

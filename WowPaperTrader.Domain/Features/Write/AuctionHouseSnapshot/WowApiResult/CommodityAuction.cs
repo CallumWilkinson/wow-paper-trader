@@ -1,8 +1,8 @@
 namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 
-public sealed class CommodityAuctionEntity
+public sealed class CommodityAuction
 {
-    public CommodityAuctionEntity(long itemId, long quantity, long unitPrice, string timeLeft)
+    public CommodityAuction(long itemId, long quantity, long unitPrice, string timeLeft)
     {
         ItemId = itemId;
         Quantity = quantity;
@@ -16,7 +16,7 @@ public sealed class CommodityAuctionEntity
     public long CommodityAuctionSnapshotId { get; private set; }
 
     //nagivation property
-    public CommodityAuctionSnapshotEntity CommodityAuctionSnapshotEntity { get; private set; } = null!;
+    public CommodityAuctionSnapshot CommodityAuctionSnapshot { get; private set; } = null!;
 
     public long ItemId { get; private set; }
 

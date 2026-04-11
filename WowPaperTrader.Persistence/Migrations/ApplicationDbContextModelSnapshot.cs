@@ -21,7 +21,7 @@ namespace WowPaperTrader.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CommodityAuctionEntity", b =>
+            modelBuilder.Entity("CommodityAuction", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.ToTable("CommodityAuctions");
                 });
 
-            modelBuilder.Entity("CommodityAuctionSnapshotEntity", b =>
+            modelBuilder.Entity("CommodityAuctionSnapshot", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,7 +77,7 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.ToTable("CommodityAuctionSnapshots");
                 });
 
-            modelBuilder.Entity("IngestionRunEntity", b =>
+            modelBuilder.Entity("IngestionRun", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,7 +108,7 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.ToTable("IngestionRuns");
                 });
 
-            modelBuilder.Entity("ItemMetaDataEntity", b =>
+            modelBuilder.Entity("ItemMetaData", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -194,32 +194,32 @@ namespace WowPaperTrader.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ItemMetaDataEntity");
+                    b.ToTable("ItemMetaData");
                 });
 
-            modelBuilder.Entity("CommodityAuctionEntity", b =>
+            modelBuilder.Entity("CommodityAuction", b =>
                 {
-                    b.HasOne("CommodityAuctionSnapshotEntity", "CommodityAuctionSnapshotEntity")
+                    b.HasOne("CommodityAuctionSnapshot", "CommodityAuctionSnapshot")
                         .WithMany("CommodityAuctions")
                         .HasForeignKey("CommodityAuctionSnapshotId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CommodityAuctionSnapshotEntity");
+                    b.Navigation("CommodityAuctionSnapshot");
                 });
 
-            modelBuilder.Entity("CommodityAuctionSnapshotEntity", b =>
+            modelBuilder.Entity("CommodityAuctionSnapshot", b =>
                 {
-                    b.HasOne("IngestionRunEntity", "IngestionRunEntity")
+                    b.HasOne("IngestionRun", "IngestionRun")
                         .WithMany()
                         .HasForeignKey("IngestionRunId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("IngestionRunEntity");
+                    b.Navigation("IngestionRun");
                 });
 
-            modelBuilder.Entity("CommodityAuctionSnapshotEntity", b =>
+            modelBuilder.Entity("CommodityAuctionSnapshot", b =>
                 {
                     b.Navigation("CommodityAuctions");
                 });

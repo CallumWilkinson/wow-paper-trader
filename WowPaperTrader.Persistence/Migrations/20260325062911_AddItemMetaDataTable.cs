@@ -12,7 +12,7 @@ namespace WowPaperTrader.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ItemMetaDataEntity",
+                name: "ItemMetaData",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -52,7 +52,7 @@ namespace WowPaperTrader.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ItemMetaDataEntity");
+                name: "ItemMetaData");
         }
     }
 }
