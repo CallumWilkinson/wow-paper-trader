@@ -19,7 +19,7 @@ public sealed class ItemMetaDataSchemaTests : IClassFixture<SqliteInMemoryDbFixt
     {
         await using var dbContext = await _db.CreateArrangeDbContextAsync();
 
-        var actualColumns = await GetTableColumnNamesAsync(dbContext, "ItemMetaData");
+        var actualColumns = await GetTableColumnNamesAsync(dbContext, "ItemMetaDataEntity");
         var expectedColumns = GetExpectedItemMetaDataColumnNames();
 
         actualColumns.Should().Equal(expectedColumns);

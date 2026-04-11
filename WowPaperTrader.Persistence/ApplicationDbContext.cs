@@ -10,11 +10,11 @@ public sealed class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<IngestionRun> IngestionRuns { get; set; } = null!;
+    public DbSet<IngestionRunEntity> IngestionRuns { get; set; } = null!;
 
-    public DbSet<CommodityAuctionSnapshot> CommodityAuctionSnapshots { get; set; } = null!;
+    public DbSet<CommodityAuctionSnapshotEntity> CommodityAuctionSnapshots { get; set; } = null!;
 
-    public DbSet<CommodityAuction> CommodityAuctions { get; set; } = null!;
+    public DbSet<CommodityAuctionEntity> CommodityAuctions { get; set; } = null!;
 
-    public DbSet<ItemMetaData> ItemMetaData { get; set; } = null!;
+    public DbSet<ItemMetaDataEntity> ItemMetaData { get; set; } = null!;
 }

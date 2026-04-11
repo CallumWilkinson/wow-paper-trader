@@ -20,7 +20,7 @@ public sealed class ItemIdsWithoutMetadataReadService : IItemIdsWithoutMetadataR
             FROM CommodityAuctions ca
             WHERE NOT EXISTS (
                 SELECT 1
-                FROM ItemMetaData im
+                FROM ItemMetaDataEntity im
                 WHERE im.ItemId = ca.ItemId
             );
         ";

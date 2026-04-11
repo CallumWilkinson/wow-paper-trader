@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Features.Write.UpdateItems;
 
-public sealed class ItemMetaData
+public sealed class ItemMetaDataEntity
 {
     public long Id { get; set; } // Primary key
 

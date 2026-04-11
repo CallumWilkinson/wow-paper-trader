@@ -17,16 +17,16 @@ public sealed class IngestionRunUseCase(
 
             await repository.SaveSnapshotAsync(run, result, cancellationToken);
 
-            logger.LogInformation("IngestionRun UseCase completed successfully.");
+            logger.LogInformation("IngestionRunEntity UseCase completed successfully.");
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            logger.LogInformation("IngestionRun UseCase Cancelled");
+            logger.LogInformation("IngestionRunEntity UseCase Cancelled");
             throw;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "IngestionRun UseCase Failed");
+            logger.LogError(ex, "IngestionRunEntity UseCase Failed");
             throw;
         }
     }

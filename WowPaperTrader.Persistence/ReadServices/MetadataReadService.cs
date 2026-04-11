@@ -67,7 +67,7 @@ public sealed class MetadataReadService : IMetadataReadService
                 meta.LastFetchedUtc
             FROM LowestPriceForItem price
             CROSS JOIN LatestSnapshot latest
-            LEFT JOIN ItemMetaData meta
+            LEFT JOIN ItemMetaDataEntity meta
                 ON meta.ItemId = price.ItemId;
             """;
 

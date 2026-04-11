@@ -2,9 +2,9 @@
 
 namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
-public sealed class CommodityAuctionSnapshot
+public sealed class CommodityAuctionSnapshotEntity
 {
-    public CommodityAuctionSnapshot(long ingestionRunId, DateTime fetchedAtUtc, string apiEndPoint)
+    public CommodityAuctionSnapshotEntity(long ingestionRunId, DateTime fetchedAtUtc, string apiEndPoint)
     {
         IngestionRunId = ingestionRunId;
         FetchedAtUtc = fetchedAtUtc;
@@ -18,7 +18,7 @@ public sealed class CommodityAuctionSnapshot
     //this is a navigation property, it is not created as a column in the db
     //it is for linking this entity type to the ingestionRun in code
     //one to one relationship
-    public IngestionRun IngestionRun { get; private set; } = null!;
+    public IngestionRunEntity IngestionRunEntity { get; private set; } = null!;
 
     public DateTime FetchedAtUtc { get; private set; }
 
@@ -26,11 +26,11 @@ public sealed class CommodityAuctionSnapshot
 
     //navigation collection property becuase this is a list of custom types
     //one to many relationship
-    public List<CommodityAuction> CommodityAuctions { get; } = new();
+    public List<CommodityAuctionEntity> CommodityAuctions { get; } = new();
 
     //used when we loop the DTO during mapping
-    public void AddAuction(CommodityAuction commodityAuction)
+    public void AddAuction(CommodityAuctionEntity commodityAuctionEntity)
     {
-        CommodityAuctions.Add(commodityAuction);
+        CommodityAuctions.Add(commodityAuctionEntity);
     }
 }

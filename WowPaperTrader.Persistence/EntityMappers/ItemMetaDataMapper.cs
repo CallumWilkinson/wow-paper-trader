@@ -4,11 +4,11 @@ namespace WowPaperTrader.Persistence.EntityMappers;
 
 public static class ItemMetaDataMapper
 {
-    public static ItemMetaData MapToEntity(ItemMetaDataRecordResponse recordResponse)
+    public static ItemMetaDataEntity MapToEntity(ItemMetaDataRecordResponse recordResponse)
     {
         if (recordResponse == null) throw new ArgumentNullException(nameof(recordResponse));
 
-        return new ItemMetaData
+        return new ItemMetaDataEntity
         {
             ItemId = recordResponse.ItemId,
             Name = recordResponse.Name,
