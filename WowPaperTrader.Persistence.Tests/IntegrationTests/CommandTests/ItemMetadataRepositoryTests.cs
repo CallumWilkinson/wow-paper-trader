@@ -8,11 +8,11 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.CommandTests;
 
-public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class ItemMetadataRepositoryTests : IClassFixture<SqliteInMemoryDbFixture>
 {
     private readonly SqliteInMemoryDbFixture _db;
 
-    public ItemMetaDataRepositoryTests(SqliteInMemoryDbFixture db)
+    public ItemMetadataRepositoryTests(SqliteInMemoryDbFixture db)
     {
         _db = db;
     }
@@ -23,9 +23,9 @@ public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDb
         //arrange
         await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
 
-        var logger = NullLogger<ItemMetaDataRepository>.Instance;
+        var logger = NullLogger<ItemMetadataRepository>.Instance;
 
-        var repo = new ItemMetaDataRepository(arrangeDbContext, logger);
+        var repo = new ItemMetadataRepository(arrangeDbContext, logger);
 
         var listOfRecords = ItemMetaDataRecordFactory.CreateRecordsList();
 
@@ -41,7 +41,7 @@ public sealed class ItemMetaDataRepositoryTests : IClassFixture<SqliteInMemoryDb
             .ToListAsync();
 
         var expected = listOfRecords
-            .Select(ItemMetaDataMapper.MapToEntity)
+            .Select(ItemMetadataMapper.MapToEntity)
             .OrderBy(x => x.ItemId)
             .ToList();
 

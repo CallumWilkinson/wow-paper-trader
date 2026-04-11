@@ -4,18 +4,18 @@ using WowPaperTrader.Persistence.EntityMappers;
 
 namespace WowPaperTrader.Persistence.Repositories;
 
-public class ItemMetaDataRepository : IItemMetaDataRepository
+public class ItemMetadataRepository : IItemMetadataRepository
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly ILogger<ItemMetaDataRepository> _logger;
+    private readonly ILogger<ItemMetadataRepository> _logger;
 
-    public ItemMetaDataRepository(ApplicationDbContext dbContext, ILogger<ItemMetaDataRepository> logger)
+    public ItemMetadataRepository(ApplicationDbContext dbContext, ILogger<ItemMetadataRepository> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
     }
 
-    public async Task SaveItemMetaDataAsync(List<ItemMetaDataRecord> itemMetaDataRecords,
+    public async Task SaveItemMetaDataAsync(List<ItemMetadataRecord> itemMetaDataRecords,
         CancellationToken cancellationToken)
     {
         var startingAdd = DateTime.UtcNow;
@@ -24,7 +24,7 @@ public class ItemMetaDataRepository : IItemMetaDataRepository
 
         foreach (var record in itemMetaDataRecords)
         {
-            var itemMetaDataEntity = ItemMetaDataMapper.MapToEntity(record);
+            var itemMetaDataEntity = ItemMetadataMapper.MapToEntity(record);
             _dbContext.ItemMetaData.Add(itemMetaDataEntity);
         }
 

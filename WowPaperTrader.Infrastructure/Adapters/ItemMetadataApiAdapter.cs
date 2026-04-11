@@ -5,18 +5,18 @@ using WowPaperTrader.Infrastructure.HttpClients;
 
 namespace WowPaperTrader.Infrastructure.Adapters;
 
-public sealed class ItemMetaDataApiAdapter : IItemMetaDataApiAdapter
+public sealed class ItemMetadataApiAdapter : IItemMetadataApiAdapter
 {
     private readonly BattleNetAuthClient _authClient;
     private readonly ItemMediaClient _itemMediaClient;
     private readonly ItemMetaDataClient _itemMetaDataClient;
-    private readonly ILogger<ItemMetaDataApiAdapter> _logger;
+    private readonly ILogger<ItemMetadataApiAdapter> _logger;
 
-    public ItemMetaDataApiAdapter(
+    public ItemMetadataApiAdapter(
         BattleNetAuthClient authClient,
         ItemMetaDataClient itemMetaDataClient,
         ItemMediaClient itemMediaClient,
-        ILogger<ItemMetaDataApiAdapter> logger)
+        ILogger<ItemMetadataApiAdapter> logger)
     {
         _authClient = authClient;
         _itemMetaDataClient = itemMetaDataClient;
@@ -24,7 +24,7 @@ public sealed class ItemMetaDataApiAdapter : IItemMetaDataApiAdapter
         _logger = logger;
     }
 
-    public async Task<ItemMetaDataRecord> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken)
+    public async Task<ItemMetadataRecord> GetItemMetaDataAsync(long itemId, CancellationToken cancellationToken)
     {
         var accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);
 

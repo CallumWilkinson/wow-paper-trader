@@ -35,8 +35,8 @@ builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();
 
 builder.Services.AddScoped<UpdateItemsCommandHandler>();
 builder.Services.AddScoped<IItemIdsWithoutMetadataReadService, ItemIdsWithoutMetadataReadService>();
-builder.Services.AddScoped<IItemMetaDataApiAdapter, ItemMetaDataApiAdapter>();
-builder.Services.AddScoped<IItemMetaDataRepository, ItemMetaDataRepository>();
+builder.Services.AddScoped<IItemMetadataApiAdapter, ItemMetadataApiAdapter>();
+builder.Services.AddScoped<IItemMetadataRepository, ItemMetadataRepository>();
 
 builder.Services.AddHttpClient<BattleNetAuthClient>()
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler

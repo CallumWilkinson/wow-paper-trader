@@ -5,8 +5,8 @@ namespace WowPaperTrader.Domain.Features.Write.UpdateItems;
 
 public sealed class UpdateItemsCommandHandler(
     IItemIdsWithoutMetadataReadService itemIdsWithoutMetadataReadService,
-    IItemMetaDataApiAdapter itemMetaDataApiAdapter,
-    IItemMetaDataRepository itemMetaDataRepository,
+    IItemMetadataApiAdapter itemMetadataApiAdapter,
+    IItemMetadataRepository itemMetadataRepository,
     ILogger<UpdateItemsCommandHandler> logger) : ICommandHandler<UpdateItemsCommand>
 {
     public async Task HandleAsync(UpdateItemsCommand command, CancellationToken cancellationToken)
@@ -15,7 +15,7 @@ public sealed class UpdateItemsCommandHandler(
         {
             var itemIds = await itemIdsWithoutMetadataReadService.GetItemIdsWithoutMetadataAsync(cancellationToken);
 
-            var itemMetaDataRecords = new List<ItemMetaDataRecord>();
+            var itemMetaDataRecords = new List<ItemMetadataRecord>();
 
             var itemIdsForMetaDataNotFound = new List<long>();
 
@@ -24,7 +24,7 @@ public sealed class UpdateItemsCommandHandler(
             foreach (var itemId in itemIds)
                 try
                 {
-                    var record = await itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
+                    var record = await itemMetadataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
 
                     if (record == null)
                     {
@@ -46,7 +46,7 @@ public sealed class UpdateItemsCommandHandler(
                     logger.LogWarning(ex, "HTTP failure while fetching metadata for item {ItemId}. Skipping.", itemId);
                 }
 
-            await itemMetaDataRepository.SaveItemMetaDataAsync(itemMetaDataRecords, cancellationToken);
+            await itemMetadataRepository.SaveItemMetaDataAsync(itemMetaDataRecords, cancellationToken);
 
             logger.LogInformation(
                 "Items that have auctions listed but no meta data from blizzard: {itemIdsForMetaDataNotFound}",

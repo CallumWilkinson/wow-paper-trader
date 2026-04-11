@@ -2,9 +2,9 @@ using WowPaperTrader.Domain.Features.Write.UpdateItems;
 
 namespace WowPaperTrader.Persistence.EntityMappers;
 
-public static class ItemMetaDataMapper
+public static class ItemMetadataMapper
 {
-    public static ItemMetaData MapToEntity(ItemMetaDataRecord record)
+    public static ItemMetaData MapToEntity(ItemMetadataRecord record)
     {
         if (record == null) throw new ArgumentNullException(nameof(record));
 

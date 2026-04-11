@@ -23,7 +23,7 @@ public sealed class ItemSearchReadServiceTests : IClassFixture<SqlServerTestDbFi
         //arrange
         await using (var arrangeDbContext = await _db.CreateArrangeDbContextAsync())
         {
-            var repo = new ItemMetaDataRepository(arrangeDbContext, NullLogger<ItemMetaDataRepository>.Instance);
+            var repo = new ItemMetadataRepository(arrangeDbContext, NullLogger<ItemMetadataRepository>.Instance);
 
             var metaData = ItemMetaDataRecordFactory.CreateLinenSearchTestRecords();
 
