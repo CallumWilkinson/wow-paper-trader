@@ -2,31 +2,17 @@ using Microsoft.Extensions.Logging;
 
 namespace WowPaperTrader.Domain.Features.Write.UpdateItems;
 
-public sealed class UpdateItemMetaDataUseCase
+public sealed class UpdateItemMetaDataUseCase(
+    IItemIdsWithoutMetadataReadService itemIdsWithoutMetadataReadService,
+    IItemMetaDataApiAdapter itemMetaDataApiAdapter,
+    IItemMetaDataRepository itemMetaDataRepository,
+    ILogger<UpdateItemMetaDataUseCase> logger)
 {
-    private readonly IItemIdsWithoutMetadataReadService _itemIdsWithoutMetadataReadService;
-    private readonly IItemMetaDataApiAdapter _itemMetaDataApiAdapter;
-    private readonly IItemMetaDataRepository _itemMetaDataRepository;
-    private readonly ILogger<UpdateItemMetaDataUseCase> _logger;
-
-    public UpdateItemMetaDataUseCase(
-        IItemIdsWithoutMetadataReadService itemIdsWithoutMetadataReadService,
-        IItemMetaDataApiAdapter itemMetaDataApiAdapter,
-        IItemMetaDataRepository itemMetaDataRepository,
-        ILogger<UpdateItemMetaDataUseCase> logger
-    )
-    {
-        _itemIdsWithoutMetadataReadService = itemIdsWithoutMetadataReadService;
-        _itemMetaDataApiAdapter = itemMetaDataApiAdapter;
-        _itemMetaDataRepository = itemMetaDataRepository;
-        _logger = logger;
-    }
-
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         try
         {
-            var itemIds = await _itemIdsWithoutMetadataReadService.GetItemIdsWithoutMetadataAsync(cancellationToken);
+            var itemIds = await itemIdsWithoutMetadataReadService.GetItemIdsWithoutMetadataAsync(cancellationToken);
 
             var itemMetaDataRecords = new List<ItemMetaDataRecordResponse>();
 
@@ -37,11 +23,11 @@ public sealed class UpdateItemMetaDataUseCase
             foreach (var itemId in itemIds)
                 try
                 {
-                    var record = await _itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
+                    var record = await itemMetaDataApiAdapter.GetItemMetaDataAsync(itemId, cancellationToken);
 
                     if (record == null)
                     {
-                        _logger.LogWarning("Item metadata not found for item {ItemId}. Skipping.", itemId);
+                        logger.LogWarning("Item metadata not found for item {ItemId}. Skipping.", itemId);
                         itemIdsForMetaDataNotFound.Add(itemId);
                         continue;
                     }
@@ -56,28 +42,28 @@ public sealed class UpdateItemMetaDataUseCase
                 {
                     itemIdsThatFailedOnHttpError.Add(itemId);
 
-                    _logger.LogWarning(ex, "HTTP failure while fetching metadata for item {ItemId}. Skipping.", itemId);
+                    logger.LogWarning(ex, "HTTP failure while fetching metadata for item {ItemId}. Skipping.", itemId);
                 }
 
-            await _itemMetaDataRepository.SaveItemMetaDataAsync(itemMetaDataRecords, cancellationToken);
+            await itemMetaDataRepository.SaveItemMetaDataAsync(itemMetaDataRecords, cancellationToken);
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 "Items that have auctions listed but no meta data from blizzard: {itemIdsForMetaDataNotFound}",
                 string.Join(", ", itemIdsForMetaDataNotFound));
 
-            _logger.LogInformation("Items that failled on http request to blizzard: {itemIdsThatFailedOnHttpError}",
+            logger.LogInformation("Items that failled on http request to blizzard: {itemIdsThatFailedOnHttpError}",
                 string.Join(", ", itemIdsThatFailedOnHttpError));
 
-            _logger.LogInformation("Update Item MetaData Use Case Completed Successfully");
+            logger.LogInformation("Update Item MetaData Use Case Completed Successfully");
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            _logger.LogInformation("Update Item MetaData Use Case Cancelled");
+            logger.LogInformation("Update Item MetaData Use Case Cancelled");
             throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Update Item MetaData Use Case Failed");
+            logger.LogError(ex, "Update Item MetaData Use Case Failed");
             throw;
         }
     }

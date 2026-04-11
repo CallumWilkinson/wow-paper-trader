@@ -2,42 +2,31 @@ using Microsoft.Extensions.Logging;
 
 namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
-public sealed class IngestionRunUseCase
+public sealed class IngestionRunUseCase(
+    ILogger<IngestionRunUseCase> logger,
+    ICommodityAuctionApiAdapter auctionApiAdapter,
+    ICommodityAuctionRepository repository)
 {
-    private readonly ICommodityAuctionApiAdapter _auctionApiAdapter;
-    private readonly ILogger<IngestionRunUseCase> _logger;
-    private readonly ICommodityAuctionRepository _repository;
-
-    public IngestionRunUseCase(
-        ILogger<IngestionRunUseCase> logger,
-        ICommodityAuctionApiAdapter auctionApiAdapter,
-        ICommodityAuctionRepository repository)
-    {
-        _logger = logger;
-        _auctionApiAdapter = auctionApiAdapter;
-        _repository = repository;
-    }
-
     public async Task RunOnceAsync(CancellationToken cancellationToken)
     {
-        var run = await _repository.CreateIngestionRunAsync(cancellationToken);
+        var run = await repository.CreateIngestionRunAsync(cancellationToken);
 
         try
         {
-            var result = await _auctionApiAdapter.GetCommodityAuctionsSnapshotAsync(cancellationToken);
+            var result = await auctionApiAdapter.GetCommodityAuctionsSnapshotAsync(cancellationToken);
 
-            await _repository.SaveSnapshotAsync(run, result, cancellationToken);
+            await repository.SaveSnapshotAsync(run, result, cancellationToken);
 
-            _logger.LogInformation("IngestionRun UseCase completed successfully.");
+            logger.LogInformation("IngestionRun UseCase completed successfully.");
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            _logger.LogInformation("IngestionRun UseCase Cancelled");
+            logger.LogInformation("IngestionRun UseCase Cancelled");
             throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "IngestionRun UseCase Failed");
+            logger.LogError(ex, "IngestionRun UseCase Failed");
             throw;
         }
     }

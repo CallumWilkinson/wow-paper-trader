@@ -2,15 +2,9 @@ using WowPaperTrader.Domain.Architecture;
 
 namespace WowPaperTrader.Domain.Features.Read.GetMetadata;
 
-public sealed class GetMetadataQueryHandler :  IQueryHandler<GetMetadataQuery, MetadataResponse>
+public sealed class GetMetadataQueryHandler(IMetadataReadService readService)
+    : IQueryHandler<GetMetadataQuery, MetadataResponse>
 {
-    private readonly IMetadataReadService _readService;
-
-    public GetMetadataQueryHandler(IMetadataReadService readService)
-    {
-        _readService = readService;
-    }
-
     public async Task<MetadataResponse> HandleAsync(GetMetadataQuery query, CancellationToken cancellationToken)
     {
         if (query.ItemId <= 0)
@@ -20,7 +14,7 @@ public sealed class GetMetadataQueryHandler :  IQueryHandler<GetMetadataQuery, M
                 "Invalid itemId"
             );
 
-        return await _readService.GetAsync(query.ItemId, cancellationToken);
+        return await readService.GetAsync(query.ItemId, cancellationToken);
     }
 
     

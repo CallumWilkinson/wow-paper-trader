@@ -1,16 +1,7 @@
 namespace WowPaperTrader.Domain.Features.Read.LowestPrice;
 
-public sealed class GetCurrentLowestUnitPriceByItemIdUseCase
+public sealed class GetCurrentLowestUnitPriceByItemIdUseCase(ICurrentLowestUnitPriceReadService query)
 {
-    private readonly ICurrentLowestUnitPriceReadService _query;
-
-    public GetCurrentLowestUnitPriceByItemIdUseCase(
-        ICurrentLowestUnitPriceReadService query
-    )
-    {
-        _query = query;
-    }
-
     public async Task<CurrentLowestUnitPriceResponse?> ExecuteAsync(
         long itemId,
         CancellationToken cancellationToken
@@ -23,6 +14,6 @@ public sealed class GetCurrentLowestUnitPriceByItemIdUseCase
                 "Invalid itemId"
             );
 
-        return await _query.GetAsync(itemId, cancellationToken);
+        return await query.GetAsync(itemId, cancellationToken);
     }
 }
