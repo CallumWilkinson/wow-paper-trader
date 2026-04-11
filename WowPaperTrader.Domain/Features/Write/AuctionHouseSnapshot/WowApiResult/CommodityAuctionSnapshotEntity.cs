@@ -1,6 +1,6 @@
 //note to self - an instance of this class is 1 row in the table called CommodityAuctionSnapshots
 
-namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 
 public sealed class CommodityAuctionSnapshotEntity
 {

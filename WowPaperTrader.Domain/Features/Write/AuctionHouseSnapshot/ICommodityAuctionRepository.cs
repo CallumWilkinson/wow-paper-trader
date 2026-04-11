@@ -1,4 +1,4 @@
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 
 namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
@@ -8,6 +8,6 @@ public interface ICommodityAuctionRepository
 
     Task SaveSnapshotAsync(
         IngestionRunEntity runEntity,
-        WowApiResponse<AuctionSnapshot> wowApiResponse,
+        WowApiResult<AuctionSnapshot> wowApiResult,
         CancellationToken cancellationToken);
 }

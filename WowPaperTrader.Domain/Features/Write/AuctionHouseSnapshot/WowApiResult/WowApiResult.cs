@@ -1,6 +1,6 @@
-namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 
-public sealed record WowApiResponse<T>(
+public sealed record WowApiResult<T>(
     T Payload,
     DateTime DataReturnedAtUtc,
     string Endpoint

@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Infrastructure.DTOs;
 
 namespace WowPaperTrader.Infrastructure.HttpClients;
@@ -22,7 +22,7 @@ public sealed class CommodityAuctionClient
         _httpClient = httpClient;
     }
 
-    public async Task<WowApiResponse<CommodityAuctionsResponseDto>> GetCommodityAuctionsAsync(string accessToken,
+    public async Task<WowApiResult<CommodityAuctionsResponseDto>> GetCommodityAuctionsAsync(string accessToken,
         CancellationToken cancellationToken)
     {
         var endpointSuffix = "auctions/commodities?namespace=dynamic-us&locale=en_US";
@@ -47,6 +47,6 @@ public sealed class CommodityAuctionClient
 
         var fullEndpoint = new Uri(_httpClient.BaseAddress!, endpointSuffix).ToString();
 
-        return new WowApiResponse<CommodityAuctionsResponseDto>(result, DateTime.UtcNow, fullEndpoint);
+        return new WowApiResult<CommodityAuctionsResponseDto>(result, DateTime.UtcNow, fullEndpoint);
     }
 }

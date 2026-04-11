@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Infrastructure.ContractMappers;
 using WowPaperTrader.Infrastructure.HttpClients;
 
@@ -21,7 +21,7 @@ public sealed class CommodityAuctionApiAdapter : ICommodityAuctionApiAdapter
         _logger = logger;
     }
 
-    public async Task<WowApiResponse<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(
+    public async Task<WowApiResult<AuctionSnapshot>> GetCommodityAuctionsSnapshotAsync(
         CancellationToken cancellationToken)
     {
         var accessToken = await _authClient.RequestNewTokenAsync(cancellationToken);

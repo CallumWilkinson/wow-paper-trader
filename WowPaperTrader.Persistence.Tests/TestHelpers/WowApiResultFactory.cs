@@ -1,11 +1,11 @@
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 
 namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 
 public static class WowApiResultFactory
 {
-    public static WowApiResponse<AuctionSnapshot> Create()
+    public static WowApiResult<AuctionSnapshot> Create()
     {
         var auctions = new List<AuctionSnapshotRow>
         {
@@ -15,14 +15,14 @@ public static class WowApiResultFactory
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResponse<AuctionSnapshot>(
+        return new WowApiResult<AuctionSnapshot>(
             snapshot,
             DateTime.UtcNow,
             "/commodities"
         );
     }
 
-    public static WowApiResponse<AuctionSnapshot> CreateOlderApiResult(DateTime olderTime)
+    public static WowApiResult<AuctionSnapshot> CreateOlderApiResult(DateTime olderTime)
     {
         var auctions = new List<AuctionSnapshotRow>
         {
@@ -33,14 +33,14 @@ public static class WowApiResultFactory
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResponse<AuctionSnapshot>(
+        return new WowApiResult<AuctionSnapshot>(
             snapshot,
             olderTime,
             "/commodities"
         );
     }
 
-    public static WowApiResponse<AuctionSnapshot> CreateNewerApiResult(DateTime newerTime)
+    public static WowApiResult<AuctionSnapshot> CreateNewerApiResult(DateTime newerTime)
     {
         var auctions = new List<AuctionSnapshotRow>
         {
@@ -51,7 +51,7 @@ public static class WowApiResultFactory
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResponse<AuctionSnapshot>(
+        return new WowApiResult<AuctionSnapshot>(
             snapshot,
             newerTime,
             "/commodities"

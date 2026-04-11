@@ -1,15 +1,15 @@
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Infrastructure.DTOs;
 
 namespace WowPaperTrader.Infrastructure.ContractMappers;
 
 public static class WowApiResultMapper
 {
-    public static WowApiResponse<AuctionSnapshot> MapToContract(
-        WowApiResponse<CommodityAuctionsResponseDto> responseWithDto)
+    public static WowApiResult<AuctionSnapshot> MapToContract(
+        WowApiResult<CommodityAuctionsResponseDto> resultWithDto)
     {
-        var dto = responseWithDto.Payload;
+        var dto = resultWithDto.Payload;
 
         var auctions = dto.CommodityAuctions
             .Select(MapSnapshotRow)
@@ -17,10 +17,10 @@ public static class WowApiResultMapper
 
         var snapshot = new AuctionSnapshot(auctions);
 
-        return new WowApiResponse<AuctionSnapshot>(
+        return new WowApiResult<AuctionSnapshot>(
             snapshot,
-            responseWithDto.DataReturnedAtUtc,
-            responseWithDto.Endpoint
+            resultWithDto.DataReturnedAtUtc,
+            resultWithDto.Endpoint
         );
     }
 

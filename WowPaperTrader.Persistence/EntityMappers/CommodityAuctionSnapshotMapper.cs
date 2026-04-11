@@ -1,17 +1,17 @@
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 
 namespace WowPaperTrader.Persistence.EntityMappers;
 
 public static class CommodityAuctionSnapshotMapper
 {
     public static CommodityAuctionSnapshotEntity MapToEntity(
-        WowApiResponse<AuctionSnapshot> apiResponse,
+        WowApiResult<AuctionSnapshot> apiResult,
         long ingestionRunId
     )
     {
-        var payload = apiResponse.Payload;
-        var snapshot = new CommodityAuctionSnapshotEntity(ingestionRunId, apiResponse.DataReturnedAtUtc, apiResponse.Endpoint);
+        var payload = apiResult.Payload;
+        var snapshot = new CommodityAuctionSnapshotEntity(ingestionRunId, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
 
         foreach (var auction in payload.Auctions)
         {

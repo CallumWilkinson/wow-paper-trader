@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Domain.Features.Write.UpdateItems;
 
 namespace WowPaperTrader.Persistence;

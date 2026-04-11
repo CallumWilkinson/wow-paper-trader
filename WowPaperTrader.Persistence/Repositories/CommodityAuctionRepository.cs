@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Persistence.EntityMappers;
 
 namespace WowPaperTrader.Persistence.Repositories;
@@ -28,7 +28,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
         return run;
     }
 
-    public async Task SaveSnapshotAsync(IngestionRunEntity runEntity, WowApiResponse<AuctionSnapshot> wowApiResponse,
+    public async Task SaveSnapshotAsync(IngestionRunEntity runEntity, WowApiResult<AuctionSnapshot> wowApiResult,
         CancellationToken cancellationToken)
     {
         var cancellationRegistration =
@@ -42,7 +42,7 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
 
         try
         {
-            await RunCommodityAuctionSnapshotDatabaseTransaction(runEntity, wowApiResponse, cancellationToken);
+            await RunCommodityAuctionSnapshotDatabaseTransaction(runEntity, wowApiResult, cancellationToken);
 
             _logger.LogInformation("All Auctions have been recorded in the database successfully!");
         }
@@ -62,13 +62,13 @@ public class CommodityAuctionRepository : ICommodityAuctionRepository
     }
 
     private async Task RunCommodityAuctionSnapshotDatabaseTransaction(IngestionRunEntity runEntity,
-        WowApiResponse<AuctionSnapshot> wowApiResponse, CancellationToken cancellationToken)
+        WowApiResult<AuctionSnapshot> wowApiResult, CancellationToken cancellationToken)
     {
         await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var snapshotEntity = CommodityAuctionSnapshotMapper.MapToEntity(wowApiResponse, runEntity.Id);
+            var snapshotEntity = CommodityAuctionSnapshotMapper.MapToEntity(wowApiResult, runEntity.Id);
 
             var startingAdd = DateTime.UtcNow;
             _logger.LogInformation("Adding to DbContext at {Time}", startingAdd);
