@@ -11,11 +11,4 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.3"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="CommandHandlers\" />
-      <Folder Include="Entities\" />
-      <Folder Include="Interfaces\" />
-      <Folder Include="ResponseTypes\" />
-    </ItemGroup>
-
 </Project>
