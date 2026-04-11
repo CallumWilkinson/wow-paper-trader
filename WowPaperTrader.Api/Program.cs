@@ -24,8 +24,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddScoped<GetCurrentLowestUnitPriceByItemIdUseCase>();
-builder.Services.AddScoped<ICurrentLowestUnitPriceReadService, CurrentLowestUnitPriceReadService>();
+builder.Services.AddScoped<LowestPriceQueryHandler>();
+builder.Services.AddScoped<ILowestPriceReadService, LowestPriceReadService>();
 
 builder.Services.AddScoped<GetMetadataQueryHandler>();
 builder.Services.AddScoped<MetadataReadService, MetadataReadService>();

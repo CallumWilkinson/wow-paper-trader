@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Features.Read.LowestPrice;
 
-public sealed class CurrentLowestUnitPriceResponse
+public sealed class LowestPriceResponse
 {
     public long ItemId { get; init; }
 

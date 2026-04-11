@@ -11,17 +11,17 @@ namespace WowPaperTrader.Api.Controllers;
 public sealed class ItemsController : ControllerBase
 {
     private readonly ItemSearchQueryHandler _itemSearchQueryHandler;
-    private readonly GetCurrentLowestUnitPriceByItemIdUseCase _getLowestPriceUseCase;
+    private readonly LowestPriceQueryHandler _getLowestPriceQueryHandler;
     private readonly GetMetadataQueryHandler _getMetadataQueryHandler;
     private readonly UpdateItemMetaDataUseCase _updateMetadataUseCase;
 
     public ItemsController(
-        GetCurrentLowestUnitPriceByItemIdUseCase getLowestPriceUseCase,
+        LowestPriceQueryHandler getLowestPriceQueryHandler,
         ItemSearchQueryHandler itemSearchQueryHandler,
         GetMetadataQueryHandler getMetadataQueryHandler,
         UpdateItemMetaDataUseCase updateMetadataUseCase)
     {
-        _getLowestPriceUseCase = getLowestPriceUseCase;
+        _getLowestPriceQueryHandler = getLowestPriceQueryHandler;
         _itemSearchQueryHandler = itemSearchQueryHandler;
         _getMetadataQueryHandler = getMetadataQueryHandler;
         _updateMetadataUseCase = updateMetadataUseCase;
@@ -55,14 +55,16 @@ public sealed class ItemsController : ControllerBase
     }
 
     [HttpGet("{itemId:long}/auctions/lowest")]
-    public async Task<ActionResult<CurrentLowestUnitPriceResponse>> GetCurrentLowestUnitPrice(
+    public async Task<ActionResult<LowestPriceResponse>> GetLowestPrice(
         long itemId,
         CancellationToken cancellationToken
     )
     {
         if (itemId <= 0) return BadRequest("Invalid itemId.");
+        
+        var query = new LowestPriceQuery(itemId);
 
-        var result = await _getLowestPriceUseCase.ExecuteAsync(itemId, cancellationToken);
+        var result = await _getLowestPriceQueryHandler.HandleAsync(query, cancellationToken);
 
         if (result is null) return NotFound();
 

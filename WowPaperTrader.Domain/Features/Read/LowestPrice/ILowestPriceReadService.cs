@@ -1,8 +1,8 @@
 namespace WowPaperTrader.Domain.Features.Read.LowestPrice;
 
-public interface ICurrentLowestUnitPriceReadService
+public interface ILowestPriceReadService
 {
-    Task<CurrentLowestUnitPriceResponse?> GetAsync(
+    Task<LowestPriceResponse?> GetAsync(
         long itemId,
         CancellationToken cancellationToken
     );

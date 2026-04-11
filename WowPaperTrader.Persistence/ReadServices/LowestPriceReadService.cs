@@ -4,16 +4,16 @@ using WowPaperTrader.Domain.Features.Read.LowestPrice;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 
-public sealed class CurrentLowestUnitPriceReadService : ICurrentLowestUnitPriceReadService
+public sealed class LowestPriceReadService : ILowestPriceReadService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public CurrentLowestUnitPriceReadService(ApplicationDbContext dbContext)
+    public LowestPriceReadService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<CurrentLowestUnitPriceResponse?> GetAsync(long itemId, CancellationToken cancellationToken)
+    public async Task<LowestPriceResponse?> GetAsync(long itemId, CancellationToken cancellationToken)
     {
         const string sql =
             """
@@ -34,7 +34,7 @@ public sealed class CurrentLowestUnitPriceReadService : ICurrentLowestUnitPriceR
 
         var connection = _dbContext.Database.GetDbConnection();
 
-        return await connection.QuerySingleOrDefaultAsync<CurrentLowestUnitPriceResponse>(
+        return await connection.QuerySingleOrDefaultAsync<LowestPriceResponse>(
             new CommandDefinition(
                 sql,
                 new { ItemId = itemId },
