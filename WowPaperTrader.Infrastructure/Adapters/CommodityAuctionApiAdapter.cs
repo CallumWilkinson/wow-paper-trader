@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
 using WowPaperTrader.Infrastructure.ContractMappers;
 using WowPaperTrader.Infrastructure.HttpClients;
 

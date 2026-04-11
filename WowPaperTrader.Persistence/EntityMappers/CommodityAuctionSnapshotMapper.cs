@@ -1,4 +1,5 @@
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
 
 namespace WowPaperTrader.Persistence.EntityMappers;
 

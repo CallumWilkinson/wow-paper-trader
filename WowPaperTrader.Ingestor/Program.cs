@@ -15,9 +15,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddHostedService<IngestionRunBackgroundService>();
+builder.Services.AddHostedService<AuctionDataBackgroundService>();
 
-builder.Services.AddScoped<IngestionRunUseCase>();
+builder.Services.AddScoped<PostAuctionDataCommandHandler>();
 builder.Services.AddScoped<ICommodityAuctionApiAdapter, CommodityAuctionApiAdapter>();
 builder.Services.AddScoped<ICommodityAuctionRepository, CommodityAuctionRepository>();
 

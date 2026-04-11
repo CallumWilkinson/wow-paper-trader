@@ -2,17 +2,9 @@ using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
 namespace WowPaperTrader.Ingestor;
 
-public sealed class IngestionRunBackgroundService : BackgroundService
+public sealed class AuctionDataBackgroundService(IServiceScopeFactory scopeFactory) : BackgroundService
 {
     private static readonly TimeSpan LoopDelay = TimeSpan.FromHours(1);
-
-    private readonly IServiceScopeFactory _scopeFactory;
-
-    public IngestionRunBackgroundService(
-        IServiceScopeFactory scopeFactory)
-    {
-        _scopeFactory = scopeFactory;
-    }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -20,9 +12,13 @@ public sealed class IngestionRunBackgroundService : BackgroundService
         {
             try
             {
-                await using var scope = _scopeFactory.CreateAsyncScope();
-                var ingestionUseCase = scope.ServiceProvider.GetRequiredService<IngestionRunUseCase>();
-                await ingestionUseCase.RunOnceAsync(cancellationToken);
+                await using var scope = scopeFactory.CreateAsyncScope();
+                
+                var postAuctionDataCommandHandler = scope.ServiceProvider.GetRequiredService<PostAuctionDataCommandHandler>();
+                
+                var command = new PostAuctionDataCommand();
+                
+                await postAuctionDataCommandHandler.HandleAsync(command, cancellationToken);
             }
             catch (OperationCanceledException)
             {

@@ -1,13 +1,14 @@
 using Microsoft.Extensions.Logging;
+using WowPaperTrader.Domain.Architecture;
 
 namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
 
-public sealed class IngestionRunUseCase(
-    ILogger<IngestionRunUseCase> logger,
+public sealed class PostAuctionDataCommandHandler(
+    ILogger<PostAuctionDataCommandHandler> logger,
     ICommodityAuctionApiAdapter auctionApiAdapter,
-    ICommodityAuctionRepository repository)
+    ICommodityAuctionRepository repository) : ICommandHandler<PostAuctionDataCommand>
 {
-    public async Task RunOnceAsync(CancellationToken cancellationToken)
+    public async Task HandleAsync(PostAuctionDataCommand command, CancellationToken cancellationToken)
     {
         var run = await repository.CreateIngestionRunAsync(cancellationToken);
 
@@ -17,17 +18,18 @@ public sealed class IngestionRunUseCase(
 
             await repository.SaveSnapshotAsync(run, result, cancellationToken);
 
-            logger.LogInformation("IngestionRunEntity UseCase completed successfully.");
+            logger.LogInformation("Commodity Auction Snapshot completed successfully.");
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            logger.LogInformation("IngestionRunEntity UseCase Cancelled");
+            logger.LogInformation("Commodity Auction Snapshot Cancelled");
             throw;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "IngestionRunEntity UseCase Failed");
+            logger.LogError(ex, "Commodity Auction Snapshot Failed");
             throw;
         }
     }
+    
 }

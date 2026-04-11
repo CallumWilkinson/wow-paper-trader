@@ -1,4 +1,4 @@
-namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
+namespace WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
 
 public sealed record WowApiResponse<T>(
     T Payload,

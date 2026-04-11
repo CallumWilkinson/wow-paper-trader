@@ -1,4 +1,5 @@
 using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.ApiResponse;
 using WowPaperTrader.Infrastructure.DTOs;
 
 namespace WowPaperTrader.Infrastructure.ContractMappers;

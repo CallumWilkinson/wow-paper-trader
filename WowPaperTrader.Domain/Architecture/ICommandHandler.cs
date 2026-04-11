@@ -1,7 +1,7 @@
 namespace WowPaperTrader.Domain.Architecture;
 
-public interface ICommandHandler<in TCommand, TResponse>
-    where TCommand : ICommand<TResponse>
+public interface ICommandHandler<in TCommand>
+    where TCommand : ICommand
 {
-    Task<TResponse> HandleAsync(TCommand command, CancellationToken cancellationToken);
+    Task HandleAsync(TCommand command, CancellationToken cancellationToken);
 }
