@@ -2,7 +2,7 @@ using WowPaperTrader.Domain.Architecture;
 
 namespace WowPaperTrader.Domain.Features.Read.GetMetadata;
 
-public class GetMetadataQuery : IQuery<MetadataResponse>
+public sealed class GetMetadataQuery(long itemId) : IQuery<MetadataResponse>
 {
-    
+    public readonly long ItemId = itemId;
 }

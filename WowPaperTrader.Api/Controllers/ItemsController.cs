@@ -12,18 +12,18 @@ public sealed class ItemsController : ControllerBase
 {
     private readonly ItemSearchQueryHandler _itemSearchQueryHandler;
     private readonly GetCurrentLowestUnitPriceByItemIdUseCase _getLowestPriceUseCase;
-    private readonly GetMetadataQueryHandler _getMetadataUseCase;
+    private readonly GetMetadataQueryHandler _getMetadataQueryHandler;
     private readonly UpdateItemMetaDataUseCase _updateMetadataUseCase;
 
     public ItemsController(
         GetCurrentLowestUnitPriceByItemIdUseCase getLowestPriceUseCase,
         ItemSearchQueryHandler itemSearchQueryHandler,
-        GetMetadataQueryHandler getMetadataUseCase,
+        GetMetadataQueryHandler getMetadataQueryHandler,
         UpdateItemMetaDataUseCase updateMetadataUseCase)
     {
         _getLowestPriceUseCase = getLowestPriceUseCase;
         _itemSearchQueryHandler = itemSearchQueryHandler;
-        _getMetadataUseCase = getMetadataUseCase;
+        _getMetadataQueryHandler = getMetadataQueryHandler;
         _updateMetadataUseCase = updateMetadataUseCase;
     }
 
@@ -41,14 +41,13 @@ public sealed class ItemsController : ControllerBase
     }
 
     [HttpGet("{itemId:long}")]
-    public async Task<ActionResult<MetadataResponse>> GetTooltipAndLowestBuyoutPrice(
-        long itemId,
-        CancellationToken cancellationToken
-    )
+    public async Task<ActionResult<MetadataResponse>> GetMetadata(long itemId, CancellationToken cancellationToken)
     {
         if (itemId <= 0) return BadRequest("Invalid itemId.");
+        
+        var query = new GetMetadataQuery(itemId);
 
-        var result = await _getMetadataUseCase.ExecuteAsync(itemId, cancellationToken);
+        var result = await _getMetadataQueryHandler.HandleAsync(query, cancellationToken);
 
         if (result is null) return NotFound();
 

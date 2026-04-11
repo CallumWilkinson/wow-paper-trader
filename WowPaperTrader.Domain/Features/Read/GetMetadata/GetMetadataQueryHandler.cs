@@ -1,6 +1,8 @@
+using WowPaperTrader.Domain.Architecture;
+
 namespace WowPaperTrader.Domain.Features.Read.GetMetadata;
 
-public sealed class GetMetadataQueryHandler
+public sealed class GetMetadataQueryHandler :  IQueryHandler<GetMetadataQuery, MetadataResponse>
 {
     private readonly IMetadataReadService _readService;
 
@@ -9,18 +11,17 @@ public sealed class GetMetadataQueryHandler
         _readService = readService;
     }
 
-    public async Task<MetadataResponse?> ExecuteAsync(
-        long itemId,
-        CancellationToken cancellationToken
-    )
+    public async Task<MetadataResponse> HandleAsync(GetMetadataQuery query, CancellationToken cancellationToken)
     {
-        if (itemId <= 0)
+        if (query.ItemId <= 0)
             throw new ArgumentOutOfRangeException
             (
-                nameof(itemId),
+                nameof(query.ItemId),
                 "Invalid itemId"
             );
 
-        return await _readService.GetAsync(itemId, cancellationToken);
+        return await _readService.GetAsync(query.ItemId, cancellationToken);
     }
+
+    
 }
