@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\WowPaperTrader.Domain\WowPaperTrader.Domain.csproj"/>
+        <ProjectReference Include="..\WowPaperTrader.Application\WowPaperTrader.Application.csproj" />
         <ProjectReference Include="..\WowPaperTrader.Infrastructure\WowPaperTrader.Infrastructure.csproj"/>
         <ProjectReference Include="..\WowPaperTrader.Persistence\WowPaperTrader.Persistence.csproj"/>
     </ItemGroup>

@@ -1,0 +1,36 @@
+//note to self - an instance of this class is 1 row in the table called CommodityAuctionSnapshots
+
+namespace WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.WowApiResult;
+
+public sealed class CommodityAuctionSnapshot
+{
+    public CommodityAuctionSnapshot(long ingestionRunId, DateTime fetchedAtUtc, string apiEndPoint)
+    {
+        IngestionRunId = ingestionRunId;
+        FetchedAtUtc = fetchedAtUtc;
+        ApiEndPoint = apiEndPoint;
+    }
+
+    public long Id { get; private set; }
+
+    public long IngestionRunId { get; private set; }
+
+    //this is a navigation property, it is not created as a column in the db
+    //it is for linking this entity type to the ingestionRun in code
+    //one to one relationship
+    public IngestionRun IngestionRun { get; private set; } = null!;
+
+    public DateTime FetchedAtUtc { get; private set; }
+
+    public string ApiEndPoint { get; private set; } = string.Empty;
+
+    //navigation collection property becuase this is a list of custom types
+    //one to many relationship
+    public List<CommodityAuction> CommodityAuctions { get; } = new();
+
+    //used when we loop the DTO during mapping
+    public void AddAuction(CommodityAuction commodityAuction)
+    {
+        CommodityAuctions.Add(commodityAuction);
+    }
+}

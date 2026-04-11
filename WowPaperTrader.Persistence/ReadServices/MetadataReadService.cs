@@ -1,6 +1,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Features.Read.GetMetadata;
+using WowPaperTrader.Application.Features.Read.GetMetadata;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 

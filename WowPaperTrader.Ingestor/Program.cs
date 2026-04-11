@@ -1,6 +1,6 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Ingestor;

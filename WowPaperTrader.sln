@@ -9,11 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Api", "WowPaperTrader.Api\WowPaperTrader.Api.csproj", "{10E1464C-4B96-48BD-8CE4-C28B8AB90453}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Domain", "WowPaperTrader.Domain\WowPaperTrader.Domain.csproj", "{84196C1D-C470-4E25-9979-072BFC2D9683}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Application", "WowPaperTrader.Application\WowPaperTrader.Application.csproj", "{84196C1D-C470-4E25-9979-072BFC2D9683}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Persistence", "WowPaperTrader.Persistence\WowPaperTrader.Persistence.csproj", "{652803E3-BD23-47E8-883D-6E40974D15A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Domain.Tests", "WowPaperTrader.Domain.Tests\WowPaperTrader.Domain.Tests.csproj", "{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Application.Tests", "WowPaperTrader.Application.Tests\WowPaperTrader.Application.Tests.csproj", "{3B01FD1F-B595-4E52-A1FC-697A8E9F132E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPaperTrader.Persistence.Tests", "WowPaperTrader.Persistence.Tests\WowPaperTrader.Persistence.Tests.csproj", "{48BFED91-BEE5-4C8B-B9B9-290E4FA819E3}"
 EndProject

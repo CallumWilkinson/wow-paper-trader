@@ -1,4 +1,4 @@
-using WowPaperTrader.Domain.Features.Write.UpdateItems;
+using WowPaperTrader.Application.Features.Write.UpdateItems;
 
 namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using WowPaperTrader.Domain.Features.Read.GetMetadata;
-using WowPaperTrader.Domain.Features.Read.ItemSearch;
-using WowPaperTrader.Domain.Features.Read.LowestPrice;
-using WowPaperTrader.Domain.Features.Write.UpdateItems;
+using WowPaperTrader.Application.Features.Read.GetMetadata;
+using WowPaperTrader.Application.Features.Read.ItemSearch;
+using WowPaperTrader.Application.Features.Read.LowestPrice;
+using WowPaperTrader.Application.Features.Write.UpdateItems;
 
 namespace WowPaperTrader.Api.Controllers;
 

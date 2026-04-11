@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Persistence.EntityMappers;
 
 namespace WowPaperTrader.Persistence.Repositories;

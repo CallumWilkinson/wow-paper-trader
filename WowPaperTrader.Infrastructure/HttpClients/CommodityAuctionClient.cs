@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Domain.Features.Write.AuctionHouseSnapshot.WowApiResult;
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Infrastructure.DTOs;
 
 namespace WowPaperTrader.Infrastructure.HttpClients;

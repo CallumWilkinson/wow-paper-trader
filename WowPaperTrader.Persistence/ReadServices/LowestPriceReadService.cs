@@ -1,6 +1,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Features.Read.LowestPrice;
+using WowPaperTrader.Application.Features.Read.LowestPrice;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 

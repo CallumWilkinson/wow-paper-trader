@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using WowPaperTrader.Domain.Features.Write.UpdateItems;
+using WowPaperTrader.Application.Features.Write.UpdateItems;
 using WowPaperTrader.Infrastructure.ContractMappers;
 using WowPaperTrader.Infrastructure.HttpClients;
 

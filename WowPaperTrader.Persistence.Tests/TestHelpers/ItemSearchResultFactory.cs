@@ -1,4 +1,4 @@
-using WowPaperTrader.Domain.Features.Read.ItemSearch;
+using WowPaperTrader.Application.Features.Read.ItemSearch;
 
 namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 

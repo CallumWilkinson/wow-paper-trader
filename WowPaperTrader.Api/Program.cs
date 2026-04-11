@@ -1,9 +1,9 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WowPaperTrader.Domain.Features.Read.GetMetadata;
-using WowPaperTrader.Domain.Features.Read.ItemSearch;
-using WowPaperTrader.Domain.Features.Read.LowestPrice;
-using WowPaperTrader.Domain.Features.Write.UpdateItems;
+using WowPaperTrader.Application.Features.Read.GetMetadata;
+using WowPaperTrader.Application.Features.Read.ItemSearch;
+using WowPaperTrader.Application.Features.Read.LowestPrice;
+using WowPaperTrader.Application.Features.Write.UpdateItems;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Persistence;
@@ -28,7 +28,7 @@ builder.Services.AddScoped<LowestPriceQueryHandler>();
 builder.Services.AddScoped<ILowestPriceReadService, LowestPriceReadService>();
 
 builder.Services.AddScoped<GetMetadataQueryHandler>();
-builder.Services.AddScoped<MetadataReadService, MetadataReadService>();
+builder.Services.AddScoped<IMetadataReadService, MetadataReadService>();
 
 builder.Services.AddScoped<ItemSearchQueryHandler>();
 builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();
