@@ -1,6 +1,6 @@
 namespace WowPaperTrader.Domain.Features.Write.UpdateItems;
 
-public sealed record ItemMetaDataRecordResponse
+public sealed record ItemMetaDataRecord
 {
     public long ItemId { get; init; }
     public string Name { get; init; } = string.Empty;

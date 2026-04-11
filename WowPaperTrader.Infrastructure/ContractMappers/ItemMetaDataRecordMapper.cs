@@ -5,14 +5,14 @@ namespace WowPaperTrader.Infrastructure.ContractMappers;
 
 public static class ItemMetaDataRecordMapper
 {
-    public static ItemMetaDataRecordResponse MapToContract(
+    public static ItemMetaDataRecord MapToContract(
         ItemMetaDataResponseDto metadataDto,
         ItemMediaResponseDto mediaDto,
         DateTime lastFetchedUtc)
     {
         if (metadataDto == null || mediaDto == null) throw new ArgumentNullException(nameof(metadataDto));
 
-        return new ItemMetaDataRecordResponse
+        return new ItemMetaDataRecord
         {
             ItemId = metadataDto.Id,
             Name = metadataDto.Name,
