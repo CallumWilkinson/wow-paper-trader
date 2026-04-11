@@ -1,20 +1,21 @@
 using Microsoft.Extensions.Logging;
+using WowPaperTrader.Domain.Architecture;
 
 namespace WowPaperTrader.Domain.Features.Write.UpdateItems;
 
-public sealed class UpdateItemMetaDataUseCase(
+public sealed class UpdateItemsCommandHandler(
     IItemIdsWithoutMetadataReadService itemIdsWithoutMetadataReadService,
     IItemMetaDataApiAdapter itemMetaDataApiAdapter,
     IItemMetaDataRepository itemMetaDataRepository,
-    ILogger<UpdateItemMetaDataUseCase> logger)
+    ILogger<UpdateItemsCommandHandler> logger) : ICommandHandler<UpdateItemsCommand>
 {
-    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task HandleAsync(UpdateItemsCommand command, CancellationToken cancellationToken)
     {
         try
         {
             var itemIds = await itemIdsWithoutMetadataReadService.GetItemIdsWithoutMetadataAsync(cancellationToken);
 
-            var itemMetaDataRecords = new List<ItemMetaDataRecordResponse>();
+            var itemMetaDataRecords = new List<ItemMetaDataRecord>();
 
             var itemIdsForMetaDataNotFound = new List<long>();
 

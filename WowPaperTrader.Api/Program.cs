@@ -33,7 +33,7 @@ builder.Services.AddScoped<MetadataReadService, MetadataReadService>();
 builder.Services.AddScoped<ItemSearchQueryHandler>();
 builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();
 
-builder.Services.AddScoped<UpdateItemMetaDataUseCase>();
+builder.Services.AddScoped<UpdateItemsCommandHandler>();
 builder.Services.AddScoped<IItemIdsWithoutMetadataReadService, ItemIdsWithoutMetadataReadService>();
 builder.Services.AddScoped<IItemMetaDataApiAdapter, ItemMetaDataApiAdapter>();
 builder.Services.AddScoped<IItemMetaDataRepository, ItemMetaDataRepository>();
