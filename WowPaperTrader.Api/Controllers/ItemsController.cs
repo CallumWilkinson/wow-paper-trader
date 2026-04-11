@@ -8,25 +8,13 @@ namespace WowPaperTrader.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/items")]
-public sealed class ItemsController : ControllerBase
+public sealed class ItemsController(
+    LowestPriceQueryHandler getLowestPriceQueryHandler,
+    ItemSearchQueryHandler itemSearchQueryHandler,
+    GetMetadataQueryHandler getMetadataQueryHandler,
+    UpdateItemsCommandHandler updateItemsCommandHandler)
+    : ControllerBase
 {
-    private readonly ItemSearchQueryHandler _itemSearchQueryHandler;
-    private readonly LowestPriceQueryHandler _getLowestPriceQueryHandler;
-    private readonly GetMetadataQueryHandler _getMetadataQueryHandler;
-    private readonly UpdateItemMetaDataUseCase _updateMetadataUseCase;
-
-    public ItemsController(
-        LowestPriceQueryHandler getLowestPriceQueryHandler,
-        ItemSearchQueryHandler itemSearchQueryHandler,
-        GetMetadataQueryHandler getMetadataQueryHandler,
-        UpdateItemMetaDataUseCase updateMetadataUseCase)
-    {
-        _getLowestPriceQueryHandler = getLowestPriceQueryHandler;
-        _itemSearchQueryHandler = itemSearchQueryHandler;
-        _getMetadataQueryHandler = getMetadataQueryHandler;
-        _updateMetadataUseCase = updateMetadataUseCase;
-    }
-
     [HttpGet]
     public async Task<ActionResult<List<ItemSearchResponse>>> SearchItems([FromQuery] string itemName,
         CancellationToken cancellationToken)
@@ -35,7 +23,7 @@ public sealed class ItemsController : ControllerBase
         
         var query = new ItemSearchQuery(itemName);
 
-        var result = await _itemSearchQueryHandler.HandleAsync(query, cancellationToken);
+        var result = await itemSearchQueryHandler.HandleAsync(query, cancellationToken);
 
         return Ok(result);
     }
@@ -47,7 +35,7 @@ public sealed class ItemsController : ControllerBase
         
         var query = new GetMetadataQuery(itemId);
 
-        var result = await _getMetadataQueryHandler.HandleAsync(query, cancellationToken);
+        var result = await getMetadataQueryHandler.HandleAsync(query, cancellationToken);
 
         if (result is null) return NotFound();
 
@@ -64,7 +52,7 @@ public sealed class ItemsController : ControllerBase
         
         var query = new LowestPriceQuery(itemId);
 
-        var result = await _getLowestPriceQueryHandler.HandleAsync(query, cancellationToken);
+        var result = await getLowestPriceQueryHandler.HandleAsync(query, cancellationToken);
 
         if (result is null) return NotFound();
 
@@ -74,7 +62,9 @@ public sealed class ItemsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> UpdateItemMetaData(CancellationToken cancellationToken)
     {
-        await _updateMetadataUseCase.ExecuteAsync(cancellationToken);
+        var command = new UpdateItemsCommand();
+        
+        await updateItemsCommandHandler.HandleAsync(command, cancellationToken);
 
         return Ok();
     }
