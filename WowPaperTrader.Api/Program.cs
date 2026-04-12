@@ -62,8 +62,19 @@ builder.Services.AddHttpClient<ItemMediaClient>(client => { client.BaseAddress =
         PooledConnectionLifetime = TimeSpan.FromMinutes(10)
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
+
+app.UseCors("Frontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
