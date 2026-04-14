@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { searchItems } from "../api/itemsApi";
-import { ItemSearchResult } from "../types/itemTypes";
+import { searchItems } from "../api/itemSearchApi";
+import { ItemSearchResult } from "../types/itemSearchTypes";
 
 interface UseItemSearchOptions {
   searchTerm: string;
