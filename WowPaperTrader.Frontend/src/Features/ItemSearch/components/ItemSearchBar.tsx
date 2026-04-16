@@ -8,15 +8,15 @@ interface ItemSearchBarProps {
 
 export default function ItemSearchBar(props: ItemSearchBarProps) {
   const { onSearch, isSearching } = props;
-  const [value, setValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    onSearch(value);
+    onSearch(searchTerm);
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setValue(event.target.value);
+    setSearchTerm(event.target.value);
   }
   return (
     <Box component="form" onSubmit={handleSubmit}>
@@ -24,7 +24,7 @@ export default function ItemSearchBar(props: ItemSearchBarProps) {
         <TextField
           fullWidth
           label="Search for an item"
-          value={value}
+          value={searchTerm}
           onChange={handleChange}
           placeholder="e.g. Copper Ore"
         />
@@ -32,7 +32,7 @@ export default function ItemSearchBar(props: ItemSearchBarProps) {
         <Button
           type="submit"
           variant="contained"
-          disabled={isSearching || value.trim().length === 0}
+          disabled={isSearching || searchTerm.trim().length === 0}
           sx={{ minWidth: 140 }}
         >
           {isSearching ? "Searching..." : "Search"}
