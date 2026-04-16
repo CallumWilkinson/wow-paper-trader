@@ -14,6 +14,7 @@ interface SelectedItemCardProps {
   isError: boolean;
 }
 
+//TODO: write unit test for this
 function formatUnitPrice(unitPrice: number): string {
   if (!Number.isInteger(unitPrice) || unitPrice < 0) {
     throw new Error("unitPrice must be a non-negative integer");
