@@ -1,4 +1,4 @@
-import { httpClient } from "../../../AxiosApi/HttpClient";
+import { httpClient } from "../../../global/axiosApi/HttpClient";
 import type {
   ItemMetadataResponse,
   ItemSearchResponse,
