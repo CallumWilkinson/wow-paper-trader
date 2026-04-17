@@ -53,7 +53,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
       <Card variant="outlined">
         <CardContent>
           <Typography color="text.secondary">
-            Select an item to see its preview.
+            Search for an item above
           </Typography>
         </CardContent>
       </Card>
