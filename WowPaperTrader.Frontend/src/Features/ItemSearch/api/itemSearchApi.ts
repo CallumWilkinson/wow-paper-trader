@@ -1,8 +1,8 @@
-import { httpClient } from "../../../global/axiosApi/HttpClient";
+import { httpClient } from "../../../api/HttpClient";
 import type {
   ItemMetadataResponse,
   ItemSearchResponse,
-} from "../Types/ItemSearchTypes";
+} from "../types/itemSearchTypes";
 
 export async function searchItems(
   itemName: string,

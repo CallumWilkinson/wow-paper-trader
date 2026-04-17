@@ -6,10 +6,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import type { ItemMetadataResponse } from "../Types/ItemSearchTypes";
-import { useAutoRefresh } from "../../../global/hooks/useAutoRefresh";
-import { formatPriceTimestamp } from "../../../global/utils/formatPriceTimestamp";
-import { formatUnitPrice } from "../../../global/utils/formatUnitPrice";
+import type { ItemMetadataResponse } from "../types/itemSearchTypes";
+import { useAutoRefresh } from "../../../hooks/useAutoRefresh";
+import { formatPriceTimestamp } from "../../../utils/formatPriceTimestamp";
+import { formatUnitPrice } from "../../../utils/formatUnitPrice";
 
 interface SelectedItemCardProps {
   item: ItemMetadataResponse | undefined;
@@ -26,10 +26,9 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
     return (
       <Card variant="outlined">
         <CardContent>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <CircularProgress size={24}>
-              <Typography>Loading selected item...</Typography>
-            </CircularProgress>
+          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+            <CircularProgress size={24} />
+            <Typography>Loading selected item...</Typography>
           </Stack>
         </CardContent>
       </Card>
