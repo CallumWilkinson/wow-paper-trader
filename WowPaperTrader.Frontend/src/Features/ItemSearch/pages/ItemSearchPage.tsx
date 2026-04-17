@@ -34,5 +34,52 @@ export default function ItemSearchPage() {
     ? "Search failed. Check the API is running and that CORS is enabled."
     : null;
 
-  return <Container></Container>;
+  return (
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Stack spacing={3}>
+        <Box>
+          <Typography variant="h3 gutterBottom">
+            World of Warcraft: Midnight Auction House
+          </Typography>
+
+          <Typography color="text.secondary">
+            Search a WoW commodity for current prices across all US-realms.
+          </Typography>
+        </Box>
+
+        <Paper sx={{ p: 3 }}>
+          <Stack>
+            <ItemSearchBar
+              onSearch={handleSearch}
+              isSearching={itemSearchPayload.isFetching}
+            ></ItemSearchBar>
+
+            {searchErrorMessage ? (
+              <Alert severity="error"> {searchErrorMessage}</Alert>
+            ) : null}
+
+            {hasSubmittedSearch &&
+            !itemSearchPayload.isFetching &&
+            !hasSearchResults &&
+            !itemSearchPayload.isError ? (
+              <Alert severity="info">No matching items found.</Alert>
+            ) : null}
+
+            <ItemSearchResults
+              items={items}
+              selectedItemId={selectedItemId}
+              onSelectItem={setSelectedItemId}
+            ></ItemSearchResults>
+          </Stack>
+        </Paper>
+        <Box>
+          <SelectedItemCard
+            item={selectedItemPayload.data}
+            isLoading={selectedItemPayload.isLoading}
+            isError={selectedItemPayload.isError}
+          ></SelectedItemCard>
+        </Box>
+      </Stack>
+    </Container>
+  );
 }
