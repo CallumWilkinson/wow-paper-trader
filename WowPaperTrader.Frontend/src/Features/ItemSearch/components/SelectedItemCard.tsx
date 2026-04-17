@@ -7,6 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import type { ItemMetadataResponse } from "../Types/ItemSearchTypes";
+import { useAutoRefresh } from "../../../global/hooks/useAutoRefresh";
+import { formatPriceTimestamp } from "../../../global/utils/formatPriceTimestamp";
 
 interface SelectedItemCardProps {
   item: ItemMetadataResponse | undefined;
@@ -42,6 +44,8 @@ function formatUnitPrice(unitPrice: number): string {
 
 export default function SelectedItemCard(props: SelectedItemCardProps) {
   const { item, isLoading, isError } = props;
+
+  useAutoRefresh();
 
   if (isLoading) {
     return (
@@ -122,7 +126,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
               {formatUnitPrice(item.unitPrice)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Price updated at : (item.priceTakenAtUtc)
+              {formatPriceTimestamp(item.priceTakenAtUtc)}
             </Typography>
           </Box>
         </Stack>
