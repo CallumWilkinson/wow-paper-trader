@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import type { ItemSearchResponse } from "../Types/ItemSearchTypes";
+import type { ItemSearchResponse } from "../types/itemSearchTypes";
 
 interface ItemSearchResultsProps {
   items: ItemSearchResponse[];
@@ -26,7 +26,7 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
     <List disablePadding>
       <Stack spacing={1.5}>
         {items.map((item) => {
-          const isSelected = items.itemId === selectedItemId;
+          const isSelected = item.itemId === selectedItemId;
 
           return (
             <ListItem key={item.itemId} disableGutters>

@@ -38,7 +38,7 @@ export default function ItemSearchPage() {
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Stack spacing={3}>
         <Box>
-          <Typography variant="h3 gutterBottom">
+          <Typography variant="h3" gutterBottom>
             World of Warcraft: Midnight Auction House
           </Typography>
 
