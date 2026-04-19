@@ -25,7 +25,8 @@ export default function AppProviders(props: AppProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <CssBaseline>{children}</CssBaseline>
+        <CssBaseline></CssBaseline>
+        {children}
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>
     </QueryClientProvider>
