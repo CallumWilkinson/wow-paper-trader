@@ -43,7 +43,8 @@ export default function ItemSearchPage() {
           </Typography>
 
           <Typography color="text.secondary">
-            Search a WoW commodity for current prices across all US-realms.
+            Search for a WoW commodity to find the lowest buyout price across
+            all US-realms.
           </Typography>
         </Box>
 

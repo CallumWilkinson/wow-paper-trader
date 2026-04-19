@@ -18,10 +18,6 @@ interface ItemSearchResultsProps {
 export default function ItemSearchResults(props: ItemSearchResultsProps) {
   const { items, selectedItemId, onSelectItem } = props;
 
-  if (items.length === 0) {
-    return <Typography color="text.secondary">No results yet.</Typography>;
-  }
-
   return (
     <List disablePadding>
       <Stack spacing={1.5}>

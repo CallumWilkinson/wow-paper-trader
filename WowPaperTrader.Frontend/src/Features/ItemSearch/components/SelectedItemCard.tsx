@@ -48,15 +48,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
   }
 
   if (!item) {
-    return (
-      <Card variant="outlined">
-        <CardContent>
-          <Typography color="text.secondary">
-            Search for an item above
-          </Typography>
-        </CardContent>
-      </Card>
-    );
+    return <Card></Card>;
   }
 
   return (
