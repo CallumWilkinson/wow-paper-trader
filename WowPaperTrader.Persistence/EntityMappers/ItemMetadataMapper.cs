@@ -47,7 +47,7 @@ public static class ItemMetadataMapper
 
             ImageUrl = record.ImageUrl,
 
-            LastFetchedUtc = record.LastFetchedUtc
+            LastFetchedUtc = DateTime.SpecifyKind(record.LastFetchedUtc, DateTimeKind.Utc),
         };
     }
 }
