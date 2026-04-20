@@ -88,8 +88,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
             </Typography>
 
             <Typography variant="body1" sx={{ mb: 1 }}>
-              Current Lowest Auction Price (US-realms):{" "}
-              {formatUnitPrice(item.unitPrice)}
+              Lowest Buyout (US-realms): {formatUnitPrice(item.unitPrice)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {formatPriceTimestamp(item.priceTakenAtUtc)}
