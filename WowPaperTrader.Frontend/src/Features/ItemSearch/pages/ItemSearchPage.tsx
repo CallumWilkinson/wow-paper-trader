@@ -10,6 +10,7 @@ export default function ItemSearchPage() {
   const [submittedSearchTerm, setSubmittedSearchTerm] = useState("");
   const [hasSubmittedSearch, setHasSubmittedSearch] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  const [isDropdownShown, setIsDropdownShown] = useState(false);
 
   const itemSearchPayload = useItemSearch({
     searchTerm: submittedSearchTerm,
@@ -24,6 +25,12 @@ export default function ItemSearchPage() {
     setSubmittedSearchTerm(trimmedSearchTerm);
     setHasSubmittedSearch(true);
     setSelectedItemId(null);
+    setIsDropdownShown(true);
+  }
+
+  function handleSelectItem(itemId: number) {
+    setSelectedItemId(itemId);
+    setIsDropdownShown(false);
   }
 
   const items = itemSearchPayload.data ?? [];
@@ -66,11 +73,13 @@ export default function ItemSearchPage() {
               <Alert severity="info">No matching items found.</Alert>
             ) : null}
 
-            <ItemSearchResults
-              items={items}
-              selectedItemId={selectedItemId}
-              onSelectItem={setSelectedItemId}
-            ></ItemSearchResults>
+            {isDropdownShown && hasSearchResults ? (
+              <ItemSearchResults
+                items={items}
+                selectedItemId={selectedItemId}
+                onSelectItem={handleSelectItem}
+              ></ItemSearchResults>
+            ) : null}
           </Stack>
         </Paper>
         <Box>
