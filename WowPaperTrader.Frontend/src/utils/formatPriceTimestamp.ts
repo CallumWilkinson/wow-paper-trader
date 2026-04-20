@@ -1,6 +1,10 @@
 //TODO: write unit test for this
 export function formatPriceTimestamp(utcString: string): string {
-  const date = new Date(utcString);
+  const normalizedUtcString = utcString.endsWith("Z")
+    ? utcString
+    : `${utcString}Z`;
+
+  const date = new Date(normalizedUtcString);
   const now = new Date();
 
   const diffMs = now.getTime() - date.getTime();
