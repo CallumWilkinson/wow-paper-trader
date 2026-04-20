@@ -11,7 +11,10 @@ public static class CommodityAuctionSnapshotMapper
     )
     {
         var payload = apiResult.Payload;
-        var snapshot = new CommodityAuctionSnapshot(ingestionRunId, apiResult.DataReturnedAtUtc, apiResult.Endpoint);
+        
+        var dataReturnedAtUtc = DateTime.SpecifyKind(apiResult.DataReturnedAtUtc, DateTimeKind.Utc);
+        
+        var snapshot = new CommodityAuctionSnapshot(ingestionRunId, dataReturnedAtUtc, apiResult.Endpoint);
 
         foreach (var auction in payload.Auctions)
         {
