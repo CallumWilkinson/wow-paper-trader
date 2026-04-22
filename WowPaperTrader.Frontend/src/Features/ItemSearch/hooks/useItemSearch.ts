@@ -4,16 +4,17 @@ import type { ItemSearchResponse } from "../types/itemSearchTypes";
 
 interface UseItemSearchOptions {
   searchTerm: string;
-  hasSubmittedSearch: boolean;
 }
 
 export function useItemSearch(options: UseItemSearchOptions) {
-  const { searchTerm, hasSubmittedSearch } = options;
+  const { searchTerm } = options;
 
   return useQuery<ItemSearchResponse[]>({
     queryKey: ["items", "search", searchTerm],
-    queryFn: () => searchItems(searchTerm),
-    enabled: hasSubmittedSearch && searchTerm.trim().length > 0,
+    queryFn: () => {
+      return searchItems(searchTerm);
+    },
+    enabled: searchTerm.trim().length > 0,
     staleTime: 30_000,
     retry: 1,
   });

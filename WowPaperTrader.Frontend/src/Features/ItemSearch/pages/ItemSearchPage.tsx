@@ -7,30 +7,24 @@ import { useItemSearch } from "../hooks/useItemSearch";
 import { useSelectedItem } from "../hooks/useSelectedItem";
 
 export default function ItemSearchPage() {
-  const [submittedSearchTerm, setSubmittedSearchTerm] = useState("");
-  const [hasSubmittedSearch, setHasSubmittedSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
-  const [isDropdownShown, setIsDropdownShown] = useState(false);
 
   const itemSearchPayload = useItemSearch({
-    searchTerm: submittedSearchTerm,
-    hasSubmittedSearch: hasSubmittedSearch,
+    searchTerm: searchTerm,
   });
 
   const selectedItemPayload = useSelectedItem(selectedItemId);
 
   function handleSearch(searchTerm: string) {
     const trimmedSearchTerm = searchTerm.trim();
-
-    setSubmittedSearchTerm(trimmedSearchTerm);
-    setHasSubmittedSearch(true);
+    setSearchTerm(trimmedSearchTerm);
     setSelectedItemId(null);
-    setIsDropdownShown(true);
   }
 
   function handleSelectItem(itemId: number) {
     setSelectedItemId(itemId);
-    setIsDropdownShown(false);
+    setSearchTerm("");
   }
 
   const items = itemSearchPayload.data ?? [];
@@ -40,6 +34,9 @@ export default function ItemSearchPage() {
   const searchErrorMessage = itemSearchPayload.isError
     ? "Search failed. Check the API is running and that CORS is enabled."
     : null;
+
+  const isDropdownShown =
+    selectedItemId === null && searchTerm.trim().length > 0 && items.length > 0;
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -57,23 +54,20 @@ export default function ItemSearchPage() {
 
         <Paper sx={{ p: 3 }}>
           <Stack>
-            <ItemSearchBar
-              onSearch={handleSearch}
-              isSearching={itemSearchPayload.isFetching}
-            ></ItemSearchBar>
+            <ItemSearchBar onDebouncedSearch={handleSearch}></ItemSearchBar>
 
             {searchErrorMessage ? (
               <Alert severity="error"> {searchErrorMessage}</Alert>
             ) : null}
 
-            {hasSubmittedSearch &&
+            {searchTerm.trim().length > 0 &&
             !itemSearchPayload.isFetching &&
             !hasSearchResults &&
             !itemSearchPayload.isError ? (
               <Alert severity="info">No matching items found.</Alert>
             ) : null}
 
-            {isDropdownShown && hasSearchResults ? (
+            {isDropdownShown ? (
               <ItemSearchResults
                 items={items}
                 selectedItemId={selectedItemId}

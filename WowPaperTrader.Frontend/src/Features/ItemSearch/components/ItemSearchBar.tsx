@@ -1,25 +1,27 @@
-import { useState } from "react";
-import { Box, Stack, TextField, Button } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Box, Stack, TextField } from "@mui/material";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 interface ItemSearchBarProps {
-  onSearch: (searchTerm: string) => void;
-  isSearching: boolean;
+  onDebouncedSearch: (searchTerm: string) => void;
 }
 
 export default function ItemSearchBar(props: ItemSearchBarProps) {
-  const { onSearch, isSearching } = props;
+  const { onDebouncedSearch } = props;
   const [searchTerm, setSearchTerm] = useState("");
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    onSearch(searchTerm);
-  }
+  const debouncedValue = useDebouncedValue(searchTerm.trim(), 300);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(event.target.value);
   }
+
+  useEffect(() => {
+    onDebouncedSearch(debouncedValue);
+  }, [debouncedValue, onDebouncedSearch]);
+
   return (
-    <Box component="form" onSubmit={handleSubmit}>
+    <Box>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
         <TextField
           fullWidth
@@ -28,15 +30,6 @@ export default function ItemSearchBar(props: ItemSearchBarProps) {
           onChange={handleChange}
           placeholder="e.g. Copper Ore"
         />
-
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={isSearching || searchTerm.trim().length === 0}
-          sx={{ minWidth: 140 }}
-        >
-          {isSearching ? "Searching..." : "Search"}
-        </Button>
       </Stack>
     </Box>
   );
