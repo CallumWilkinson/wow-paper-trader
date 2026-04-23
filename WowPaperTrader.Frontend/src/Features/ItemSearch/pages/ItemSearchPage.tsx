@@ -11,7 +11,7 @@ export default function ItemSearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
-  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 200);
 
   const itemSearchPayload = useItemSearch(debouncedSearchTerm);
 
@@ -27,6 +27,12 @@ export default function ItemSearchPage() {
 
   const isDropdownShown =
     selectedItemId === null && searchTerm.trim().length > 0 && items.length > 0;
+
+  const isItemsFound =
+    searchTerm.trim().length > 0 &&
+    !itemSearchPayload.isFetching &&
+    !hasSearchResults &&
+    !itemSearchPayload.isError;
 
   function handleSearchInputChange(searchTerm: string) {
     setSearchTerm(searchTerm);
@@ -73,10 +79,7 @@ export default function ItemSearchPage() {
               <Alert severity="error"> {searchErrorMessage}</Alert>
             ) : null}
 
-            {searchTerm.trim().length > 0 &&
-            !itemSearchPayload.isFetching &&
-            !hasSearchResults &&
-            !itemSearchPayload.isError ? (
+            {isItemsFound ? (
               <Alert severity="info">No matching items found.</Alert>
             ) : null}
 
