@@ -40,9 +40,9 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
               onClick={() => onSelectItem(item.itemId)}
               dense
               sx={{
-                px: 1,
-                py: 0.5,
-                minHeight: 40,
+                px: 1.5,
+                py: 0.75,
+                minHeight: 44,
               }}
             >
               <Box
@@ -50,7 +50,7 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
                 src={item.imageUrl}
                 alt={item.name}
                 sx={{
-                  width: 24,
+                  width: 28,
                   height: 24,
                   mr: 1.25,
                   borderRadius: 0.5,
@@ -60,7 +60,7 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
               <ListItemText
                 disableTypography
                 primary={
-                  <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                  <Typography variant="body1" sx={{ lineHeight: 1.2 }}>
                     {item.name}
                   </Typography>
                 }
