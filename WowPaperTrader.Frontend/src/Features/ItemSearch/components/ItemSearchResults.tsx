@@ -1,11 +1,9 @@
 import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
+  Box,
   List,
   ListItem,
-  Stack,
+  ListItemButton,
+  ListItemText,
   Typography,
 } from "@mui/material";
 import type { ItemSearchResponse } from "../types/itemSearchTypes";
@@ -20,44 +18,57 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
   const { items, selectedItemId, onSelectItem } = props;
 
   return (
-    <List disablePadding>
-      <Stack spacing={1.5}>
-        {items.map((item) => {
-          const isSelected = item.itemId === selectedItemId;
+    <List
+      disablePadding
+      sx={{
+        mt: 0.5,
+        border: 1,
+        borderColor: "divider",
+        borderRadius: 1,
+        overflow: "hidden",
+        bgcolor: "background.paper",
+      }}
+    >
+      {items.map((item, index) => {
+        const isSelected = item.itemId === selectedItemId;
+        const isLastItem = index === items.length - 1;
 
-          return (
-            <ListItem key={item.itemId} disableGutters>
-              <Card
-                variant={isSelected ? "elevation" : "outlined"}
-                sx={{ width: "100%" }}
-              >
-                <CardActionArea onClick={() => onSelectItem(item.itemId)}>
-                  <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{ p: 1, alignItems: "center" }}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={item.imageUrl}
-                      alt={item.name}
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 1,
-                        flexShrink: 0,
-                      }}
-                    ></CardMedia>
-                    <CardContent sx={{ p: 0 }}>
-                      <Typography variant="h6">{item.name}</Typography>
-                    </CardContent>
-                  </Stack>
-                </CardActionArea>
-              </Card>
-            </ListItem>
-          );
-        })}
-      </Stack>
+        return (
+          <ListItem key={item.itemId} disablePadding divider={!isLastItem}>
+            <ListItemButton
+              selected={isSelected}
+              onClick={() => onSelectItem(item.itemId)}
+              dense
+              sx={{
+                px: 1,
+                py: 0.5,
+                minHeight: 40,
+              }}
+            >
+              <Box
+                component="img"
+                src={item.imageUrl}
+                alt={item.name}
+                sx={{
+                  width: 24,
+                  height: 24,
+                  mr: 1.25,
+                  borderRadius: 0.5,
+                  flexShrink: 0,
+                }}
+              />
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                    {item.name}
+                  </Typography>
+                }
+              />
+            </ListItemButton>
+          </ListItem>
+        );
+      })}
     </List>
   );
 }
