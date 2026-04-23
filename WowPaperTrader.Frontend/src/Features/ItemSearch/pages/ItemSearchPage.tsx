@@ -17,6 +17,17 @@ export default function ItemSearchPage() {
 
   const selectedItemPayload = useSelectedItem(selectedItemId);
 
+  const items = itemSearchPayload.data ?? [];
+
+  const hasSearchResults = items.length > 0;
+
+  const searchErrorMessage = itemSearchPayload.isError
+    ? "Search failed. Check the API is running and that CORS is enabled."
+    : null;
+
+  const isDropdownShown =
+    selectedItemId === null && searchTerm.trim().length > 0 && items.length > 0;
+
   function handleSearchInputChange(searchTerm: string) {
     const trimmedSearchTerm = searchTerm.trim();
     setSearchTerm(trimmedSearchTerm);
@@ -28,16 +39,14 @@ export default function ItemSearchPage() {
     setSearchTerm("");
   }
 
-  const items = itemSearchPayload.data ?? [];
+  function handleEnter() {
+    if (items.length === 0) {
+      return;
+    }
 
-  const hasSearchResults = items.length > 0;
-
-  const searchErrorMessage = itemSearchPayload.isError
-    ? "Search failed. Check the API is running and that CORS is enabled."
-    : null;
-
-  const isDropdownShown =
-    selectedItemId === null && searchTerm.trim().length > 0 && items.length > 0;
+    const firstItem = items[0];
+    setSelectedItemId(firstItem.itemId);
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -58,6 +67,7 @@ export default function ItemSearchPage() {
             <ItemSearchBar
               value={searchTerm}
               onChange={handleSearchInputChange}
+              onEnter={handleEnter}
             ></ItemSearchBar>
 
             {searchErrorMessage ? (
