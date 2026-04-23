@@ -11,7 +11,7 @@ export default function ItemSearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
-  const debouncedSearchTerm = useDebouncedValue(searchTerm.trim(), 300);
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
 
   const itemSearchPayload = useItemSearch(debouncedSearchTerm);
 
@@ -29,8 +29,7 @@ export default function ItemSearchPage() {
     selectedItemId === null && searchTerm.trim().length > 0 && items.length > 0;
 
   function handleSearchInputChange(searchTerm: string) {
-    const trimmedSearchTerm = searchTerm.trim();
-    setSearchTerm(trimmedSearchTerm);
+    setSearchTerm(searchTerm);
     setSelectedItemId(null);
   }
 
