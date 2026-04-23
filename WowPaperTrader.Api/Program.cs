@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Application.Features.Read.GetMetadata;
 using WowPaperTrader.Application.Features.Read.ItemSearch;
 using WowPaperTrader.Application.Features.Read.LowestPrice;
+using WowPaperTrader.Application.Features.Read.MonthlyPriceQuantity;
 using WowPaperTrader.Application.Features.Write.UpdateItems;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
@@ -32,6 +33,9 @@ builder.Services.AddScoped<IMetadataReadService, MetadataReadService>();
 
 builder.Services.AddScoped<ItemSearchQueryHandler>();
 builder.Services.AddScoped<IItemSearchReadService, ItemSearchReadService>();
+
+builder.Services.AddScoped<MonthlyPriceQuantityQueryHandler>();
+builder.Services.AddScoped<IMonthlyPriceQuantityReadService, MonthlyPriceQuantityReadService>();
 
 builder.Services.AddScoped<UpdateItemsCommandHandler>();
 builder.Services.AddScoped<IItemIdsWithoutMetadataReadService, ItemIdsWithoutMetadataReadService>();
