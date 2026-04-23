@@ -2,6 +2,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  CardMedia,
   List,
   ListItem,
   Stack,
@@ -31,9 +32,26 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
                 sx={{ width: "100%" }}
               >
                 <CardActionArea onClick={() => onSelectItem(item.itemId)}>
-                  <CardContent>
-                    <Typography variant="h6">{item.name}</Typography>
-                  </CardContent>
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{ p: 1, alignItems: "center" }}
+                  >
+                    <CardMedia
+                      component="img"
+                      image={item.imageUrl}
+                      alt={item.name}
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 1,
+                        flexShrink: 0,
+                      }}
+                    ></CardMedia>
+                    <CardContent sx={{ p: 0 }}>
+                      <Typography variant="h6">{item.name}</Typography>
+                    </CardContent>
+                  </Stack>
                 </CardActionArea>
               </Card>
             </ListItem>

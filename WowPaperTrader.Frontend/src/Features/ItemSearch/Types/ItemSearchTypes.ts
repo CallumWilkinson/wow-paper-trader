@@ -1,6 +1,7 @@
 export interface ItemSearchResponse {
   itemId: number;
   name: string;
+  imageUrl: string;
 }
 
 export interface ItemMetadataResponse {

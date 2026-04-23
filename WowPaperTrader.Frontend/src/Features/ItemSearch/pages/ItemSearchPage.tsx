@@ -58,7 +58,7 @@ export default function ItemSearchPage() {
       <Stack spacing={3}>
         <Box>
           <Typography variant="h3" gutterBottom>
-            World of Warcraft: Midnight Auction House
+            World of Warcraft: Midnight <br></br> Auction House
           </Typography>
 
           <Typography color="text.secondary">
