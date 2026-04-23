@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using WowPaperTrader.Application.Features.Read.GetMetadata;
 using WowPaperTrader.Application.Features.Read.ItemSearch;
 using WowPaperTrader.Application.Features.Read.LowestPrice;
+using WowPaperTrader.Application.Features.Read.MonthlyPriceQuantity;
 using WowPaperTrader.Application.Features.Write.UpdateItems;
 
 namespace WowPaperTrader.Api.Controllers;
@@ -12,7 +13,8 @@ public sealed class ItemsController(
     LowestPriceQueryHandler getLowestPriceQueryHandler,
     ItemSearchQueryHandler itemSearchQueryHandler,
     GetMetadataQueryHandler getMetadataQueryHandler,
-    UpdateItemsCommandHandler updateItemsCommandHandler)
+    UpdateItemsCommandHandler updateItemsCommandHandler,
+    MonthlyPriceQuantityQueryHandler monthlyPriceQuantityQueryHandler)
     : ControllerBase
 {
     [HttpGet]
@@ -56,6 +58,20 @@ public sealed class ItemsController(
 
         if (result is null) return NotFound();
 
+        return Ok(result);
+    }
+
+    [HttpGet("{itemId:long}/price-history")]
+    public async Task<ActionResult<MonthlyPriceQuantityResponse>> GetPriceHistory(long itemId,
+        CancellationToken cancellationToken)
+    {
+        if (itemId <= 0) return BadRequest("Invalid itemId.");
+        
+        var query = new MonthlyPriceQuantityQuery(itemId);
+        
+        var result = await monthlyPriceQuantityQueryHandler.HandleAsync(query, cancellationToken);
+        if (result is null) return NotFound();
+        
         return Ok(result);
     }
     
