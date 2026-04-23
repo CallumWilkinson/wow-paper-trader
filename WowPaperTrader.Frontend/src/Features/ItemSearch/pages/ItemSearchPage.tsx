@@ -5,18 +5,19 @@ import ItemSearchResults from "../components/ItemSearchResults";
 import SelectedItemCard from "../components/SelectedItemCard";
 import { useItemSearch } from "../hooks/useItemSearch";
 import { useSelectedItem } from "../hooks/useSelectedItem";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 export default function ItemSearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
-  const itemSearchPayload = useItemSearch({
-    searchTerm: searchTerm,
-  });
+  const debouncedSearchTerm = useDebouncedValue(searchTerm.trim(), 300);
+
+  const itemSearchPayload = useItemSearch(debouncedSearchTerm);
 
   const selectedItemPayload = useSelectedItem(selectedItemId);
 
-  function handleSearch(searchTerm: string) {
+  function handleSearchInputChange(searchTerm: string) {
     const trimmedSearchTerm = searchTerm.trim();
     setSearchTerm(trimmedSearchTerm);
     setSelectedItemId(null);
@@ -54,7 +55,10 @@ export default function ItemSearchPage() {
 
         <Paper sx={{ p: 3 }}>
           <Stack>
-            <ItemSearchBar onDebouncedSearch={handleSearch}></ItemSearchBar>
+            <ItemSearchBar
+              value={searchTerm}
+              onChange={handleSearchInputChange}
+            ></ItemSearchBar>
 
             {searchErrorMessage ? (
               <Alert severity="error"> {searchErrorMessage}</Alert>

@@ -2,13 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { searchItems } from "../api/itemSearchApi";
 import type { ItemSearchResponse } from "../types/itemSearchTypes";
 
-interface UseItemSearchOptions {
-  searchTerm: string;
-}
-
-export function useItemSearch(options: UseItemSearchOptions) {
-  const { searchTerm } = options;
-
+export function useItemSearch(searchTerm: string) {
   return useQuery<ItemSearchResponse[]>({
     queryKey: ["items", "search", searchTerm],
     queryFn: () => {
