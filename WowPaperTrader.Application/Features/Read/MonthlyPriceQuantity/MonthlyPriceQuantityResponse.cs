@@ -4,8 +4,7 @@ public class MonthlyPriceQuantityResponse
 {
     public long ItemId { get; init; }
 
-    public IReadOnlyList<PriceQuantityResponse> Rows { get; init; } = [];
-    
+    public List<PriceQuantityResponse> PriceQuantityResponses { get; init; } = new();
 }
 
 public sealed class PriceQuantityResponse

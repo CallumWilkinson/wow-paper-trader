@@ -6,9 +6,7 @@ namespace WowPaperTrader.Persistence.ReadServices;
 
 public class MonthlyPriceQuantityReadService(ApplicationDbContext dbContext) : IMonthlyPriceQuantityReadService
 {
-    private readonly ApplicationDbContext _dbContext = dbContext;
-
-    public async Task<MonthlyPriceQuantityResponse?> GetAsync(long itemId, CancellationToken cancellationToken)
+    public async Task<MonthlyPriceQuantityResponse> GetAsync(long itemId, CancellationToken cancellationToken)
     {
         const string sql = 
             """
@@ -29,10 +27,16 @@ public class MonthlyPriceQuantityReadService(ApplicationDbContext dbContext) : I
                 s.FetchedAtUtc DESC;
             """;
 
-        var connection = _dbContext.Database.GetDbConnection();
+        var connection = dbContext.Database.GetDbConnection();
         
         var command = new CommandDefinition(sql, new {itemId}, cancellationToken: cancellationToken);
         
-        return await connection.QuerySingleOrDefaultAsync<MonthlyPriceQuantityResponse>(command);
+        var list = (await connection.QueryAsync<PriceQuantityResponse>(command)).ToList();
+
+        return new MonthlyPriceQuantityResponse
+        {
+            ItemId = itemId,
+            PriceQuantityResponses = list
+        };
     }
 }
