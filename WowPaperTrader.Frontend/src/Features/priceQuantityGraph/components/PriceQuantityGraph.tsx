@@ -62,7 +62,7 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
           type="monotone"
           dataKey="lowestUnitPrice"
           name="Price"
-          dot={false}
+          dot={true}
         ></Line>
       </ComposedChart>
     </ResponsiveContainer>

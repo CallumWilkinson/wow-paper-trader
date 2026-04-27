@@ -6,6 +6,8 @@ import SelectedItemCard from "../features/itemSearch/components/SelectedItemCard
 import { useItemSearch } from "../features/itemSearch/hooks/useItemSearch";
 import { useSelectedItem } from "../features/itemSearch/hooks/useSelectedItem";
 import { useDebouncedValue } from "../features/itemSearch/hooks/useDebouncedValue";
+import PriceQuantityGraph from "../features/priceQuantityGraph/components/PriceQuantityGraph";
+import { usePriceQuantityHistory } from "../features/priceQuantityGraph/hooks/usePriceQuantityHistory";
 
 export default function ItemSearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,6 +18,8 @@ export default function ItemSearchPage() {
   const itemSearchPayload = useItemSearch(debouncedSearchTerm);
 
   const selectedItemPayload = useSelectedItem(selectedItemId);
+
+  const monthlyPriceQuantityPayload = usePriceQuantityHistory(selectedItemId);
 
   const items = itemSearchPayload.data ?? [];
 
@@ -98,6 +102,13 @@ export default function ItemSearchPage() {
             isLoading={selectedItemPayload.isLoading}
             isError={selectedItemPayload.isError}
           ></SelectedItemCard>
+        </Box>
+        <Box>
+          {monthlyPriceQuantityPayload.data && (
+            <PriceQuantityGraph
+              data={monthlyPriceQuantityPayload.data}
+            ></PriceQuantityGraph>
+          )}
         </Box>
       </Stack>
     </Container>
