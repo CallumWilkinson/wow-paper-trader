@@ -8,7 +8,8 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class ItemSearchReadServiceTests : IClassFixture<SqlServerTestDbFixture>
+[Collection("SqlServer Database")]
+public sealed class ItemSearchReadServiceTests
 {
     private readonly SqlServerTestDbFixture _db;
 
