@@ -41,9 +41,9 @@ public sealed class MonthlyPriceQuantityReadServiceTests(SqlServerTestDbFixture 
         result.Should().NotBeNull();
         result.ItemId.Should().Be(copperOreItemId);
         result.PriceQuantityResponses.Should().HaveCount(2);
-        result.PriceQuantityResponses[0].LowestUnitPrice.Should().Be(80);
-        result.PriceQuantityResponses[0].TotalQuantityPosted.Should().Be(15);
-        result.PriceQuantityResponses[1].LowestUnitPrice.Should().Be(50);
-        result.PriceQuantityResponses[1].TotalQuantityPosted.Should().Be(10);
+        result.PriceQuantityResponses[0].LowestUnitPrice.Should().Be(50);
+        result.PriceQuantityResponses[0].TotalQuantityPosted.Should().Be(10);
+        result.PriceQuantityResponses[1].LowestUnitPrice.Should().Be(80);
+        result.PriceQuantityResponses[1].TotalQuantityPosted.Should().Be(15);
     }
 }

@@ -24,7 +24,7 @@ public class MonthlyPriceQuantityReadService(ApplicationDbContext dbContext) : I
                 ca.CommodityAuctionSnapshotId,
                 s.FetchedAtUtc
             ORDER BY
-                s.FetchedAtUtc DESC;
+                s.FetchedAtUtc ASC;
             """;
 
         var connection = dbContext.Database.GetDbConnection();
