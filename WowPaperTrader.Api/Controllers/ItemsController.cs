@@ -62,7 +62,7 @@ public sealed class ItemsController(
     }
 
     [HttpGet("{itemId:long}/price-history")]
-    public async Task<ActionResult<List<PriceQuantityResponse>>> GetPriceHistory(long itemId,
+    public async Task<ActionResult<MonthlyPriceQuantityResponse>> GetPriceHistory(long itemId,
         CancellationToken cancellationToken)
     {
         if (itemId <= 0) return BadRequest("Invalid itemId.");
