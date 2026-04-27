@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Alert, Box, Container, Paper, Stack, Typography } from "@mui/material";
-import ItemSearchBar from "../components/ItemSearchBar";
-import ItemSearchResults from "../components/ItemSearchResults";
-import SelectedItemCard from "../components/SelectedItemCard";
-import { useItemSearch } from "../hooks/useItemSearch";
-import { useSelectedItem } from "../hooks/useSelectedItem";
-import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import ItemSearchBar from "../features/itemSearch/components/ItemSearchBar";
+import ItemSearchResults from "../features/itemSearch/components/ItemSearchResults";
+import SelectedItemCard from "../features/itemSearch/components/SelectedItemCard";
+import { useItemSearch } from "../features/itemSearch/hooks/useItemSearch";
+import { useSelectedItem } from "../features/itemSearch/hooks/useSelectedItem";
+import { useDebouncedValue } from "../features/itemSearch/hooks/useDebouncedValue";
 
 export default function ItemSearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
