@@ -1,6 +1,6 @@
 export interface MonthlyPriceQuantityResponse {
   itemId: number;
-  priceQuantityResponses: Array<PriceQuantityResponse>;
+  priceQuantityResponses: PriceQuantityResponse[];
 }
 
 interface PriceQuantityResponse {
