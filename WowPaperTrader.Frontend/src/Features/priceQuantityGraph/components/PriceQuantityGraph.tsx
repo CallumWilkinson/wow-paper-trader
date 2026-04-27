@@ -10,19 +10,14 @@ import {
   Legend,
 } from "recharts";
 import type { MonthlyPriceQuantityResponse } from "../types/priceQuantityTypes";
-import { formatLocalDate } from "../../../utils/formatLocalDate";
+import {
+  formatLocalDateLong,
+  formatLocalDateShort,
+} from "../../../utils/formatLocalDate";
 import { formatUnitPrice } from "../../../utils/formatUnitPrice";
 
 interface PriceQuantityGraphProps {
   data: MonthlyPriceQuantityResponse;
-}
-
-function formatTooltipLabel(label: React.ReactNode): React.ReactNode {
-  if (typeof label !== "string") {
-    return label;
-  }
-
-  return new Date(label).toLocaleString();
 }
 
 export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
@@ -32,7 +27,10 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={priceQuantityData}>
         <CartesianGrid strokeDasharray="3 3"></CartesianGrid>
-        <XAxis dataKey="fetchedAtUtc" tickFormatter={formatLocalDate}></XAxis>
+        <XAxis
+          dataKey="fetchedAtUtc"
+          tickFormatter={formatLocalDateShort}
+        ></XAxis>
 
         <YAxis
           yAxisId="price"
@@ -40,10 +38,12 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
           tickFormatter={formatUnitPrice}
         ></YAxis>
 
+        <YAxis yAxisId="quantity" orientation="right"></YAxis>
+
         <Tooltip
-          labelFormatter={formatTooltipLabel}
+          labelFormatter={formatLocalDateLong}
           formatter={(value, name) => {
-            if (name === "lowestUnitPrice") {
+            if (name === "Price") {
               return [formatUnitPrice(value as number), "Price"];
             }
             return [value, "Quantity"];
