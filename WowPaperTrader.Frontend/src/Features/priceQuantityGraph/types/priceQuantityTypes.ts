@@ -3,9 +3,9 @@ export interface MonthlyPriceQuantityResponse {
   priceQuantityResponses: PriceQuantityResponse[];
 }
 
-interface PriceQuantityResponse {
-  commodityAuctionSnapshotId: number;
-  fetchedAtUtc: string;
-  lowestUnitPrice: number;
-  totalQuantityPosted: number;
+export interface PriceQuantityResponse {
+  commodityAuctionSnapshotId: number | null;
+  fetchedAtUtc: string | null;
+  lowestUnitPrice: number | null;
+  totalQuantityPosted: number | null;
 }
