@@ -65,8 +65,14 @@ export default function ItemSearchPage() {
             component="section"
             sx={{
               position: "relative",
+              overflow: "hidden",
               p: { xs: 3, md: 5 },
               bgcolor: "#0b1020",
+              backgroundImage:
+                "linear-gradient(rgba(11, 16, 32, 0.34), rgba(11, 16, 32, 0.46)), url('/title-background.png')",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
             }}
           >
             <Stack
