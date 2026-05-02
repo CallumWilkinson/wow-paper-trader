@@ -6,7 +6,6 @@ export function useSelectedItem(selectedItemId: number | null) {
   return useQuery<ItemMetadataResponse>({
     queryKey: ["items", "metadata", selectedItemId],
     queryFn: () => {
-      console.log("query firing");
       return getItemMetadata(selectedItemId as number);
     },
     enabled: selectedItemId !== null,
