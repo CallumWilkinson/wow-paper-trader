@@ -1,13 +1,24 @@
+import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
 import {
-  ResponsiveContainer,
-  ComposedChart,
-  Line,
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  Skeleton,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import {
   Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  CartesianGrid,
-  Legend,
 } from "recharts";
 import type { MonthlyPriceQuantityResponse } from "../types/priceQuantityTypes";
 import {
@@ -17,54 +28,205 @@ import {
 import { formatUnitPrice } from "../../../utils/formatUnitPrice";
 
 interface PriceQuantityGraphProps {
-  data: MonthlyPriceQuantityResponse;
+  data: MonthlyPriceQuantityResponse | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  itemName: string | undefined;
 }
 
 export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
-  const priceQuantityData = props.data.priceQuantityResponses;
+  const { data, isLoading, isError, itemName } = props;
+  const theme = useTheme();
+
+  const priceQuantityData =
+    data?.priceQuantityResponses.filter((entry) => entry.fetchedAtUtc !== null) ?? [];
+
+  const hasHistory = priceQuantityData.length > 0;
+
+  if (isLoading) {
+    return (
+      <Card component="section">
+        <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+          <Stack spacing={2.5}>
+            <Box>
+              <Skeleton variant="text" width="34%" height={42}></Skeleton>
+              <Skeleton variant="text" width="54%"></Skeleton>
+            </Box>
+            <Skeleton variant="rounded" height={360}></Skeleton>
+          </Stack>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <ComposedChart data={priceQuantityData}>
-        <CartesianGrid strokeDasharray="3 3"></CartesianGrid>
-        <XAxis
-          dataKey="fetchedAtUtc"
-          tickFormatter={formatLocalDateShort}
-        ></XAxis>
+    <Card component="section">
+      <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+        <Stack spacing={3}>
+          <Box>
+            <Typography variant="h4">Market activity</Typography>
+            <Typography color="text.secondary">
+              {itemName
+                ? `Price and quantity history for ${itemName} across the last 30 days of auction snapshots.`
+                : "Select an item to load recent price and quantity movement."}
+            </Typography>
+          </Box>
 
-        <YAxis
-          yAxisId="price"
-          orientation="left"
-          tickFormatter={formatUnitPrice}
-        ></YAxis>
+          {isError ? (
+            <Alert severity="error">
+              Price history could not be loaded for the selected item.
+            </Alert>
+          ) : null}
 
-        <YAxis yAxisId="quantity" orientation="right"></YAxis>
+          {!isError && !itemName ? (
+            <Box
+              sx={{
+                minHeight: 320,
+                borderRadius: 3,
+                border: "1px dashed",
+                borderColor: "divider",
+                bgcolor: "rgba(7, 14, 24, 0.72)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                p: 3,
+              }}
+            >
+              <Stack spacing={1.5} sx={{ alignItems: "center", maxWidth: 420 }}>
+                <QueryStatsRoundedIcon
+                  sx={{ fontSize: 40, color: "primary.main" }}
+                ></QueryStatsRoundedIcon>
+                <Typography variant="h5" align="center">
+                  Market history appears after item selection
+                </Typography>
+                <Typography color="text.secondary" align="center">
+                  The chart will show lowest buyout and total quantity posted for
+                  the selected commodity.
+                </Typography>
+              </Stack>
+            </Box>
+          ) : null}
 
-        <Tooltip
-          labelFormatter={formatLocalDateLong}
-          formatter={(value, name) => {
-            if (name === "Price") {
-              return [formatUnitPrice(value as number), "Price"];
-            }
-            return [value, "Quantity"];
-          }}
-        ></Tooltip>
-        <Legend></Legend>
+          {!isError && itemName && !hasHistory ? (
+            <Alert severity="info">
+              No price history is available yet for this item.
+            </Alert>
+          ) : null}
 
-        <Bar
-          yAxisId="quantity"
-          dataKey="totalQuantityPosted"
-          name="Quantity"
-        ></Bar>
+          {!isError && itemName && hasHistory ? (
+            <Box sx={{ width: "100%", height: { xs: 320, md: 380 } }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart
+                  data={priceQuantityData}
+                  margin={{ top: 10, right: 4, left: 0, bottom: 4 }}
+                >
+                  <CartesianGrid
+                    stroke={theme.palette.divider}
+                    strokeDasharray="4 4"
+                    vertical={false}
+                  ></CartesianGrid>
 
-        <Line
-          yAxisId="price"
-          type="monotone"
-          dataKey="lowestUnitPrice"
-          name="Price"
-          dot={true}
-        ></Line>
-      </ComposedChart>
-    </ResponsiveContainer>
+                  <XAxis
+                    dataKey="fetchedAtUtc"
+                    tickFormatter={formatLocalDateShort}
+                    axisLine={false}
+                    tickLine={false}
+                    minTickGap={24}
+                    tick={{
+                      fill: theme.palette.text.secondary,
+                      fontSize: 12,
+                    }}
+                  ></XAxis>
+
+                  <YAxis
+                    yAxisId="price"
+                    orientation="left"
+                    tickFormatter={(value: number) => formatUnitPrice(value)}
+                    axisLine={false}
+                    tickLine={false}
+                    width={86}
+                    tick={{
+                      fill: theme.palette.text.secondary,
+                      fontSize: 12,
+                    }}
+                  ></YAxis>
+
+                  <YAxis
+                    yAxisId="quantity"
+                    orientation="right"
+                    axisLine={false}
+                    tickLine={false}
+                    width={64}
+                    tick={{
+                      fill: theme.palette.text.secondary,
+                      fontSize: 12,
+                    }}
+                  ></YAxis>
+
+                  <Tooltip
+                    labelFormatter={formatLocalDateLong}
+                    contentStyle={{
+                      borderRadius: 14,
+                      border: `1px solid ${theme.palette.divider}`,
+                      backgroundColor: "#101827",
+                      color: theme.palette.text.primary,
+                      boxShadow: "0 16px 32px rgba(2, 7, 15, 0.4)",
+                    }}
+                    formatter={(value, name) => {
+                      if (name === "Lowest buyout") {
+                        if (typeof value !== "number") {
+                          return ["No data", "Lowest buyout"];
+                        }
+
+                        return [formatUnitPrice(value), "Lowest buyout"];
+                      }
+
+                      if (typeof value !== "number") {
+                        return ["No data", "Quantity posted"];
+                      }
+
+                      return [value.toLocaleString(), "Quantity posted"];
+                    }}
+                  ></Tooltip>
+
+                  <Legend
+                    verticalAlign="top"
+                    align="right"
+                    iconType="circle"
+                    wrapperStyle={{
+                      paddingBottom: 16,
+                      color: theme.palette.text.secondary,
+                    }}
+                  ></Legend>
+
+                  <Bar
+                    yAxisId="quantity"
+                    dataKey="totalQuantityPosted"
+                    name="Quantity posted"
+                    fill="rgba(78, 127, 177, 0.68)"
+                    radius={[8, 8, 0, 0]}
+                  ></Bar>
+
+                  <Line
+                    yAxisId="price"
+                    type="monotone"
+                    dataKey="lowestUnitPrice"
+                    name="Lowest buyout"
+                    stroke={theme.palette.primary.main}
+                    strokeWidth={3}
+                    dot={false}
+                    activeDot={{
+                      r: 5,
+                      fill: theme.palette.primary.dark,
+                    }}
+                    connectNulls
+                  ></Line>
+                </ComposedChart>
+              </ResponsiveContainer>
+            </Box>
+          ) : null}
+        </Stack>
+      </CardContent>
+    </Card>
   );
 }
