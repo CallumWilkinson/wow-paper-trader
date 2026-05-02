@@ -85,18 +85,6 @@ function buildDetailRows(item: ItemMetadataResponse): DetailRow[] {
           value: item.craftingReagent,
         }
       : null,
-    item.maxCount !== null
-      ? {
-          label: "Max count",
-          value: item.maxCount.toString(),
-        }
-      : null,
-    item.purchaseQuantity !== null
-      ? {
-          label: "Vendor quantity",
-          value: item.purchaseQuantity.toString(),
-        }
-      : null,
     item.purchasePrice !== null
       ? {
           label: "Vendor price",
