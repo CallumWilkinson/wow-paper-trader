@@ -2,7 +2,6 @@ import {
   Box,
   Card,
   CardContent,
-  Chip,
   Divider,
   Skeleton,
   Stack,
@@ -228,28 +227,6 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
 
   const detailRows = buildDetailRows(item);
 
-  const summaryChips: string[] = [];
-
-  if (item.qualityName) {
-    summaryChips.push(item.qualityName);
-  }
-
-  if (item.itemClassName) {
-    summaryChips.push(item.itemClassName);
-  }
-
-  if (item.professionName) {
-    summaryChips.push(item.professionName);
-  }
-
-  if (item.isStackable) {
-    summaryChips.push("Stackable");
-  }
-
-  if (item.isEquippable) {
-    summaryChips.push("Equippable");
-  }
-
   return (
     <Card component="section">
       <CardContent sx={{ p: { xs: 3, md: 4 } }}>
@@ -299,22 +276,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                   <Typography variant="h3" gutterBottom>
                     {item.name}
                   </Typography>
-                  <Typography color="text.secondary">
-                    Review the latest market snapshot, pricing details, and item
-                    metadata.
-                  </Typography>
                 </Box>
-
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  useFlexGap
-                  sx={{ flexWrap: "wrap" }}
-                >
-                  {summaryChips.map((chipLabel) => (
-                    <Chip key={chipLabel} label={chipLabel}></Chip>
-                  ))}
-                </Stack>
               </Stack>
             </Stack>
 
