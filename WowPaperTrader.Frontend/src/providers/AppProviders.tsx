@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, ThemeProvider, alpha, createTheme } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -8,19 +8,26 @@ interface AppProvidersProps {
   children: ReactNode;
 }
 
+const midnightBlue = "#4b8de4";
+const midnightBlueLight = "#7fb4ff";
+const midnightBlueDark = "#2d5f9f";
+const midnightPurple = "#9278ff";
+const midnightPurpleLight = "#bbadff";
+const midnightPurpleDark = "#6851d4";
+
 const theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#f0b400",
-      light: "#ffd15a",
-      dark: "#b47a00",
-      contrastText: "#120c06",
+      main: midnightPurple,
+      light: midnightPurpleLight,
+      dark: midnightPurpleDark,
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: "#2f67b1",
-      light: "#5090dd",
-      dark: "#1d3e69",
+      main: midnightBlue,
+      light: midnightBlueLight,
+      dark: midnightBlueDark,
       contrastText: "#ffffff",
     },
     background: {
@@ -31,18 +38,22 @@ const theme = createTheme({
       primary: "#ffffff",
       secondary: "#d0d6e0",
     },
-    divider: "rgba(255, 194, 54, 0.16)",
+    divider: alpha(midnightBlue, 0.18),
     success: {
       main: "#5fa96e",
     },
     info: {
-      main: "#4b8de4",
+      main: midnightPurple,
+      light: midnightPurpleLight,
+      dark: midnightPurpleDark,
     },
     error: {
       main: "#dd6848",
     },
     warning: {
-      main: "#f0b400",
+      main: midnightPurple,
+      light: midnightPurpleLight,
+      dark: midnightPurpleDark,
     },
   },
   shape: {
@@ -107,7 +118,7 @@ const theme = createTheme({
         root: {
           backgroundImage: "none",
           backgroundColor: "rgba(14, 21, 35, 0.94)",
-          border: "1px solid rgba(255, 194, 54, 0.12)",
+          border: `1px solid ${alpha(midnightBlue, 0.14)}`,
           boxShadow: "0 24px 54px rgba(2, 7, 15, 0.42)",
         },
       },
@@ -117,7 +128,7 @@ const theme = createTheme({
         root: {
           backgroundImage: "none",
           backgroundColor: "rgba(14, 21, 35, 0.94)",
-          border: "1px solid rgba(255, 194, 54, 0.12)",
+          border: `1px solid ${alpha(midnightBlue, 0.14)}`,
           boxShadow: "0 24px 54px rgba(2, 7, 15, 0.42)",
         },
       },
@@ -134,8 +145,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 999,
-          border: "1px solid rgba(255, 194, 54, 0.28)",
-          backgroundColor: "rgba(255, 194, 54, 0.08)",
+          border: `1px solid ${alpha(midnightPurple, 0.28)}`,
+          backgroundColor: alpha(midnightPurple, 0.12),
           color: "#ffffff",
           fontWeight: 600,
         },
@@ -155,16 +166,17 @@ const theme = createTheme({
         root: {
           borderRadius: 16,
           backgroundColor: "rgba(9, 14, 23, 0.96)",
-          transition: "box-shadow 160ms ease, border-color 160ms ease",
+          transition: "border-color 160ms ease",
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#f0b400",
+            borderColor: midnightPurple,
           },
-          "&.Mui-focused": {
-            boxShadow: "0 0 0 4px rgba(240, 180, 0, 0.16)",
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: alpha(midnightBlue, 0.22),
+            borderWidth: 1,
           },
         },
         notchedOutline: {
-          borderColor: "rgba(255, 194, 54, 0.2)",
+          borderColor: alpha(midnightBlue, 0.22),
         },
         input: {
           paddingTop: 16,
