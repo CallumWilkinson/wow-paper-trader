@@ -8,13 +8,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import type { ReactNode } from "react";
 import AutoGraphRoundedIcon from "@mui/icons-material/AutoGraphRounded";
 import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import CurrencyAmount from "../../../components/CurrencyAmount";
 import type { ItemMetadataResponse } from "../types/itemSearchTypes";
 import { useAutoRefresh } from "../../../hooks/useAutoRefresh";
 import { formatPriceTimestamp } from "../../../utils/formatPriceTimestamp";
-import { formatUnitPrice } from "../../../utils/formatUnitPrice";
 
 interface SelectedItemCardProps {
   item: ItemMetadataResponse | undefined;
@@ -24,7 +25,7 @@ interface SelectedItemCardProps {
 
 interface DetailRow {
   label: string;
-  value: string;
+  value: ReactNode;
 }
 
 function buildDetailRows(item: ItemMetadataResponse): DetailRow[] {
@@ -88,13 +89,13 @@ function buildDetailRows(item: ItemMetadataResponse): DetailRow[] {
     item.purchasePrice !== null
       ? {
           label: "Vendor price",
-          value: formatUnitPrice(item.purchasePrice),
+          value: <CurrencyAmount unitPrice={item.purchasePrice}></CurrencyAmount>,
         }
       : null,
     item.sellPrice !== null
       ? {
           label: "Vendor sell",
-          value: formatUnitPrice(item.sellPrice),
+          value: <CurrencyAmount unitPrice={item.sellPrice}></CurrencyAmount>,
         }
       : null,
   ];
@@ -330,9 +331,13 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                 <Typography variant="overline" color="primary.main">
                   Lowest buyout
                 </Typography>
-                <Typography variant="h4">
-                  {formatUnitPrice(item.unitPrice)}
-                </Typography>
+                <Box sx={{ fontSize: "2.125rem", fontWeight: 400, lineHeight: 1.235 }}>
+                  <CurrencyAmount
+                    unitPrice={item.unitPrice}
+                    iconSize={20}
+                    amountSx={{ fontSize: "2.125rem" }}
+                  ></CurrencyAmount>
+                </Box>
                 <Typography color="text.secondary">
                   {formatPriceTimestamp(item.priceTakenAtUtc)}
                 </Typography>

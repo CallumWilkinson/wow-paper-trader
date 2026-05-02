@@ -1,4 +1,5 @@
 import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
+import CurrencyAmount from "../../../components/CurrencyAmount";
 import {
   Alert,
   Box,
@@ -25,13 +26,20 @@ import {
   formatLocalDateLong,
   formatLocalDateShort,
 } from "../../../utils/formatLocalDate";
-import { formatUnitPrice } from "../../../utils/formatUnitPrice";
 
 interface PriceQuantityGraphProps {
   data: MonthlyPriceQuantityResponse | undefined;
   isLoading: boolean;
   isError: boolean;
   itemName: string | undefined;
+}
+
+interface PriceAxisTickProps {
+  x?: number | string;
+  y?: number | string;
+  payload?: {
+    value?: number | string;
+  };
 }
 
 export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
@@ -42,6 +50,42 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
     data?.priceQuantityResponses.filter((entry) => entry.fetchedAtUtc !== null) ?? [];
 
   const hasHistory = priceQuantityData.length > 0;
+
+  function renderPriceAxisTick(props: PriceAxisTickProps) {
+    const value = props.payload?.value;
+
+    if (typeof value !== "number") {
+      return null;
+    }
+
+    const x = typeof props.x === "number" ? props.x : Number(props.x ?? 0);
+    const y = typeof props.y === "number" ? props.y : Number(props.y ?? 0);
+
+    return (
+      <g transform={`translate(${x - 108}, ${y - 12})`}>
+        <foreignObject width={108} height={24}>
+          <div
+            style={{
+              width: "108px",
+              height: "24px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
+            <CurrencyAmount
+              unitPrice={value}
+              iconSize={12}
+              amountSx={{
+                color: theme.palette.text.secondary,
+                fontSize: "12px",
+              }}
+            ></CurrencyAmount>
+          </div>
+        </foreignObject>
+      </g>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -141,14 +185,10 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
                   <YAxis
                     yAxisId="price"
                     orientation="left"
-                    tickFormatter={(value: number) => formatUnitPrice(value)}
                     axisLine={false}
                     tickLine={false}
-                    width={86}
-                    tick={{
-                      fill: theme.palette.text.secondary,
-                      fontSize: 12,
-                    }}
+                    width={112}
+                    tick={renderPriceAxisTick}
                   ></YAxis>
 
                   <YAxis
@@ -178,7 +218,15 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
                           return ["No data", "Lowest buyout"];
                         }
 
-                        return [formatUnitPrice(value), "Lowest buyout"];
+                        return [
+                          <CurrencyAmount
+                            key={value}
+                            unitPrice={value}
+                            iconSize={14}
+                            amountSx={{ fontSize: "14px" }}
+                          ></CurrencyAmount>,
+                          "Lowest buyout",
+                        ];
                       }
 
                       if (typeof value !== "number") {
