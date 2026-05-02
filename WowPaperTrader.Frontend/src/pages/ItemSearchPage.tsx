@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Box, Chip, Container, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Container, Paper, Stack, Typography } from "@mui/material";
 import ItemSearchBar from "../features/itemSearch/components/ItemSearchBar";
 import ItemSearchResults from "../features/itemSearch/components/ItemSearchResults";
 import SelectedItemCard from "../features/itemSearch/components/SelectedItemCard";
@@ -61,54 +61,6 @@ export default function ItemSearchPage() {
     <Box sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="xl">
         <Stack spacing={3.5}>
-          <Box component="header">
-            <Paper
-              sx={{
-                px: { xs: 2.5, md: 3.5 },
-                py: 1.75,
-                background:
-                  "linear-gradient(180deg, rgba(51, 36, 40, 0.98), rgba(43, 31, 35, 0.96))",
-              }}
-            >
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={2}
-                sx={{
-                  justifyContent: "space-between",
-                  alignItems: { xs: "flex-start", sm: "center" },
-                }}
-              >
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  sx={{ alignItems: "center" }}
-                >
-                  <Box
-                    component="img"
-                    src="/wow-midnight-logo.avif"
-                    alt="World of Warcraft Midnight"
-                    sx={{
-                      width: { xs: 132, sm: 168 },
-                      height: "auto",
-                      filter: "drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45))",
-                    }}
-                  ></Box>
-
-                  <Box>
-                    <Typography variant="overline" color="primary.light">
-                      WowPaperTrader
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Auction House market intelligence for US realms
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                <Chip label="US market data"></Chip>
-              </Stack>
-            </Paper>
-          </Box>
-
           <Paper
             component="section"
             sx={{
@@ -143,34 +95,28 @@ export default function ItemSearchPage() {
               spacing={{ xs: 4, lg: 6 }}
               sx={{ position: "relative", alignItems: "center" }}
             >
-                <Stack spacing={4} sx={{ flex: 1, width: "100%", maxWidth: 760 }}>
-                  <Stack spacing={2}>
-                    <Typography variant="overline" color="primary.light">
-                      Midnight Auction House Watch
-                    </Typography>
+              <Stack spacing={4} sx={{ flex: 1, width: "100%", maxWidth: 760 }}>
+                <Stack spacing={2}>
+                  <Typography variant="overline" color="primary.light">
+                    Midnight Auction House Watch
+                  </Typography>
 
-                    <Typography variant="h2">
-                      Track World of Warcraft commodity prices across US realms.
-                    </Typography>
+                  <Typography variant="h2">
+                    Track World of Warcraft commodity prices across US realms.
+                  </Typography>
 
-                    <Typography variant="body1" color="text.secondary">
-                      Search for commodities, inspect the current lowest buyout,
-                      and review 30 days of price and quantity movement through a
-                      WoW-inspired market dashboard.
-                    </Typography>
-                  </Stack>
+                  <Typography variant="body1" color="text.secondary">
+                    Search for commodities, inspect the current lowest buyout,
+                    and review 30 days of price and quantity movement.
+                  </Typography>
+                </Stack>
 
                 <Stack
                   direction="row"
                   spacing={1}
                   useFlexGap
                   sx={{ flexWrap: "wrap" }}
-                >
-                  <Chip label="Official Midnight branding"></Chip>
-                  <Chip label="US realms"></Chip>
-                  <Chip label="Lowest buyout"></Chip>
-                  <Chip label="30-day history"></Chip>
-                </Stack>
+                ></Stack>
 
                 <Box
                   sx={{
