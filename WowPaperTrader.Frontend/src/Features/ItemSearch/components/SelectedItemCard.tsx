@@ -320,8 +320,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                 minWidth: { lg: 260 },
                 p: 3,
                 borderRadius: 3,
-                background:
-                  "linear-gradient(180deg, rgba(255, 194, 54, 0.16), rgba(47, 103, 177, 0.1))",
+                bgcolor: "rgba(18, 27, 42, 0.92)",
                 border: "1px solid",
                 borderColor: "rgba(255, 194, 54, 0.24)",
                 boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.04)",

@@ -65,35 +65,14 @@ export default function ItemSearchPage() {
             component="section"
             sx={{
               position: "relative",
-              overflow: "hidden",
               p: { xs: 3, md: 5 },
-              background:
-                "linear-gradient(135deg, rgba(10, 15, 27, 0.98), rgba(8, 13, 24, 0.97))",
+              bgcolor: "#080d18",
             }}
           >
-            <Box
-              sx={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "radial-gradient(circle at top right, rgba(255, 196, 70, 0.16), transparent 24%)",
-                pointerEvents: "none",
-              }}
-            ></Box>
-            <Box
-              sx={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "radial-gradient(circle at 18% 18%, rgba(50, 97, 174, 0.22), transparent 26%)",
-                pointerEvents: "none",
-              }}
-            ></Box>
-
             <Stack
               direction={{ xs: "column", lg: "row" }}
               spacing={{ xs: 4, lg: 6 }}
-              sx={{ position: "relative", alignItems: "center" }}
+              sx={{ alignItems: "center" }}
             >
               <Stack spacing={4} sx={{ flex: 1, width: "100%", maxWidth: 760 }}>
                 <Stack spacing={2}>
