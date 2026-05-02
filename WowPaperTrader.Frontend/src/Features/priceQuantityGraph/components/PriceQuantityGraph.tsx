@@ -47,7 +47,9 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
   const theme = useTheme();
 
   const priceQuantityData =
-    data?.priceQuantityResponses.filter((entry) => entry.fetchedAtUtc !== null) ?? [];
+    data?.priceQuantityResponses.filter(
+      (entry) => entry.fetchedAtUtc !== null,
+    ) ?? [];
 
   const hasHistory = priceQuantityData.length > 0;
 
@@ -112,7 +114,7 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
             <Typography color="text.secondary">
               {itemName
                 ? `Price and quantity history for ${itemName} across the last 30 days of auction snapshots.`
-                : "Select an item to load recent price and quantity movement."}
+                : "Select an item to load recent price and quantity data."}
             </Typography>
           </Box>
 
@@ -129,7 +131,7 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
                 borderRadius: 3,
                 border: "1px dashed",
                 borderColor: "divider",
-                bgcolor: "rgba(7, 14, 24, 0.72)",
+                bgcolor: "rgba(12, 18, 33, 0.8)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -138,14 +140,14 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
             >
               <Stack spacing={1.5} sx={{ alignItems: "center", maxWidth: 420 }}>
                 <QueryStatsRoundedIcon
-                  sx={{ fontSize: 40, color: "primary.main" }}
+                  sx={{ fontSize: 40, color: "secondary.main" }}
                 ></QueryStatsRoundedIcon>
                 <Typography variant="h5" align="center">
                   Market history appears after item selection
                 </Typography>
                 <Typography color="text.secondary" align="center">
-                  The chart will show lowest buyout and total quantity posted for
-                  the selected commodity.
+                  The chart will show lowest buyout and total quantity posted
+                  for the selected commodity.
                 </Typography>
               </Stack>
             </Box>
@@ -208,7 +210,7 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
                     contentStyle={{
                       borderRadius: 14,
                       border: `1px solid ${theme.palette.divider}`,
-                      backgroundColor: "#101827",
+                      backgroundColor: "#111a2d",
                       color: theme.palette.text.primary,
                       boxShadow: "0 16px 32px rgba(2, 7, 15, 0.4)",
                     }}
@@ -241,6 +243,17 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
                     verticalAlign="top"
                     align="right"
                     iconType="circle"
+                    formatter={(value) => {
+                      if (value === "Lowest buyout") {
+                        return (
+                          <span style={{ color: theme.palette.info.main }}>
+                            {value}
+                          </span>
+                        );
+                      }
+
+                      return value;
+                    }}
                     wrapperStyle={{
                       paddingBottom: 16,
                       color: theme.palette.text.secondary,
@@ -251,7 +264,7 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
                     yAxisId="quantity"
                     dataKey="totalQuantityPosted"
                     name="Quantity posted"
-                    fill="rgba(78, 127, 177, 0.68)"
+                    fill="rgba(75, 141, 228, 0.68)"
                     radius={[8, 8, 0, 0]}
                   ></Bar>
 
@@ -260,12 +273,12 @@ export default function PriceQuantityGraph(props: PriceQuantityGraphProps) {
                     type="monotone"
                     dataKey="lowestUnitPrice"
                     name="Lowest buyout"
-                    stroke={theme.palette.primary.main}
+                    stroke={theme.palette.info.main}
                     strokeWidth={3}
                     dot={false}
                     activeDot={{
                       r: 5,
-                      fill: theme.palette.primary.dark,
+                      fill: theme.palette.info.dark,
                     }}
                     connectNulls
                   ></Line>

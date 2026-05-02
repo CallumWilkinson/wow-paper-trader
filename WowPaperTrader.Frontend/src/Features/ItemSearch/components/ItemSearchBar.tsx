@@ -39,7 +39,6 @@ export default function ItemSearchBar(props: ItemSearchBarProps) {
             ),
           },
         }}
-        helperText="Press Enter to select the first result, or choose an item from the list."
         sx={{
           "& .MuiInputBase-input::placeholder": {
             color: "text.secondary",

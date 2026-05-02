@@ -89,7 +89,9 @@ function buildDetailRows(item: ItemMetadataResponse): DetailRow[] {
     item.purchasePrice !== null
       ? {
           label: "Vendor price",
-          value: <CurrencyAmount unitPrice={item.purchasePrice}></CurrencyAmount>,
+          value: (
+            <CurrencyAmount unitPrice={item.purchasePrice}></CurrencyAmount>
+          ),
         }
       : null,
     item.sellPrice !== null
@@ -191,8 +193,8 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  bgcolor: "rgba(255, 194, 54, 0.08)",
-                  color: "primary.main",
+                  bgcolor: "rgba(75, 141, 228, 0.12)",
+                  color: "secondary.main",
                   border: "1px solid",
                   borderColor: "divider",
                   flexShrink: 0,
@@ -204,7 +206,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
               </Box>
 
               <Stack spacing={1.25}>
-                <Typography variant="h4">Select an item to inspect</Typography>
+                <Typography variant="h4">Search for an item</Typography>
                 <Typography color="text.secondary">
                   Choose a commodity from search results to load the latest
                   lowest buyout, metadata summary, and market history.
@@ -267,11 +269,11 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                   border: "1px solid",
                   borderColor: "divider",
                   flexShrink: 0,
-                  bgcolor: "rgba(255, 194, 54, 0.08)",
+                  bgcolor: "rgba(75, 141, 228, 0.12)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  boxShadow: "0 0 0 1px rgba(255, 194, 54, 0.12)",
+                  boxShadow: "0 0 0 1px rgba(146, 120, 255, 0.22)",
                 }}
               >
                 {item.imageUrl ? (
@@ -321,17 +323,23 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                 minWidth: { lg: 260 },
                 p: 3,
                 borderRadius: 3,
-                bgcolor: "rgba(18, 27, 42, 0.92)",
+                bgcolor: "rgba(20, 26, 49, 0.92)",
                 border: "1px solid",
-                borderColor: "rgba(255, 194, 54, 0.24)",
+                borderColor: "rgba(146, 120, 255, 0.32)",
                 boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.04)",
               }}
             >
               <Stack spacing={1.25}>
-                <Typography variant="overline" color="primary.main">
+                <Typography variant="overline" color="info.light">
                   Lowest buyout
                 </Typography>
-                <Box sx={{ fontSize: "2.125rem", fontWeight: 400, lineHeight: 1.235 }}>
+                <Box
+                  sx={{
+                    fontSize: "2.125rem",
+                    fontWeight: 400,
+                    lineHeight: 1.235,
+                  }}
+                >
                   <CurrencyAmount
                     unitPrice={item.unitPrice}
                     iconSize={20}
@@ -365,12 +373,12 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                   borderRadius: 2.5,
                   border: "1px solid",
                   borderColor: "divider",
-                  bgcolor: "rgba(8, 15, 25, 0.72)",
+                  bgcolor: "rgba(11, 18, 32, 0.78)",
                 }}
               >
                 <Stack direction="row" spacing={1.25}>
                   <CategoryRoundedIcon
-                    sx={{ color: "primary.main", fontSize: 20, mt: 0.2 }}
+                    sx={{ color: "secondary.main", fontSize: 20, mt: 0.2 }}
                   ></CategoryRoundedIcon>
                   <Box>
                     <Typography variant="body2" color="text.secondary">

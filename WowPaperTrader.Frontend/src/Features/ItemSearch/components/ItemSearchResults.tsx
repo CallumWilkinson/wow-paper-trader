@@ -27,7 +27,7 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
         borderColor: "divider",
         borderRadius: 2,
         overflow: "hidden",
-        bgcolor: "rgba(8, 16, 28, 0.96)",
+        bgcolor: "rgba(10, 17, 31, 0.96)",
         maxHeight: 320,
         overflowY: "auto",
       }}
@@ -48,13 +48,13 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
                 alignItems: "center",
                 transition: "background-color 140ms ease",
                 "&:hover": {
-                  backgroundColor: "rgba(78, 127, 177, 0.12)",
+                  backgroundColor: (theme) => theme.palette.divider,
                 },
                 "&.Mui-selected": {
-                  backgroundColor: "rgba(214, 174, 88, 0.16)",
+                  backgroundColor: "rgba(146, 120, 255, 0.2)",
                 },
                 "&.Mui-selected:hover": {
-                  backgroundColor: "rgba(214, 174, 88, 0.24)",
+                  backgroundColor: "rgba(146, 120, 255, 0.28)",
                 },
               }}
             >
@@ -70,7 +70,7 @@ export default function ItemSearchResults(props: ItemSearchResultsProps) {
                   justifyContent: "center",
                   border: "1px solid",
                   borderColor: "divider",
-                  bgcolor: "rgba(214, 174, 88, 0.08)",
+                  bgcolor: "rgba(146, 120, 255, 0.14)",
                   overflow: "hidden",
                 }}
               >

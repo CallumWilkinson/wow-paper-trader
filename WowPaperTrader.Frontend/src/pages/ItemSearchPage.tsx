@@ -66,7 +66,7 @@ export default function ItemSearchPage() {
             sx={{
               position: "relative",
               p: { xs: 3, md: 5 },
-              bgcolor: "#080d18",
+              bgcolor: "#0b1020",
             }}
           >
             <Stack
@@ -76,7 +76,7 @@ export default function ItemSearchPage() {
             >
               <Stack spacing={4} sx={{ flex: 1, width: "100%", maxWidth: 760 }}>
                 <Stack spacing={2}>
-                  <Typography variant="overline" color="primary.light">
+                  <Typography variant="overline" color="secondary.light">
                     Midnight Auction House Watch
                   </Typography>
 
@@ -86,7 +86,7 @@ export default function ItemSearchPage() {
 
                   <Typography variant="body1" color="text.secondary">
                     Search for commodities, inspect the current lowest buyout,
-                    and review 30 days of price and quantity movement.
+                    and review 30 days of price and quantity data.
                   </Typography>
                 </Stack>
 
@@ -102,9 +102,11 @@ export default function ItemSearchPage() {
                     p: { xs: 2, md: 2.5 },
                     borderRadius: 3,
                     border: "1px solid",
-                    borderColor: "divider",
-                    bgcolor: "rgba(9, 14, 24, 0.84)",
+                    borderColor: (theme) => theme.palette.info.main,
+                    bgcolor: "rgba(13, 19, 36, 0.88)",
                     backdropFilter: "blur(8px)",
+                    boxShadow: (theme) =>
+                      `inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 0 0 1px ${theme.palette.divider}`,
                   }}
                 >
                   <Stack spacing={1.5}>
@@ -152,7 +154,7 @@ export default function ItemSearchPage() {
                     maxWidth: 360,
                     height: "auto",
                     filter:
-                      "drop-shadow(0 18px 36px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 22px rgba(214, 174, 88, 0.18))",
+                      "drop-shadow(0 18px 36px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px rgba(75, 141, 228, 0.18)) drop-shadow(0 0 26px rgba(146, 120, 255, 0.18))",
                   }}
                 ></Box>
               </Box>
