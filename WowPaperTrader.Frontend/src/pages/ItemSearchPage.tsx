@@ -87,7 +87,7 @@ export default function ItemSearchPage() {
                   </Typography>
 
                   <Typography variant="h2">
-                    Track World of Warcraft commodity prices across US realms.
+                    Track World of Warcraft commodity prices across US realms
                   </Typography>
 
                   <Typography variant="body1" color="text.secondary">
