@@ -228,52 +228,96 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
   const detailRows = buildDetailRows(item);
 
   return (
-    <Card component="section">
+    <Card
+      component="section"
+      sx={{
+        overflow: "hidden",
+        borderRadius: 3,
+        border: "1px solid",
+        borderColor: "divider",
+        bgcolor: "rgba(10, 17, 31, 0.96)",
+      }}
+    >
       <CardContent sx={{ p: { xs: 3, md: 4 } }}>
         <Stack spacing={3}>
-          <Stack direction={{ xs: "column", lg: "row" }} spacing={3}>
+          <Stack
+            direction={{ xs: "column", lg: "row" }}
+            spacing={3}
+            sx={{
+              p: { xs: 2.5, md: 3 },
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "rgba(11, 18, 32, 0.78)",
+            }}
+          >
             <Stack
               direction={{ xs: "column", sm: "row" }}
-              spacing={3}
-              sx={{ flexGrow: 1 }}
+              spacing={{ xs: 2.5, sm: 3 }}
+              sx={{
+                flexGrow: 1,
+                minWidth: 0,
+                alignItems: { xs: "flex-start", sm: "center" },
+              }}
             >
               <Box
                 sx={{
-                  width: { xs: 96, sm: 120 },
-                  height: { xs: 96, sm: 120 },
+                  position: "relative",
+                  p: 0.5,
                   borderRadius: 3,
-                  overflow: "hidden",
                   border: "1px solid",
                   borderColor: "divider",
+                  bgcolor: "rgba(146, 120, 255, 0.12)",
                   flexShrink: 0,
-                  bgcolor: "rgba(75, 141, 228, 0.12)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 0 0 1px rgba(146, 120, 255, 0.22)",
                 }}
               >
-                {item.imageUrl ? (
-                  <Box
-                    component="img"
-                    src={item.imageUrl}
-                    alt={item.name}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
-                  <Inventory2OutlinedIcon
-                    sx={{ fontSize: 36, color: "text.secondary" }}
-                  ></Inventory2OutlinedIcon>
-                )}
+                <Box
+                  sx={{
+                    width: { xs: 104, sm: 128 },
+                    height: { xs: 104, sm: 128 },
+                    borderRadius: 2.5,
+                    overflow: "hidden",
+                    bgcolor: "rgba(10, 17, 31, 0.96)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {item.imageUrl ? (
+                    <Box
+                      component="img"
+                      src={item.imageUrl}
+                      alt={item.name}
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <Inventory2OutlinedIcon
+                      sx={{ fontSize: 42, color: "text.secondary" }}
+                    ></Inventory2OutlinedIcon>
+                  )}
+                </Box>
               </Box>
 
-              <Stack spacing={2} sx={{ minWidth: 0 }}>
-                <Box>
-                  <Typography variant="h3" gutterBottom>
+              <Stack
+                spacing={2}
+                sx={{
+                  minWidth: 0,
+                  flexGrow: 1,
+                  justifyContent: "center",
+                }}
+              >
+                <Box sx={{ maxWidth: 560 }}>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      lineHeight: 1.05,
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
                     {item.name}
                   </Typography>
                 </Box>
@@ -282,30 +326,35 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
 
             <Box
               sx={{
-                minWidth: { lg: 260 },
-                p: 3,
+                minWidth: { lg: 320 },
+                p: { xs: 2.5, md: 3 },
                 borderRadius: 3,
-                bgcolor: "rgba(20, 26, 49, 0.92)",
+                bgcolor: "rgba(15, 23, 40, 0.92)",
                 border: "1px solid",
-                borderColor: "rgba(146, 120, 255, 0.32)",
-                boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.04)",
+                borderColor: "rgba(146, 120, 255, 0.24)",
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              <Stack spacing={1.25}>
-                <Typography variant="overline" color="info.light">
+              <Stack spacing={1.5}>
+                <Typography
+                  variant="overline"
+                  color="info.light"
+                  sx={{ letterSpacing: "0.16em" }}
+                >
                   Lowest buyout
                 </Typography>
                 <Box
                   sx={{
-                    fontSize: "2.125rem",
+                    fontSize: { xs: "2rem", md: "2.35rem" },
                     fontWeight: 400,
-                    lineHeight: 1.235,
+                    lineHeight: 1.15,
                   }}
                 >
                   <CurrencyAmount
                     unitPrice={item.unitPrice}
                     iconSize={20}
-                    amountSx={{ fontSize: "2.125rem" }}
+                    amountSx={{ fontSize: { xs: "2rem", md: "2.35rem" } }}
                   ></CurrencyAmount>
                 </Box>
                 <Typography color="text.secondary">
