@@ -238,13 +238,13 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
         bgcolor: "rgba(10, 17, 31, 0.96)",
       }}
     >
-      <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-        <Stack spacing={3}>
+      <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
+        <Stack spacing={2.5}>
           <Stack
             direction={{ xs: "column", lg: "row" }}
-            spacing={3}
+            spacing={2.5}
             sx={{
-              p: { xs: 2.5, md: 3 },
+              p: { xs: 2, md: 2.5 },
               borderRadius: 3,
               border: "1px solid",
               borderColor: "divider",
@@ -253,7 +253,7 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
           >
             <Stack
               direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 2.5, sm: 3 }}
+              spacing={{ xs: 2, sm: 2.5 }}
               sx={{
                 flexGrow: 1,
                 minWidth: 0,
@@ -273,8 +273,8 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
               >
                 <Box
                   sx={{
-                    width: { xs: 104, sm: 128 },
-                    height: { xs: 104, sm: 128 },
+                    width: { xs: 88, sm: 104 },
+                    height: { xs: 88, sm: 104 },
                     borderRadius: 2.5,
                     overflow: "hidden",
                     bgcolor: "rgba(10, 17, 31, 0.96)",
@@ -303,19 +303,20 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
               </Box>
 
               <Stack
-                spacing={2}
+                spacing={1}
                 sx={{
                   minWidth: 0,
                   flexGrow: 1,
                   justifyContent: "center",
                 }}
               >
-                <Box sx={{ maxWidth: 560 }}>
+                <Box sx={{ maxWidth: 500 }}>
                   <Typography
-                    variant="h3"
+                    variant="h4"
                     sx={{
                       lineHeight: 1.05,
                       letterSpacing: "-0.02em",
+                      fontSize: { xs: "2rem", md: "2.35rem" },
                     }}
                   >
                     {item.name}
@@ -326,8 +327,8 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
 
             <Box
               sx={{
-                minWidth: { lg: 320 },
-                p: { xs: 2.5, md: 3 },
+                minWidth: { lg: 280 },
+                p: { xs: 2, md: 2.5 },
                 borderRadius: 3,
                 bgcolor: "rgba(15, 23, 40, 0.92)",
                 border: "1px solid",
@@ -336,28 +337,28 @@ export default function SelectedItemCard(props: SelectedItemCardProps) {
                 alignItems: "center",
               }}
             >
-              <Stack spacing={1.5}>
+              <Stack spacing={1}>
                 <Typography
                   variant="overline"
                   color="info.light"
-                  sx={{ letterSpacing: "0.16em" }}
+                  sx={{ letterSpacing: "0.14em" }}
                 >
                   Lowest buyout
                 </Typography>
                 <Box
                   sx={{
-                    fontSize: { xs: "2rem", md: "2.35rem" },
+                    fontSize: { xs: "1.75rem", md: "2rem" },
                     fontWeight: 400,
                     lineHeight: 1.15,
                   }}
                 >
                   <CurrencyAmount
                     unitPrice={item.unitPrice}
-                    iconSize={20}
-                    amountSx={{ fontSize: { xs: "2rem", md: "2.35rem" } }}
+                    iconSize={18}
+                    amountSx={{ fontSize: { xs: "1.75rem", md: "2rem" } }}
                   ></CurrencyAmount>
                 </Box>
-                <Typography color="text.secondary">
+                <Typography variant="body2" color="text.secondary">
                   {formatPriceTimestamp(item.priceTakenAtUtc)}
                 </Typography>
               </Stack>
