@@ -2,7 +2,7 @@
 
 `WowPaperTrader` is a .NET 10 solution for collecting World of Warcraft commodity auction data from Blizzard's API, storing auction snapshots in SQL Server, enriching known item ids with Blizzard item metadata, and exposing a small REST API for item search, metadata, and current lowest auction price queries.
 
-The long-term product direction in [Requirements.md](./Requirements.md) is larger than the codebase today. This README describes the repository as it exists on April 11, 2026.
+![alt text](image.png)
 
 ## Current Project State
 
