@@ -6,6 +6,10 @@
 
 ![Search Page](appDemo.jpg)
 
+## API Endpoints Screenshot
+
+![API](swagger-screenshot.png)
+
 ## Current Project State
 
 Implemented:
