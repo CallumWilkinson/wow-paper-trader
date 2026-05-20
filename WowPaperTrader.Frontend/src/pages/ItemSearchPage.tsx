@@ -95,52 +95,6 @@ export default function ItemSearchPage() {
                     and review 30 days of price and quantity data.
                   </Typography>
                 </Stack>
-
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  useFlexGap
-                  sx={{ flexWrap: "wrap" }}
-                ></Stack>
-
-                <Box
-                  sx={{
-                    p: { xs: 2, md: 2.5 },
-                    borderRadius: 3,
-                    border: "1px solid",
-                    borderColor: (theme) => theme.palette.info.main,
-                    bgcolor: "rgba(13, 19, 36, 0.88)",
-                    backdropFilter: "blur(8px)",
-                    boxShadow: (theme) =>
-                      `inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 0 0 1px ${theme.palette.divider}`,
-                  }}
-                >
-                  <Stack spacing={1.5}>
-                    <ItemSearchBar
-                      value={searchTerm}
-                      onChange={handleSearchInputChange}
-                      onEnter={handleEnter}
-                    ></ItemSearchBar>
-
-                    {searchErrorMessage ? (
-                      <Alert severity="error">{searchErrorMessage}</Alert>
-                    ) : null}
-
-                    {isItemsFound ? (
-                      <Alert severity="info">
-                        No matching items found for that search.
-                      </Alert>
-                    ) : null}
-
-                    {isDropdownShown ? (
-                      <ItemSearchResults
-                        items={items}
-                        selectedItemId={selectedItemId}
-                        onSelectItem={handleSelectItem}
-                      ></ItemSearchResults>
-                    ) : null}
-                  </Stack>
-                </Box>
               </Stack>
 
               <Box
@@ -166,6 +120,45 @@ export default function ItemSearchPage() {
               </Box>
             </Stack>
           </Paper>
+
+          <Box
+            sx={{
+              p: { xs: 2, md: 2.5 },
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: (theme) => theme.palette.info.main,
+              bgcolor: "rgba(13, 19, 36, 0.88)",
+              backdropFilter: "blur(8px)",
+              boxShadow: (theme) =>
+                `inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 0 0 1px ${theme.palette.divider}`,
+            }}
+          >
+            <Stack spacing={1.5}>
+              <ItemSearchBar
+                value={searchTerm}
+                onChange={handleSearchInputChange}
+                onEnter={handleEnter}
+              ></ItemSearchBar>
+
+              {searchErrorMessage ? (
+                <Alert severity="error">{searchErrorMessage}</Alert>
+              ) : null}
+
+              {isItemsFound ? (
+                <Alert severity="info">
+                  No matching items found for that search.
+                </Alert>
+              ) : null}
+
+              {isDropdownShown ? (
+                <ItemSearchResults
+                  items={items}
+                  selectedItemId={selectedItemId}
+                  onSelectItem={handleSelectItem}
+                ></ItemSearchResults>
+              ) : null}
+            </Stack>
+          </Box>
 
           <SelectedItemCard
             item={selectedItemPayload.data}
