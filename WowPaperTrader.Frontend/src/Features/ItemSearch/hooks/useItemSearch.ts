@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { searchItems } from "../api/itemSearchApi";
 import type { ItemSearchResponse } from "../types/itemSearchTypes";
 
@@ -9,6 +9,7 @@ export function useItemSearch(searchTerm: string) {
       return searchItems(searchTerm);
     },
     enabled: searchTerm.trim().length > 0,
+    placeholderData: keepPreviousData,
     staleTime: 30_000,
     retry: 1,
   });
