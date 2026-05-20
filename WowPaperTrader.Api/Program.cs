@@ -22,7 +22,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("WowPaperTrader");
-    options.UseSqlServer(connectionString);
+    options.UseSqlServer(connectionString, sqlServerOptions =>
+    {
+        sqlServerOptions.CommandTimeout(300);
+    });
 });
 
 builder.Services.AddScoped<LowestPriceQueryHandler>();
