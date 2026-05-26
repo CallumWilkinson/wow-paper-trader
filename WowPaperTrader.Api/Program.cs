@@ -24,6 +24,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("WowPaperTrader");
     options.UseSqlServer(connectionString, sqlServerOptions =>
     {
+        sqlServerOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+        
         sqlServerOptions.CommandTimeout(300);
     });
 });
