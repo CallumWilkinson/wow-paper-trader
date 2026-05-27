@@ -12,10 +12,16 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("WowPaperTrader");
+    
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        throw new InvalidOperationException("ConnectionStrings:WowPaperTrader is missing.");
+    }
+    
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddHostedService<AuctionDataBackgroundService>();
+builder.Services.AddSingleton<AuctionDataIngestionJob>();
 
 builder.Services.AddScoped<PostAuctionDataCommandHandler>();
 builder.Services.AddScoped<ICommodityAuctionApiAdapter, CommodityAuctionApiAdapter>();
@@ -38,7 +44,8 @@ builder.Services.AddHttpClient<CommodityAuctionClient>(client => { client.BaseAd
         PooledConnectionLifetime = TimeSpan.FromMinutes(10)
     });
 
-builder.Services.Configure<HostOptions>(options => { options.ShutdownTimeout = TimeSpan.FromMinutes(10); });
+using var host = builder.Build();
 
-var host = builder.Build();
-host.Run();
+var job = host.Services.GetRequiredService<AuctionDataIngestionJob>();
+
+return await job.RunAsync();
