@@ -1,10 +1,12 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Application.Features.Write.Helpers;
 using WowPaperTrader.Infrastructure.Adapters;
 using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Ingestor;
 using WowPaperTrader.Persistence;
+using WowPaperTrader.Persistence.Helpers;
 using WowPaperTrader.Persistence.Repositories;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -26,6 +28,8 @@ builder.Services.AddSingleton<AuctionDataIngestionJob>();
 builder.Services.AddScoped<PostAuctionDataCommandHandler>();
 builder.Services.AddScoped<ICommodityAuctionApiAdapter, CommodityAuctionApiAdapter>();
 builder.Services.AddScoped<ICommodityAuctionRepository, CommodityAuctionRepository>();
+
+builder.Services.AddScoped<IDatabaseSizeGuard, DatabaseSizeGuard>();
 
 builder.Services.AddHttpClient<BattleNetAuthClient>()
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
