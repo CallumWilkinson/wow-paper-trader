@@ -10,10 +10,10 @@ using WowPaperTrader.Infrastructure.HttpClients;
 using WowPaperTrader.Persistence;
 using WowPaperTrader.Persistence.ReadServices;
 using WowPaperTrader.Persistence.Repositories;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -30,6 +30,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             errorNumbersToAdd: null);
         
         sqlServerOptions.CommandTimeout(300);
+    });
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+    {
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: "global-api-limit",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                    PermitLimit = 60,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueLimit = 0,
+                    AutoReplenishment = true
+            });
     });
 });
 
@@ -88,7 +106,8 @@ var app = builder.Build();
 
 app.UseCors("Frontend");
 
-// Configure the HTTP request pipeline.
+app.UseRateLimiter();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
