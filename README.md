@@ -6,6 +6,10 @@
 
 ![Search Page](appDemo.jpg)
 
+## Architecture Diagram
+
+![Architecture](architecture.png)
+
 ## API Endpoints Screenshot
 
 ![API](swagger-screenshot.png)
@@ -66,32 +70,6 @@ Not implemented yet:
 - `WowPaperTrader.Persistence.Tests`
   - integration tests for repositories, read services, and schema behavior
 
-## Dependency Graph
-
-Project references:
-
-```text
-WowPaperTrader.Api
-  -> WowPaperTrader.Application
-  -> WowPaperTrader.Infrastructure
-  -> WowPaperTrader.Persistence
-
-WowPaperTrader.Ingestor
-  -> WowPaperTrader.Infrastructure
-  -> WowPaperTrader.Persistence
-
-WowPaperTrader.Infrastructure
-  -> WowPaperTrader.Application
-
-WowPaperTrader.Persistence
-  -> WowPaperTrader.Application
-
-WowPaperTrader.Application.Tests
-  -> WowPaperTrader.Application
-
-WowPaperTrader.Persistence.Tests
-  -> WowPaperTrader.Persistence
-```
 
 Architectural direction:
 
