@@ -104,6 +104,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+
 app.UseCors("Frontend");
 
 app.UseRateLimiter();
@@ -115,5 +117,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
+
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.Run();
