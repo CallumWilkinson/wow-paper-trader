@@ -4,7 +4,7 @@ $ErrorActionPreference = "Stop"
 # Settings
 # -----------------------------
 
-$ProjectRoot = "C:\Users\callu\Documents\Code\WowPaperTrader"
+$ProjectRoot = Split-Path -Parent $PSScriptRoot
 
 $ResourceGroup = "rg-wow-paper-trader-dev"
 $ApiAppName = "wow-paper-trader-api-dev"
