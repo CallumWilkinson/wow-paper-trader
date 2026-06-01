@@ -78,10 +78,12 @@ public sealed class ItemsController(
     [HttpPost]
     public async Task<IActionResult> UpdateItemMetaData(CancellationToken cancellationToken)
     {
-        var command = new UpdateItemsCommand();
+        return NotFound();
         
-        await updateItemsCommandHandler.HandleAsync(command, cancellationToken);
-
-        return Ok();
+        // var command = new UpdateItemsCommand();
+        //
+        // await updateItemsCommandHandler.HandleAsync(command, cancellationToken);
+        //
+        // return Ok();
     }
 }
