@@ -13,7 +13,7 @@ $ImageName = "ghcr.io/callumwilkinson/wow-paper-trader-api"
 $DockerfilePath = ".\WowPaperTrader.Api\Dockerfile"
 
 # -----------------------------
-# Move to project folder
+# Go to project folder
 # -----------------------------
 
 Set-Location $ProjectRoot
@@ -27,50 +27,36 @@ Write-Host "Checking Azure login..."
 az account show 1>$null 2>$null
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "You are not logged in to Azure. Logging in now..."
+    Write-Host "You are not logged in to Azure."
     az login
 }
 
-# -----------------------------
-# Create image tag
-# -----------------------------
-
-$Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$ImageTag = "dev-$Timestamp"
-$Image = "${ImageName}:${ImageTag}"
-
-Write-Host "Deploying image:"
-Write-Host $Image
-
-# -----------------------------
-# Build Docker image
-# -----------------------------
-
-Write-Host "Building Docker image..."
-
-docker build `
-  -t $Image `
-  -f $DockerfilePath `
-  .
-
 if ($LASTEXITCODE -ne 0) {
-    throw "Docker build failed."
+    throw "Azure login failed."
 }
 
 # -----------------------------
-# Push Docker image
+# Check GHCR login
 # -----------------------------
 
-Write-Host "Pushing Docker image to GHCR..."
+Write-Host "Checking GHCR login..."
 
-docker push $Image
+$DockerConfigPath = "$env:USERPROFILE\.docker\config.json"
+$IsLoggedInToGhcr = $false
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Docker push failed. You may not be logged in to GHCR."
-    Write-Host "Log in using your GitHub username and a classic PAT with write:packages and read:packages."
+if (Test-Path $DockerConfigPath) {
+    $DockerConfigText = Get-Content $DockerConfigPath -Raw
+
+    if ($DockerConfigText -like "*ghcr.io*") {
+        $IsLoggedInToGhcr = $true
+    }
+}
+
+if (-not $IsLoggedInToGhcr) {
+    Write-Host "You do not appear to be logged in to GHCR."
 
     $GitHubUsername = Read-Host "GitHub username"
-    $GitHubToken = Read-Host "GitHub classic PAT" -AsSecureString
+    $GitHubToken = Read-Host "GitHub classic PAT with write:packages and read:packages" -AsSecureString
 
     $TokenPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($GitHubToken)
 
@@ -86,14 +72,46 @@ if ($LASTEXITCODE -ne 0) {
     if ($LASTEXITCODE -ne 0) {
         throw "GHCR login failed."
     }
+}
 
-    Write-Host "Trying Docker push again..."
+# -----------------------------
+# Create a unique image tag
+# -----------------------------
 
-    docker push $Image
+$Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$ImageTag = "dev-$Timestamp"
+$Image = "${ImageName}:${ImageTag}"
 
-    if ($LASTEXITCODE -ne 0) {
-        throw "Docker push failed again."
-    }
+Write-Host ""
+Write-Host "Image to deploy:"
+Write-Host $Image
+Write-Host ""
+
+# -----------------------------
+# Build image
+# -----------------------------
+
+Write-Host "Building Docker image..."
+
+docker build `
+  -t $Image `
+  -f $DockerfilePath `
+  .
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Docker build failed."
+}
+
+# -----------------------------
+# Push image
+# -----------------------------
+
+Write-Host "Pushing Docker image to GHCR..."
+
+docker push $Image
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Docker push failed. Check your GHCR token permissions."
 }
 
 # -----------------------------
@@ -112,7 +130,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # -----------------------------
-# Print API URL
+# Get API URL
 # -----------------------------
 
 $ApiHostName = az containerapp show `
@@ -137,10 +155,12 @@ Write-Host "Testing /health..."
 
 try {
     $Response = Invoke-WebRequest "$ApiUrl/health" -UseBasicParsing
-    Write-Host "Health check passed:"
-    Write-Host $Response.Content
+
+    Write-Host "Health check passed."
+    Write-Host "Status: $($Response.StatusCode)"
+    Write-Host "Body:   $($Response.Content)"
 }
 catch {
     Write-Host "Health check failed."
-    Write-Host "This is okay if you have not added /health yet."
+    Write-Host "This is expected if /health has not been added yet."
 }
