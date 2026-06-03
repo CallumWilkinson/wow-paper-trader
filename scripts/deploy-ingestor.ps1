@@ -29,14 +29,14 @@ function Stop-IfCommandFailed {
 function Connect-AzureIfNeeded {
     Write-Host "Checking Azure login..."
 
-    az account show 1>$null 2>$null
+    az account show --only-show-errors 1>$null 2>$null
 
     if ($LASTEXITCODE -eq 0) {
         return
     }
 
     Write-Host "You are not logged in to Azure."
-    az login
+    az login --only-show-errors
 
     Stop-IfCommandFailed "Azure login failed."
 }
@@ -79,6 +79,7 @@ function Test-IngestorJobExists {
     az containerapp job show `
       --name $IngestorJobName `
       --resource-group $ResourceGroup `
+      --only-show-errors `
       1>$null 2>$null
 
     Stop-IfCommandFailed "Could not find Container Apps Job: $IngestorJobName"
@@ -86,6 +87,7 @@ function Test-IngestorJobExists {
 
 function New-ImageTag {
     $Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+
     return "dev-$Timestamp"
 }
 
@@ -126,7 +128,8 @@ function Update-IngestorJobImage {
     az containerapp job update `
       --name $IngestorJobName `
       --resource-group $ResourceGroup `
-      --image $Image
+      --image $Image `
+      --only-show-errors
 
     Stop-IfCommandFailed "Azure Container Apps Job update failed."
 }
@@ -136,6 +139,7 @@ function Get-DeployedIngestorImage {
       --name $IngestorJobName `
       --resource-group $ResourceGroup `
       --query "properties.template.containers[0].image" `
+      --only-show-errors `
       -o tsv
 }
 
