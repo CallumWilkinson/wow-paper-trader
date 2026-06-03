@@ -4,7 +4,7 @@ $ErrorActionPreference = "Stop"
 # Settings
 # -----------------------------
 
-$ProjectRoot = Split-Path -Parent $PSScriptRoot
+$ProjectRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
 $ResourceGroup = "rg-wow-paper-trader-dev"
 $IngestorJobName = "wow-paper-trader-ingestor-dev"
