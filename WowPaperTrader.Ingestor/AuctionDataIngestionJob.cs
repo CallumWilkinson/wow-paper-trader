@@ -6,7 +6,8 @@ namespace WowPaperTrader.Ingestor;
 
 public sealed class AuctionDataIngestionJob(
     IServiceScopeFactory scopeFactory,
-    IConfiguration configuration)
+    IConfiguration configuration,
+    ILogger<AuctionDataIngestionJob> logger)
 {
     private static readonly TimeSpan JobTimeout = TimeSpan.FromMinutes(50);
 
@@ -23,7 +24,7 @@ public sealed class AuctionDataIngestionJob(
             
             if (IsAzureDatabase() && await databaseSizeGuard.IsDatabaseAboveAzureFreeLimit(cancellationToken))
             {
-                Console.Error.WriteLine("Azure database free limit exceeded, the Ingestion Job has been cancelled");
+                logger.LogError("Azure database free limit exceeded, the Ingestion Job has been cancelled");
 
                 return 1;
             }
@@ -36,15 +37,21 @@ public sealed class AuctionDataIngestionJob(
 
             return 0;
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException exception) when (timeoutSource.IsCancellationRequested)
         {
-            Console.Error.WriteLine("Auction data ingestion was cancelled or timed out.");
+            logger.LogError(exception, "Auction data ingestion job timed out after {TimeoutMinutes} minutes.", JobTimeout.TotalMinutes);
 
             return 1;
         }
-        catch (Exception)
+        catch (OperationCanceledException exception)
         {
-            Console.Error.WriteLine("Auction data ingestion failed.");
+            logger.LogError(exception, "Auction data ingestion was cancelled.");
+
+            return 1;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Auction data ingestion failed.");
 
             return 1;
         }
