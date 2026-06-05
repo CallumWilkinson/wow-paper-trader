@@ -8,6 +8,7 @@ if (!apiBaseUrl) {
   );
 }
 
+//axios
 export const httpClient = axios.create({
   baseURL: apiBaseUrl,
   timeout: 10_000,
