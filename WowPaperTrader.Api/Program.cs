@@ -19,6 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Database connection string
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("WowPaperTrader");
@@ -33,6 +34,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     });
 });
 
+//Rate limiting
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -51,6 +53,7 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
+//Services and handlers for controller end points
 builder.Services.AddScoped<LowestPriceQueryHandler>();
 builder.Services.AddScoped<ILowestPriceReadService, LowestPriceReadService>();
 
@@ -68,6 +71,7 @@ builder.Services.AddScoped<IItemIdsWithoutMetadataReadService, ItemIdsWithoutMet
 builder.Services.AddScoped<IItemMetadataApiAdapter, ItemMetadataApiAdapter>();
 builder.Services.AddScoped<IItemMetadataRepository, ItemMetadataRepository>();
 
+//Http clients for external api calls
 builder.Services.AddHttpClient<BattleNetAuthClient>()
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
     {
@@ -92,11 +96,26 @@ builder.Services.AddHttpClient<ItemMediaClient>(client => { client.BaseAddress =
         PooledConnectionLifetime = TimeSpan.FromMinutes(10)
     });
 
+//CORS
+var configuredOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
+var allowedOrigins = configuredOrigins
+    .Where(origin => !string.IsNullOrWhiteSpace(origin))
+    .Select(origins => origins.Trim().TrimEnd('/'))
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray();
+
+if (allowedOrigins.Length == 0)
+{
+    throw new InvalidOperationException("No CORS allowed origins configured.");
+}
+
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Frontend", policy =>
+    options.AddPolicy("FrontendCorsPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -104,17 +123,19 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-
-app.UseCors("Frontend");
-
-app.UseRateLimiter();
+//Middleware
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+
+app.UseCors("FrontendCorsPolicy");
+
+app.UseRateLimiter();
 
 app.MapControllers();
 
