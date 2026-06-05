@@ -30,3 +30,4 @@ jobs:
           app_location: WowPaperTrader.Frontend
           api_location: ""
           output_location: dist
+          app_build_command: npm run build
