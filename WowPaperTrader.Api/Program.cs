@@ -23,14 +23,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("WowPaperTrader");
-    options.UseSqlServer(connectionString, sqlServerOptions =>
+    options.UseNpgsql(connectionString, npgsqlOptions =>
     {
-        sqlServerOptions.EnableRetryOnFailure(
+        npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
+            errorCodesToAdd: null);
         
-        sqlServerOptions.CommandTimeout(300);
+        npgsqlOptions.CommandTimeout(300);
     });
 });
 

@@ -18,7 +18,7 @@ public sealed class SqlServerTestDbFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         Options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlServer(ConnectionString)
+            .UseNpgsql(ConnectionString)
             .Options;
 
         await ResetDatabaseAsync();

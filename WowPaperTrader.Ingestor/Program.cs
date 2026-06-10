@@ -20,7 +20,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         throw new InvalidOperationException("ConnectionStrings:WowPaperTrader is missing.");
     }
     
-    options.UseSqlServer(connectionString);
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddSingleton<AuctionDataIngestionJob>();
