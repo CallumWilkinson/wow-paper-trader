@@ -4,39 +4,44 @@ using WowPaperTrader.Application.Features.Read.ItemSearch;
 
 namespace WowPaperTrader.Persistence.ReadServices;
 
-public sealed class ItemSearchReadService : IItemSearchReadService
+public sealed class ItemSearchReadService(ApplicationDbContext dbContext) : IItemSearchReadService
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public ItemSearchReadService(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<List<ItemSearchResponse>> SearchByNameAsync(string itemName, CancellationToken cancellationToken)
     {
-        const string sql = @"
-            DECLARE @Search nvarchar(4000) = TRIM(@Name);
+        var search = itemName.Trim();
+        
+        if (string.IsNullOrWhiteSpace(search))
+            return [];
+        
+        const string sql = """
+                           SELECT
+                               i."ItemId",
+                               i."Name",
+                               i."ImageUrl"
+                           FROM public."ItemMetaData" AS i
+                           WHERE i."Name" ILIKE @ContainsPattern
+                           ORDER BY
+                               CASE
+                                   WHEN lower(i."Name") = lower(@Search) THEN 1
+                                   WHEN i."Name" ILIKE @PrefixPattern THEN 2
+                                   ELSE 3
+                               END,
+                               char_length(i."Name"),
+                               lower(i."Name"),
+                               i."Name"
+                           LIMIT 5;
+                           """;
 
-            SELECT TOP (5)
-                i.ItemId,
-                i.Name,
-                i.ImageUrl
-            FROM dbo.ItemMetaData AS i
-            WHERE i.Name COLLATE Latin1_General_100_CI_AS LIKE N'%' + @Search + N'%'
-            ORDER BY
-                CASE
-                    WHEN i.Name COLLATE Latin1_General_100_CI_AS = @Search THEN 1
-                    WHEN i.Name COLLATE Latin1_General_100_CI_AS LIKE @Search + N'%' THEN 2
-                    ELSE 3
-                END,
-                LEN(i.Name + N'.') - 1,
-                i.Name COLLATE Latin1_General_100_CI_AS;
-            ";
+        var parameters = new
+        {
+            Search = search,
+            ContainsPattern = $"%{search}%",
+            PrefixPattern = $"{search}%"
+        };
 
-        var connection = _dbContext.Database.GetDbConnection();
+        var connection = dbContext.Database.GetDbConnection();
 
-        var command = new CommandDefinition(sql, new { Name = itemName }, cancellationToken: cancellationToken);
+        var command = new CommandDefinition(sql, parameters, cancellationToken: cancellationToken);
 
         var topFiveResults = await connection.QueryAsync<ItemSearchResponse>(command);
 
