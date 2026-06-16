@@ -1,0 +1,32 @@
+name: wow-paper-trader-dev
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: wow-paper-trader-postgres-local
+    restart: unless-stopped
+
+    environment:
+      # Local development secrets only. Do not reuse this password in production.
+      POSTGRES_DB: wowpapertrader
+      POSTGRES_USER: wowpapertrader
+      POSTGRES_PASSWORD: local_dev_password
+
+    ports:
+      - "127.0.0.1:5432:5432"
+
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U wowpapertrader -d wowpapertrader"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
