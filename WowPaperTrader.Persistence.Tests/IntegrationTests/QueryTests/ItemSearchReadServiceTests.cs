@@ -8,12 +8,12 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-[Collection("SqlServer Database")]
+[Collection("PostgreSql Database")]
 public sealed class ItemSearchReadServiceTests
 {
-    private readonly SqlServerTestDbFixture _db;
+    private readonly PostgreSqlTestDbFixture _db;
 
-    public ItemSearchReadServiceTests(SqlServerTestDbFixture db)
+    public ItemSearchReadServiceTests(PostgreSqlTestDbFixture db)
     {
         _db = db;
     }

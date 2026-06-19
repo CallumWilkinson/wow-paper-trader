@@ -6,8 +6,8 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-[Collection("SqlServer Database")]
-public sealed class MonthlyPriceQuantityReadServiceTests(SqlServerTestDbFixture db)
+[Collection("PostgreSql Database")]
+public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlTestDbFixture db)
 {
     [Fact]
     public async Task

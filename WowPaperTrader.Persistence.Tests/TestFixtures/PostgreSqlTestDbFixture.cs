@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WowPaperTrader.Persistence.Tests.TestFixtures;
 
-public sealed class SqlServerTestDbFixture : IAsyncLifetime
+public sealed class PostgreSqlTestDbFixture : IAsyncLifetime
 {
     private static readonly string ConnectionString =
         Environment.GetEnvironmentVariable("WOW_PAPER_TRADER_TEST_DB")
