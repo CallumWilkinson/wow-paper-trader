@@ -7,14 +7,14 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
 [Collection("PostgreSql Database")]
-public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlTestDbFixture db)
+public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
     [Fact]
     public async Task
         GetAsync_ShouldReturn_AllPriceQuantityHistoryFromLast30Days_Given_ItemID_2770()
     {
         //arrange
-        await using (var arrangeDbContext = await db.CreateArrangeDbContextAsync())
+        await using (var arrangeDbContext = db.CreateDbContext())
         {
             var olderTime = DateTime.UtcNow.AddDays(-2);
             await CommodityAuctionSnapshotTestFactory.AddOlderSnapshotToDbAsync(arrangeDbContext, olderTime);
@@ -28,7 +28,7 @@ public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlTestDbFixture
         //act
         MonthlyPriceQuantityResponse result;
         
-        await using (var assertDbContext = db.CreateAssertDbContext())
+        await using (var assertDbContext = db.CreateDbContext())
         {
             
             var readService = new MonthlyPriceQuantityReadService(assertDbContext);
@@ -46,4 +46,5 @@ public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlTestDbFixture
         result.PriceQuantityResponses[1].LowestUnitPrice.Should().Be(80);
         result.PriceQuantityResponses[1].TotalQuantityPosted.Should().Be(15);
     }
+    
 }

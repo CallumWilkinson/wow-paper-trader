@@ -22,13 +22,13 @@ public sealed class PostgreSqlTestDbFixture : IAsyncLifetime
     
     //getters
     private DbContextOptions<ApplicationDbContext> Options =>
-        _options ?? throw new InvalidOperationException("The test database fixture has not been initialized. Did you forget to use the fixture via IClassFixture?");
+        _options ?? throw new InvalidOperationException("The test database fixture has not been initialized. Did you forget to use the Database Collection attribute?");
     
     private NpgsqlDataSource DataSource =>
-        _dataSource ?? throw new InvalidOperationException("The test database fixture has not been initialized. Did you forget to use the fixture via IClassFixture?");
+        _dataSource ?? throw new InvalidOperationException("The test database fixture has not been initialized. Did you forget to use the Database Collection attribute?");
     
     private Respawner DatabaseRespawner =>
-    _respawner ?? throw new InvalidOperationException("The test database fixture has not been initialized. Did you forget to use the fixture via IClassFixture?");
+    _respawner ?? throw new InvalidOperationException("The test database fixture has not been initialized. Did you forget to use the Database Collection attribute?");
 
     public async Task InitializeAsync()
     {
@@ -43,40 +43,7 @@ public sealed class PostgreSqlTestDbFixture : IAsyncLifetime
         await CreateDatabaseSchemaAsync();
         await CreateRespawnerAsync();
     }
-
-    public async Task DisposeAsync()
-    {
-        if (_dataSource is not null)
-        {
-            await _dataSource.DisposeAsync();
-        }
-        
-        await _postgreSqlContainer.DisposeAsync();
-    }
-
-    private async Task ResetDatabaseAsync()
-    {
-        await using NpgsqlConnection connection = await DataSource.OpenConnectionAsync();
-        
-        await DatabaseRespawner.ResetAsync(connection);
-    }
     
-    private ApplicationDbContext CreateDbContext()
-    {
-        return new ApplicationDbContext(Options);
-    }
-
-    public async Task<ApplicationDbContext> CreateArrangeDbContextAsync()
-    {
-        await ResetDatabaseAsync();
-        return CreateDbContext();
-    }
-
-    public ApplicationDbContext CreateAssertDbContext()
-    {
-        return CreateDbContext();
-    }
-
     private async Task CreateDatabaseSchemaAsync()
     {
         await using ApplicationDbContext db = CreateDbContext();
@@ -84,7 +51,7 @@ public sealed class PostgreSqlTestDbFixture : IAsyncLifetime
         await db.Database.EnsureCreatedAsync();
         
     }
-
+    
     private async Task CreateRespawnerAsync()
     {
         await using NpgsqlConnection connection = await DataSource.OpenConnectionAsync();
@@ -100,4 +67,30 @@ public sealed class PostgreSqlTestDbFixture : IAsyncLifetime
                 ]
             });
     }
+
+    public async Task DisposeAsync()
+    {
+        if (_dataSource is not null)
+        {
+            await _dataSource.DisposeAsync();
+        }
+        
+        await _postgreSqlContainer.DisposeAsync();
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await using NpgsqlConnection connection = await DataSource.OpenConnectionAsync();
+        
+        await DatabaseRespawner.ResetAsync(connection);
+    }
+    
+    public ApplicationDbContext CreateDbContext()
+    {
+        return new ApplicationDbContext(Options);
+    }
+
+
+
+
 }

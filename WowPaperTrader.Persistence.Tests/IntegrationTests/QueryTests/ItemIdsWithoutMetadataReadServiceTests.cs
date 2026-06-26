@@ -5,21 +5,15 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class ItemIdsWithoutMetadataReadServiceTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class ItemIdsWithoutMetadataReadServiceTests(PostgreSqlTestDbFixture db)
+    : PostgreSqlIntegrationTestBase(db)
 {
-    private readonly SqliteInMemoryDbFixture _db;
-
-    public ItemIdsWithoutMetadataReadServiceTests(SqliteInMemoryDbFixture db)
-    {
-        _db = db;
-    }
-
     [Fact]
     public async Task
         GetItemIdsWithoutMetadataAsync_ShouldReturn_AllUniqueItemIdsThatDoNotHaveMetadata_ContainedIn_CommodityAuctionsTable()
     {
         //arrange
-        await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
+        await using var arrangeDbContext = db.CreateDbContext();
 
         var snapshotTime = new DateTime(2026, 3, 12, 9, 0, 0, DateTimeKind.Utc);
 
@@ -31,7 +25,7 @@ public sealed class ItemIdsWithoutMetadataReadServiceTests : IClassFixture<Sqlit
         var result = await query.GetItemIdsWithoutMetadataAsync(CancellationToken.None);
 
         //assert
-        await using var assertDbContext = _db.CreateAssertDbContext();
+        await using var assertDbContext = db.CreateDbContext();
 
         result.Should().NotBeNull();
         result.Should().HaveCount(2);

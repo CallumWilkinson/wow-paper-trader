@@ -5,20 +5,13 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class LowestPriceReadServiceTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class LowestPriceReadServiceTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
-    private readonly SqliteInMemoryDbFixture _db;
-
-    public LowestPriceReadServiceTests(SqliteInMemoryDbFixture db)
-    {
-        _db = db;
-    }
-
     [Fact]
     public async Task GetAsync_ShouldReturn_LowestUnitPrice_FromLatestSnapshot()
     {
         //arrange
-        await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
+        await using var arrangeDbContext = db.CreateDbContext();
 
         var query = new LowestPriceReadService(arrangeDbContext);
 
@@ -34,7 +27,7 @@ public sealed class LowestPriceReadServiceTests : IClassFixture<SqliteInMemoryDb
         var result = await query.GetAsync(copperOreItemId, CancellationToken.None);
 
         //assert
-        await using var assertDbContext = _db.CreateAssertDbContext();
+        await using var assertDbContext = db.CreateDbContext();
 
         result.Should().NotBeNull();
         result.ItemId.Should().Be(copperOreItemId);

@@ -8,21 +8,14 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-[Collection("PostgreSql Database")]
-public sealed class ItemSearchReadServiceTests
+public sealed class ItemSearchReadServiceTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
-    private readonly PostgreSqlTestDbFixture _db;
-
-    public ItemSearchReadServiceTests(PostgreSqlTestDbFixture db)
-    {
-        _db = db;
-    }
-
+    
     [Fact]
     public async Task SearchByNameAsync_ShouldReturnItems_WithNameContainingSearchTerm()
     {
         //arrange
-        await using (var arrangeDbContext = await _db.CreateArrangeDbContextAsync())
+        await using (var arrangeDbContext = db.CreateDbContext())
         {
             var repo = new ItemMetadataRepository(arrangeDbContext, NullLogger<ItemMetadataRepository>.Instance);
 
@@ -36,7 +29,7 @@ public sealed class ItemSearchReadServiceTests
         //act
         List<ItemSearchResponse> results;
 
-        await using (var actDbContext = _db.CreateAssertDbContext())
+        await using (var actDbContext = db.CreateDbContext())
         {
             var query = new ItemSearchReadService(actDbContext);
 
@@ -50,4 +43,6 @@ public sealed class ItemSearchReadServiceTests
         results.Should().NotBeNull();
         results.Should().BeEquivalentTo(expectedResults);
     }
+
+
 }
