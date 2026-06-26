@@ -17,58 +17,61 @@ public sealed class MetadataReadService : IMetadataReadService
     {
         const string sql =
             """
-            WITH LatestSnapshot AS
+            WITH "LatestSnapshot" AS
             (
-                SELECT MAX(FetchedAtUtc) AS FetchedAtUtc
-                FROM CommodityAuctionSnapshots
+                SELECT MAX(snapshot."FetchedAtUtc") AS "FetchedAtUtc"
+                FROM public."CommodityAuctionSnapshots" AS snapshot
             ),
-            LowestPriceForItem AS
+            "LowestPriceForItem" AS
             (
                 SELECT
-                    auction.ItemId,
-                    MIN(auction.UnitPrice) AS UnitPrice
-                FROM CommodityAuctions auction
-                INNER JOIN CommodityAuctionSnapshots snapshot
-                    ON snapshot.Id = auction.CommodityAuctionSnapshotId
-                WHERE auction.ItemId = @ItemId
-                AND snapshot.FetchedAtUtc = (SELECT FetchedAtUtc FROM LatestSnapshot)
-                GROUP BY auction.ItemId
+                    auction."ItemId",
+                    MIN(auction."UnitPrice") AS "UnitPrice"
+                FROM public."CommodityAuctions" AS auction
+                INNER JOIN public."CommodityAuctionSnapshots" AS snapshot
+                    ON snapshot."Id" = auction."CommodityAuctionSnapshotId"
+                WHERE auction."ItemId" = @ItemId
+                  AND snapshot."FetchedAtUtc" = (
+                      SELECT latest."FetchedAtUtc"
+                      FROM "LatestSnapshot" AS latest
+                  )
+                GROUP BY auction."ItemId"
             )
             SELECT
-                price.ItemId,
-                price.UnitPrice,
-                latest.FetchedAtUtc AS PriceTakenAtUtc,
+                price."ItemId",
+                price."UnitPrice",
+                latest."FetchedAtUtc" AS "PriceTakenAtUtc",
 
-                meta.Id,
-                meta.ItemId,
-                meta.Name,
-                meta.QualityType,
-                meta.QualityName,
-                meta.Level,
-                meta.RequiredLevel,
-                meta.ItemClassId,
-                meta.ItemClassName,
-                meta.ItemSubclassId,
-                meta.ItemSubclassName,
-                meta.ProfessionId,
-                meta.ProfessionName,
-                meta.ProfessionSkillLevel,
-                meta.SkillDisplayString,
-                meta.CraftingReagent,
-                meta.InventoryType,
-                meta.InventoryTypeName,
-                meta.PurchasePrice,
-                meta.SellPrice,
-                meta.MaxCount,
-                meta.IsEquippable,
-                meta.IsStackable,
-                meta.PurchaseQuantity,
-                meta.ImageUrl,
-                meta.LastFetchedUtc
-            FROM LowestPriceForItem price
-            CROSS JOIN LatestSnapshot latest
-            LEFT JOIN ItemMetaData meta
-                ON meta.ItemId = price.ItemId;
+                meta."Id",
+                meta."ItemId",
+                meta."Name",
+                meta."QualityType",
+                meta."QualityName",
+                meta."Level",
+                meta."RequiredLevel",
+                meta."ItemClassId",
+                meta."ItemClassName",
+                meta."ItemSubclassId",
+                meta."ItemSubclassName",
+                meta."ProfessionId",
+                meta."ProfessionName",
+                meta."ProfessionSkillLevel",
+                meta."SkillDisplayString",
+                meta."CraftingReagent",
+                meta."InventoryType",
+                meta."InventoryTypeName",
+                meta."PurchasePrice",
+                meta."SellPrice",
+                meta."MaxCount",
+                meta."IsEquippable",
+                meta."IsStackable",
+                meta."PurchaseQuantity",
+                meta."ImageUrl",
+                meta."LastFetchedUtc"
+            FROM "LowestPriceForItem" AS price
+            CROSS JOIN "LatestSnapshot" AS latest
+            LEFT JOIN public."ItemMetaData" AS meta
+                ON meta."ItemId" = price."ItemId";
             """;
 
         var connection = _dbContext.Database.GetDbConnection();

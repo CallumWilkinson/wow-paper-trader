@@ -8,23 +8,23 @@ public class MonthlyPriceQuantityReadService(ApplicationDbContext dbContext) : I
 {
     public async Task<MonthlyPriceQuantityResponse> GetAsync(long itemId, CancellationToken cancellationToken)
     {
-        const string sql = 
+        const string sql =
             """
             SELECT
-                ca.CommodityAuctionSnapshotId,
-                s.FetchedAtUtc,
-                MIN(ca.UnitPrice) AS LowestUnitPrice,
-                SUM(ca.Quantity) AS TotalQuantityPosted
-            FROM dbo.CommodityAuctions AS ca
-            INNER JOIN dbo.CommodityAuctionSnapshots AS s
-                ON s.Id = ca.CommodityAuctionSnapshotId
-            WHERE ca.ItemId = @ItemId
-              AND s.FetchedAtUtc >= DATEADD(DAY, -30, SYSUTCDATETIME())
+                ca."CommodityAuctionSnapshotId",
+                s."FetchedAtUtc",
+                MIN(ca."UnitPrice") AS "LowestUnitPrice",
+                SUM(ca."Quantity") AS "TotalQuantityPosted"
+            FROM public."CommodityAuctions" AS ca
+            INNER JOIN public."CommodityAuctionSnapshots" AS s
+                ON s."Id" = ca."CommodityAuctionSnapshotId"
+            WHERE ca."ItemId" = @ItemId
+              AND s."FetchedAtUtc" >= CURRENT_TIMESTAMP - INTERVAL '30 days'
             GROUP BY
-                ca.CommodityAuctionSnapshotId,
-                s.FetchedAtUtc
+                ca."CommodityAuctionSnapshotId",
+                s."FetchedAtUtc"
             ORDER BY
-                s.FetchedAtUtc ASC;
+                s."FetchedAtUtc" ASC;
             """;
 
         var connection = dbContext.Database.GetDbConnection();

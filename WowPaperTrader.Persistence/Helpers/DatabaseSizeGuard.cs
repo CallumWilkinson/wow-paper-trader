@@ -21,10 +21,13 @@ public sealed class DatabaseSizeGuard(ApplicationDbContext dbContext) : IDatabas
 
     private async Task<decimal> GetDatabaseSizeGbAsync(CancellationToken cancellationToken)
     {
-        const string sql = """
-                           SELECT CAST(SUM(size) * 8.0 / 1024.0 / 1024.0 AS decimal(18, 2))
-                           FROM sys.database_files;
-                           """;
+        const string sql =
+            """
+            SELECT ROUND(
+                pg_database_size(current_database()) / 1024.0 / 1024.0,
+                2
+            );
+            """;
         var connection = dbContext.Database.GetDbConnection();
 
         var command = new CommandDefinition(

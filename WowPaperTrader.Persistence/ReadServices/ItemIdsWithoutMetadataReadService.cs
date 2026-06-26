@@ -15,16 +15,16 @@ public sealed class ItemIdsWithoutMetadataReadService : IItemIdsWithoutMetadataR
 
     public async Task<List<long>> GetItemIdsWithoutMetadataAsync(CancellationToken cancellationToken)
     {
-        const string sql = @"
-            SELECT DISTINCT ca.ItemId
-            FROM CommodityAuctions ca
+        const string sql =
+            """
+            SELECT DISTINCT ca."ItemId"
+            FROM public."CommodityAuctions" AS ca
             WHERE NOT EXISTS (
                 SELECT 1
-                FROM ItemMetaData im
-                WHERE im.ItemId = ca.ItemId
+                FROM public."ItemMetaData" AS im
+                WHERE im."ItemId" = ca."ItemId"
             );
-        ";
-
+            """;
         var connection = _dbContext.Database.GetDbConnection();
 
         try
