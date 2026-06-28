@@ -1,6 +1,5 @@
 using Microsoft.Data.SqlClient;
 using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot;
-using WowPaperTrader.Application.Features.Write.Helpers;
 
 namespace WowPaperTrader.Ingestor;
 
@@ -22,22 +21,6 @@ public sealed class AuctionDataIngestionJob(
         try
         {
             await using var scope = scopeFactory.CreateAsyncScope();
-            
-            var isAzureDatabase = IsAzureDatabase();
-
-            if (isAzureDatabase)
-            {
-                await EnsureDatabaseIsReadyAsync(cancellationToken);
-            }
-            
-            var databaseSizeGuard = scope.ServiceProvider.GetRequiredService<IDatabaseSizeGuard>();
-            
-            if (isAzureDatabase && await databaseSizeGuard.IsDatabaseAboveAzureFreeLimit(cancellationToken))
-            {
-                logger.LogError("Azure database free limit exceeded, the Ingestion Job has been cancelled");
-
-                return 1;
-            }
             
             var postAuctionDataCommandHandler = scope.ServiceProvider.GetRequiredService<PostAuctionDataCommandHandler>();
             
@@ -68,6 +51,7 @@ public sealed class AuctionDataIngestionJob(
         
     }
 
+    //originally used to avoid extra azure costs, safe to delete if no longer using any cloud platforms
     private async Task EnsureDatabaseIsReadyAsync(CancellationToken cancellationToken)
     {
         var connectionString = configuration.GetConnectionString("WowPaperTrader");
@@ -103,23 +87,5 @@ public sealed class AuctionDataIngestionJob(
             }
         }
     }
-
-    private bool IsAzureDatabase()
-    {
-        var connectionString = configuration.GetConnectionString("WowPaperTrader");
-
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            return false;
-        }
-
-        var builder = new SqlConnectionStringBuilder(connectionString);
-
-        if (builder.DataSource.Contains(".database.windows.net", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        return false;
-    }
+    
 }
