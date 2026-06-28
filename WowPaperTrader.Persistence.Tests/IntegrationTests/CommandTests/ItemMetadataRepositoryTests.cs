@@ -8,20 +8,13 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.CommandTests;
 
-public sealed class ItemMetadataRepositoryTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class ItemMetadataRepositoryTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
-    private readonly SqliteInMemoryDbFixture _db;
-
-    public ItemMetadataRepositoryTests(SqliteInMemoryDbFixture db)
-    {
-        _db = db;
-    }
-
     [Fact]
     public async Task SaveItemMetaDataAsync_Should_Save_AllPersistedFields()
     {
         //arrange
-        await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
+        await using var arrangeDbContext = db.CreateDbContext();
 
         var logger = NullLogger<ItemMetadataRepository>.Instance;
 
@@ -33,7 +26,7 @@ public sealed class ItemMetadataRepositoryTests : IClassFixture<SqliteInMemoryDb
         await repo.SaveItemMetaDataAsync(listOfRecords, CancellationToken.None);
 
         //assert
-        await using var assertDbContext = _db.CreateAssertDbContext();
+        await using var assertDbContext = db.CreateDbContext();
 
         var actual = await assertDbContext.ItemMetaData
             .AsNoTracking()
@@ -45,8 +38,15 @@ public sealed class ItemMetadataRepositoryTests : IClassFixture<SqliteInMemoryDb
             .OrderBy(x => x.ItemId)
             .ToList();
 
-        actual.Should().BeEquivalentTo(expected, options => options
-            .Excluding(x => x.Id)
-            .WithStrictOrdering());
+        actual.Should().BeEquivalentTo(
+            expected,
+            options => options
+                .Excluding(record => record.Id)
+                .WithStrictOrdering()
+                .Using<DateTime>(context =>
+                    context.Subject.Should().BeCloseTo(
+                        context.Expectation,
+                        TimeSpan.FromMicroseconds(1)))
+                .When(info => info.Path.EndsWith("LastFetchedUtc")));
     }
 }

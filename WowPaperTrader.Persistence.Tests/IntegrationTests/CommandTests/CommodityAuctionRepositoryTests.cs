@@ -7,20 +7,15 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.CommandTests;
 
-public sealed class CommodityAuctionRepositoryTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class CommodityAuctionRepositoryTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
-    private readonly SqliteInMemoryDbFixture _db;
 
-    public CommodityAuctionRepositoryTests(SqliteInMemoryDbFixture db)
-    {
-        _db = db;
-    }
 
     [Fact]
     public async Task SaveSnapshotAsync_ShouldSaveAuctionRows_ToATestDatabase_UsingFakeApiResult()
     {
         //arrange
-        await using var arrangeDbContext = await _db.CreateArrangeDbContextAsync();
+        await using var arrangeDbContext = db.CreateDbContext();
 
         var logger = NullLogger<CommodityAuctionRepository>.Instance;
 
@@ -34,7 +29,7 @@ public sealed class CommodityAuctionRepositoryTests : IClassFixture<SqliteInMemo
         await repo.SaveSnapshotAsync(run, result, CancellationToken.None);
 
         //assert
-        await using var assertDbContext = _db.CreateAssertDbContext();
+        await using var assertDbContext = db.CreateDbContext();
 
         var savedIngestionRuns = await assertDbContext.IngestionRuns.ToListAsync();
         savedIngestionRuns.Should().ContainSingle();

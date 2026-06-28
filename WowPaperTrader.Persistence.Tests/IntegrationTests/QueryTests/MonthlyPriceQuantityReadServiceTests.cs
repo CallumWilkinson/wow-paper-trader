@@ -6,7 +6,6 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-[Collection("PostgreSql Database")]
 public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
     [Fact]

@@ -2,37 +2,55 @@ using System.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
+using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.SchemaTests;
 
-public sealed class ItemMetaDataSchemaTests : IClassFixture<SqliteInMemoryDbFixture>
+public sealed class ItemMetaDataSchemaTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
-    private readonly SqliteInMemoryDbFixture _db;
-
-    public ItemMetaDataSchemaTests(SqliteInMemoryDbFixture db)
-    {
-        _db = db;
-    }
-
     [Fact]
     public async Task ItemMetaData_Table_Should_Have_Expected_Columns()
     {
-        await using var dbContext = await _db.CreateArrangeDbContextAsync();
+        await using var dbContext = db.CreateDbContext();
 
-        var actualColumns = await GetTableColumnNamesAsync(dbContext, "ItemMetaData");
+        var actualColumns = await GetTableColumnNamesAsync(
+            dbContext,
+            schemaName: "public",
+            tableName: "ItemMetaData");
+        
         var expectedColumns = GetExpectedItemMetaDataColumnNames();
 
         actualColumns.Should().Equal(expectedColumns);
     }
 
-    private static async Task<List<string>> GetTableColumnNamesAsync(ApplicationDbContext dbContext, string tableName)
+    private static async Task<List<string>> GetTableColumnNamesAsync(
+        ApplicationDbContext dbContext,
+        string schemaName,
+        string tableName)
     {
         var connection = dbContext.Database.GetDbConnection();
 
         if (connection.State != ConnectionState.Open) await connection.OpenAsync();
 
         await using var command = connection.CreateCommand();
-        command.CommandText = $"PRAGMA table_info({tableName})";
+        
+        command.CommandText =  """
+                               SELECT column_name
+                               FROM information_schema.columns
+                               WHERE table_schema = @schemaName
+                                 AND table_name = @tableName
+                               ORDER BY ordinal_position;
+                               """;
+        
+        var schemaParameter = command.CreateParameter();
+        schemaParameter.ParameterName = "schemaName";
+        schemaParameter.Value = schemaName;
+        command.Parameters.Add(schemaParameter);
+
+        var tableParameter = command.CreateParameter();
+        tableParameter.ParameterName = "tableName";
+        tableParameter.Value = tableName;
+        command.Parameters.Add(tableParameter);
 
         await using var reader = await command.ExecuteReaderAsync();
 
@@ -40,7 +58,7 @@ public sealed class ItemMetaDataSchemaTests : IClassFixture<SqliteInMemoryDbFixt
 
         while (await reader.ReadAsync())
         {
-            var columnName = reader.GetString(reader.GetOrdinal("name"));
+            var columnName = reader.GetString(0);
             columnNames.Add(columnName);
         }
 
