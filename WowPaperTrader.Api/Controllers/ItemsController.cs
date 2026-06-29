@@ -3,7 +3,6 @@ using WowPaperTrader.Application.Features.Read.GetMetadata;
 using WowPaperTrader.Application.Features.Read.ItemSearch;
 using WowPaperTrader.Application.Features.Read.LowestPrice;
 using WowPaperTrader.Application.Features.Read.MonthlyPriceQuantity;
-using WowPaperTrader.Application.Features.Write.UpdateItems;
 
 namespace WowPaperTrader.Api.Controllers;
 
@@ -13,7 +12,6 @@ public sealed class ItemsController(
     LowestPriceQueryHandler getLowestPriceQueryHandler,
     ItemSearchQueryHandler itemSearchQueryHandler,
     GetMetadataQueryHandler getMetadataQueryHandler,
-    UpdateItemsCommandHandler updateItemsCommandHandler,
     MonthlyPriceQuantityQueryHandler monthlyPriceQuantityQueryHandler)
     : ControllerBase
 {
@@ -73,17 +71,5 @@ public sealed class ItemsController(
         if (result is null) return NotFound();
         
         return Ok(result);
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> UpdateItemMetaData(CancellationToken cancellationToken)
-    {
-        return NotFound();
-        
-        // var command = new UpdateItemsCommand();
-        //
-        // await updateItemsCommandHandler.HandleAsync(command, cancellationToken);
-        //
-        // return Ok();
     }
 }
