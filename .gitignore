@@ -5,6 +5,10 @@
 
 # dotenv files
 .env
+.env.*
+!.env.api.example
+!.env.ingestor.example
+!.env.postgres.example
 
 # User-specific files
 *.rsuser
