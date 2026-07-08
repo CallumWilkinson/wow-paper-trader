@@ -1,32 +1,90 @@
 name: wow-paper-trader-dev
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   postgres:
-    image: postgres:18
-    container_name: wow-paper-trader-postgres-local
-    restart: unless-stopped
-
-    environment:
-      # Local development secrets only. Do not reuse this password in production.
-      POSTGRES_DB: wowpapertrader
-      POSTGRES_USER: wowpapertrader
-      POSTGRES_PASSWORD: local_dev_password
-
-    ports:
-      - "127.0.0.1:5432:5432"
-
+    image: postgres:18-bookworm
+    env_file:
+      - .env.postgres
+    networks:
+      - data
     volumes:
-      - postgres-data:/var/lib/postgresql
-
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U wowpapertrader -d wowpapertrader"
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
         ]
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    logging: *default-logging
+      
+  api:
+    image: wow-paper-trader-api:latest
+    build:
+      context: .
+      dockerfile: WowPaperTrader.Api/Dockerfile
+    env_file:
+      - .env.api
+    networks:
+      - proxy
+      - data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *default-logging
+      
+      
+  ingestor:
+      image: wow-paper-trader-ingestor:latest
+      build:
+        context: .
+        dockerfile: WowPaperTrader.Ingestor/Dockerfile
+      env_file:
+        - .env.ingestor
+      networks:
+        - data
+      depends_on:
+        postgres:
+          condition: service_healthy
+      command: 
+        - auctions
+      restart: "no"
+      profiles:
+        - jobs
+      logging: *default-logging
+       
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - proxy
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+    restart: unless-stopped
+    logging: *default-logging
+    
+networks:
+  proxy:
+  data:
 
 volumes:
   postgres-data:
+  caddy-data:
+  caddy-config:

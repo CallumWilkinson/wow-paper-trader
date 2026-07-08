@@ -16,9 +16,16 @@ RUN dotnet restore "WowPaperTrader.Api/WowPaperTrader.Api.csproj"
 COPY . .
 
 WORKDIR "/src/WowPaperTrader.Api"
-RUN dotnet publish "WowPaperTrader.Api.csproj" -c Release -o /app/publish
+
+RUN dotnet publish \
+    "WowPaperTrader.Api.csproj" \
+    --configuration Release \
+    --output /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+USER $APP_UID
 ENTRYPOINT ["dotnet", "WowPaperTrader.Api.dll"]
