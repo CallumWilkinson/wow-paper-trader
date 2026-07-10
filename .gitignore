@@ -6,6 +6,7 @@
 # dotenv files
 .env
 .env.*
+!.env.example
 !.env.api.example
 !.env.ingestor.example
 !.env.postgres.example
