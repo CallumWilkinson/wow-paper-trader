@@ -41,7 +41,7 @@ builder.Services.AddRateLimiter(options =>
             partitionKey: "global-api-limit",
             factory: _ => new FixedWindowRateLimiterOptions
             {
-                    PermitLimit = 60,
+                    PermitLimit = 100,
                     Window = TimeSpan.FromMinutes(1),
                     QueueLimit = 0,
                     AutoReplenishment = true
@@ -106,6 +106,9 @@ app.UseRateLimiter();
 
 app.MapControllers();
 
-app.MapGet("/health", () => Results.Ok("OK"));
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "Healthy"
+}));
 
 app.Run();
