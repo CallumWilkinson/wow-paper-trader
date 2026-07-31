@@ -11,6 +11,10 @@
 !.env.ingestor.example
 !.env.postgres.example
 
+#backups folder
+backups/*
+!backups/.gitkeep
+
 # User-specific files
 *.rsuser
 *.suo
