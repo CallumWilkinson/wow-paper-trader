@@ -1,0 +1,60 @@
+name: Publish Container Images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    
+permissions:
+  contents: read
+  packages: write
+  
+env:
+  API_IMAGE: ghcr.io/callumwilkinson/wow-paper-trader-api
+  INGESTOR_IMAGE: ghcr.io/callumwilkinson/wow-paper-trader-ingestor
+  
+jobs:
+  publish:
+    name: Build and Publish Container Images
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      -name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+        
+      -name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      -name: Build and Publish API Image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./WowPaperTrader.Api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.API_IMAGE }}:latest
+            ${{ env.API_IMAGE }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            
+      -name: Build and Publish Ingestor Image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./WowPaperTrader.Ingestor/Dockerfile
+          push: true
+          tags: |
+            ${{ env.INGESTOR_IMAGE }}:latest
+            ${{ env.INGESTOR_IMAGE }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
