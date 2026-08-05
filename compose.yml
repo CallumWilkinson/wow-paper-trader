@@ -1,4 +1,4 @@
-name: wow-paper-trader-dev
+name: wow-paper-trader
 
 x-logging: &default-logging
   driver: json-file
@@ -30,10 +30,6 @@ services:
     logging: *default-logging
       
   api:
-    image: wow-paper-trader-api:latest
-    build:
-      context: .
-      dockerfile: WowPaperTrader.Api/Dockerfile
     env_file:
       - .env.api
     networks:
@@ -47,10 +43,6 @@ services:
       
       
   ingestor:
-      image: wow-paper-trader-ingestor:latest
-      build:
-        context: .
-        dockerfile: WowPaperTrader.Ingestor/Dockerfile
       env_file:
         - .env.ingestor
       networks:

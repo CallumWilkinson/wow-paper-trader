@@ -1,0 +1,8 @@
+name: wow-paper-trader-production
+
+services:
+  api:
+    image: ghcr.io/callumwilkinson/wow-paper-trader-api:${IMAGE_TAG:-latest}
+
+  ingestor:
+    image: ghcr.io/callumwilkinson/wow-paper-trader-ingestor:${IMAGE_TAG:-latest}

@@ -1,0 +1,14 @@
+name: wow-paper-trader-dev
+
+services:
+  api:
+    image: wow-paper-trader-api:latest
+    build:
+      context: .
+      dockerfile: WowPaperTrader.Api/Dockerfile
+      
+  ingestor:
+    image: wow-paper-trader-ingestor:latest
+    build:
+      context: .
+      dockerfile: WowPaperTrader.Ingestor/Dockerfile

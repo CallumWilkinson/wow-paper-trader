@@ -10,6 +10,7 @@
 !.env.api.example
 !.env.ingestor.example
 !.env.postgres.example
+!.env.production.example
 
 #backups folder
 backups/*
