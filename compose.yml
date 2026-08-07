@@ -29,6 +29,31 @@ services:
     restart: unless-stopped
     logging: *default-logging
       
+  migrator:
+    env_file:
+      - .env.postgres
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      #set cors to localhost to avoid startup errors, leave this in production
+      Cors__AllowedOrigins__0: http://localhost
+    networks:
+      - data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+      - -c
+    command:
+      - |
+        exec /app/efbundle \
+          --connection "Host=postgres;Port=5432;Database=$${POSTGRES_DB};Username=$${POSTGRES_USER};Password=$${ADMIN_DB_PASSWORD}" \
+          --no-color
+      
+    restart: "no"
+    profiles:
+      - jobs
+    logging: *default-logging
   api:
     env_file:
       - .env.api
@@ -75,6 +100,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     
+
 networks:
   proxy:
   data:

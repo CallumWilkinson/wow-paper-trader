@@ -7,6 +7,12 @@ services:
       context: .
       dockerfile: WowPaperTrader.Api/Dockerfile
       
+  migrator:
+    image: wow-paper-trader-api:latest
+    build:
+      context: .
+      dockerfile: WowPaperTrader.Migrator/Dockerfile
+      
   ingestor:
     image: wow-paper-trader-ingestor:latest
     build:
