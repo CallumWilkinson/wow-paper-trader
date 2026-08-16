@@ -1,408 +1,300 @@
 # WowPaperTrader
 
-`WowPaperTrader` is a .NET 10 solution for collecting World of Warcraft commodity auction data from Blizzard's API, storing auction snapshots in SQL Server, enriching known item ids with Blizzard item metadata, and exposing a small REST API for item search, metadata, and current lowest auction price queries.
+WowPaperTrader is a full-stack World of Warcraft commodity auction analytics application. It collects region-wide WoW Retail auction snapshots from Blizzard's API, enriches observed item IDs with item metadata and media, stores the results in PostgreSQL, and presents current pricing plus 30-day market history through a .NET API and React frontend.
 
-## App Screenshot
+I am currently in the process of deploying and hosting the project on a private VPS.
 
-![Search Page](appDemo.jpg)
+The repository currently delivers the market-data foundation of the wider paper-trading idea described in [Requirements.md](Requirements.md). User accounts, portfolios, and simulated trades are not implemented yet.
 
-## Architecture Diagram
+## Demo
 
-![Architecture](architecture.png)
+![WowPaperTrader item search, item details, and market history](appDemo.jpg)
 
-## API Endpoints Screenshot
+## What It Does
 
-![API](swagger-screenshot.png)
+- searches known commodities by name, ranking exact and prefix matches before other results
+- displays Blizzard item metadata, item media, and the lowest unit price from the latest stored snapshot
+- charts the lowest unit price and total quantity posted for each snapshot from the last 30 days
+- ingests the US WoW Retail commodity auction feed as an atomic snapshot
+- discovers auctioned item IDs without metadata and enriches them through Blizzard's item and media APIs
+- records ingestion lifecycle state and failure details
+- keeps write paths in EF Core and read-optimized queries in Dapper
+- exposes a read-only, rate-limited REST API with CORS and a health endpoint
+- provides PostgreSQL integration tests backed by disposable Testcontainers databases
+- includes container images, Docker Compose services, Caddy configuration, and GitHub Actions deployment assets
 
-## Current Project State
+Auction prices are stored as copper. Commodity auctions are region-wide, so this project does not currently model individual realms or connected realms.
 
-Implemented:
+## Technology Stack
 
-- hourly background ingestion of the US commodity auction snapshot
-- Battle.net client-credentials OAuth flow with token reuse
-- Blizzard API clients for commodity auctions, item metadata, and item media
-- SQL Server persistence with EF Core migrations
-- transactional snapshot writes for auction ingestion
-- item metadata storage, including icon image URLs from the media endpoint
-- CQRS-style application layer with explicit command/query contracts and handlers
-- Dapper-based read services for query-oriented API responses
-- REST API under `/api/v1/items`
-- persistence integration tests using SQLite fixtures
+| Area                | Technology                                                         |
+| ------------------- | ------------------------------------------------------------------ |
+| API and ingestion   | C# 14, .NET 10, ASP.NET Core                                       |
+| Application design  | Layered architecture with CQRS-style commands and queries          |
+| Write persistence   | Entity Framework Core 10                                           |
+| Read persistence    | Dapper 2                                                           |
+| Database            | PostgreSQL through Npgsql; provided containers use PostgreSQL 18   |
+| Frontend            | React 19, TypeScript 6, Vite 8                                     |
+| UI and server state | Material UI 9, TanStack React Query 5, Axios, Recharts             |
+| Backend testing     | xUnit, FluentAssertions, Testcontainers, Respawn                   |
+| Operations          | Docker Compose, Caddy, GitHub Actions, GHCR, Azure Static Web Apps |
 
-Partially implemented:
+## Architecture
 
-- item metadata refresh is exposed as a manual API command endpoint, not automated
-- read APIs query the latest auction snapshot only
-- CQRS boundaries are present in code, but handler registration is still manual in host projects
+![WowPaperTrader project dependency diagram](architecture.png)
 
-Not implemented yet:
-
-- automated 30-day retention cleanup
-- configurable ingestion interval
-- historical price APIs beyond latest-snapshot reads
-- realm-specific auction data
-- user accounts, authentication, portfolios, or paper-trading workflows
-- retry/backoff policies for Blizzard API failures or rate limits
-
-## Solution Layout
-
-- `WowPaperTrader.Api`
-  - ASP.NET Core REST API
-  - registers query handlers, read services, metadata update command handler, EF Core, Swagger, and Blizzard item clients
-  - exposes all current HTTP endpoints through `ItemsController`
-- `WowPaperTrader.Ingestor`
-  - worker service
-  - starts an auction ingestion command immediately, then repeats every hour
-  - registers EF Core, the auction ingestion command handler, the Blizzard auction adapter, and repository
-- `WowPaperTrader.Application`
-  - application contracts and use cases
-  - contains `ICommand`, `ICommandHandler<TCommand>`, `IQuery<TResponse>`, and `IQueryHandler<TQuery, TResponse>`
-  - organizes features into `Features/Read` and `Features/Write`
-- `WowPaperTrader.Infrastructure`
-  - Blizzard OAuth and API HTTP clients
-  - adapter implementations for application-facing API contracts
-  - DTO-to-application contract mappers
-- `WowPaperTrader.Persistence`
-  - EF Core `ApplicationDbContext`
-  - migrations, write repositories, entity mappers, and Dapper read services
-- `WowPaperTrader.Application.Tests`
-  - application test project scaffold
-- `WowPaperTrader.Persistence.Tests`
-  - integration tests for repositories, read services, and schema behavior
-
-
-Architectural direction:
+The dependency direction is kept deliberately simple:
 
 ```text
-Hosts
-  Api / Ingestor
-    -> Application
-       -> contracts for reads, writes, and external services
-    -> Infrastructure
-       -> Blizzard HTTP adapters implementing application contracts
-    -> Persistence
-       -> SQL Server repositories and read services implementing application contracts
+API / Ingestor
+    -> Application contracts and use cases
+    -> Persistence implementations
+    -> Infrastructure adapters
+
+Persistence -> Application
+Infrastructure -> Application
 ```
 
-`Application` is the center of the solution. It owns feature contracts and use-case orchestration, while `Infrastructure` and `Persistence` depend inward on those contracts. The host projects compose the concrete implementations.
+`WowPaperTrader.Application` owns the commands, queries, contracts, response models, and ingestion entities. `WowPaperTrader.Persistence` and `WowPaperTrader.Infrastructure` implement the database and Blizzard API boundaries, while the API and ingestor projects act as composition roots.
 
-## CQRS Focus
+### Solution Layout
 
-The solution is intentionally organized around commands and queries:
+| Project or directory               | Responsibility                                                                                      |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `WowPaperTrader.Api`               | Read-only ASP.NET Core API, dependency injection, CORS, rate limiting, Swagger, and health endpoint |
+| `WowPaperTrader.Application`       | CQRS-style read/write features, contracts, handlers, response models, and ingestion entities        |
+| `WowPaperTrader.Infrastructure`    | Battle.net OAuth, Blizzard HTTP clients, DTOs, adapters, and contract mapping                       |
+| `WowPaperTrader.Persistence`       | EF Core context and migrations, write repositories, Dapper read services, and database helpers      |
+| `WowPaperTrader.Ingestor`          | One-shot auction and metadata ingestion modes intended to be run by an external scheduler           |
+| `WowPaperTrader.Persistence.Tests` | PostgreSQL repository, query, and schema integration tests                                          |
+| `WowPaperTrader.Application.Tests` | Application test project scaffold; it does not contain test cases yet                               |
+| `WowPaperTrader.Frontend`          | React single-page application for search, item details, and market history                          |
+| `docker` and `compose*.yml`        | PostgreSQL roles, runtime services, migration job, and local/production image selection             |
+| `scripts`                          | Ingestor runner, deployment helpers, and maintenance utilities                                      |
 
-- queries implement `IQuery<TResponse>` and are handled by `IQueryHandler<TQuery, TResponse>`
-- commands implement `ICommand` and are handled by `ICommandHandler<TCommand>`
-- read features live under `WowPaperTrader.Application/Features/Read`
-- write features live under `WowPaperTrader.Application/Features/Write`
-- read services are application contracts implemented in `WowPaperTrader.Persistence/ReadServices`
-- write repositories are application contracts implemented in `WowPaperTrader.Persistence/Repositories`
-
-Current query features:
-
-- `ItemSearchQuery`
-  - searches `ItemMetaData` by name and returns the top five matches
-- `GetMetadataQuery`
-  - returns item metadata joined with latest-snapshot lowest price information
-- `LowestPriceQuery`
-  - returns the lowest unit price for an item from the latest stored snapshot
-
-Current command features:
-
-- `PostAuctionDataCommand`
-  - fetches the Blizzard commodity auction snapshot and persists it
-  - executed by `WowPaperTrader.Ingestor`
-- `UpdateItemsCommand`
-  - finds item ids that appear in auction data but do not have metadata yet
-  - fetches metadata and media from Blizzard
-  - persists new metadata records
-  - currently triggered manually through the API
-
-Persistence follows the CQRS split pragmatically:
-
-- write paths use EF Core repositories because they create and persist aggregate-shaped data
-- read paths use Dapper and SQL tailored to the response shape
-- the metadata update command uses a read service to discover missing metadata ids, then writes through a repository
-
-## Runtime Data Flow
+## Runtime Flows
 
 ### Auction Ingestion
 
-1. `AuctionDataBackgroundService` creates a scoped service provider.
-2. The worker resolves `PostAuctionDataCommandHandler`.
-3. The handler creates an `IngestionRun`.
-4. `CommodityAuctionApiAdapter` requests an OAuth token through `BattleNetAuthClient`.
-5. `CommodityAuctionClient` calls:
+1. The ingestor starts in `auctions` mode.
+2. `PostAuctionDataCommandHandler` creates an `IngestionRun`.
+3. Infrastructure obtains a Battle.net client-credentials token and calls Blizzard's US commodity auction endpoint.
+4. The response is mapped into application-owned snapshot records.
+5. `CommodityAuctionRepository` saves the snapshot and all auction rows in one PostgreSQL transaction.
+6. The run is marked `Finished`, `Failed`, or `Cancelled`.
 
-```text
-GET https://us.api.blizzard.com/data/wow/auctions/commodities?namespace=dynamic-us&locale=en_US
-```
+Each one-shot auction job has a 50-minute timeout and returns a process exit code so it can be supervised by Task Scheduler, cron, a container job, or another external scheduler. The repository does not run a permanent hourly background service.
 
-6. Infrastructure maps Blizzard DTOs to application contracts.
-7. `CommodityAuctionRepository` writes the snapshot and auction rows in a database transaction.
-8. The ingestion run is marked `Finished`, `Failed`, or `Cancelled`.
+### Metadata Enrichment
 
-### Metadata Update
+The `metadata` ingestor mode first performs a fresh auction ingestion, then:
 
-1. `POST /api/v1/items` reaches `ItemsController.UpdateItemMetaData`.
-2. The controller dispatches `UpdateItemsCommand`.
-3. `ItemIdsWithoutMetadataReadService` finds distinct auction item ids missing from `ItemMetaData`.
-4. `ItemMetadataApiAdapter` fetches item metadata and media from Blizzard:
-
-```text
-GET item/{itemId}?namespace=static-us&locale=en_US
-GET media/item/{itemId}?namespace=static-us&locale=en_US
-```
-
-5. Infrastructure maps the DTOs into `ItemMetadataRecord`.
-6. `ItemMetadataRepository` saves the metadata rows through EF Core.
+1. finds distinct auction item IDs missing from `ItemMetaData`
+2. fetches item metadata and item media from Blizzard's `static-us` namespace
+3. skips and logs Blizzard 404 responses and per-item HTTP failures
+4. saves the successfully mapped metadata records through EF Core
 
 ### Read Path
 
-1. A client calls a `GET /api/v1/items...` endpoint.
-2. `ItemsController` validates route or query parameters.
-3. The controller constructs an application query.
-4. The matching query handler validates the query and calls its read-service contract.
-5. The persistence read service executes Dapper SQL against the application database.
-6. The controller returns `200 OK`, `400 Bad Request`, or `404 Not Found` depending on the request and result.
+The React application calls the API through a shared Axios client. React Query manages search, selected-item, and price-history server state. API controllers validate inputs, dispatch query handlers, and use Dapper read services to shape results directly from PostgreSQL.
 
-## REST API Design
+## Data Model
 
-The API is versioned at the route level with `/api/v1`. Item-related resources are grouped under `/api/v1/items`.
+| Table                       | Purpose                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------- |
+| `IngestionRuns`             | Tracks ingestion start, completion, status, and failure details                           |
+| `CommodityAuctionSnapshots` | Stores fetch time, source endpoint, and its ingestion run                                 |
+| `CommodityAuctions`         | Stores item ID, quantity, unit price, and time-left rows for a snapshot                   |
+| `ItemMetaData`              | Stores Blizzard item details, profession fields, vendor values, media URL, and fetch time |
 
-Development tooling:
+The schema indexes snapshot timestamps and the auction `(ItemId, CommodityAuctionSnapshotId)` lookup used by the read queries.
 
-- Swagger/OpenAPI is enabled in development
-- default development URLs are `https://localhost:7033` and `http://localhost:5091`
+## API
 
-### Search Items
+The item API is rooted at `/api/v1/items`.
 
-```http
-GET /api/v1/items?itemName=thorium
-```
+| Method and route                             | Behavior                                                                                |
+| -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `GET /api/v1/items?itemName={name}`          | Returns up to five case-insensitive name matches with item IDs and image URLs           |
+| `GET /api/v1/items/{itemId}`                 | Returns item metadata and the lowest price from the latest snapshot                     |
+| `GET /api/v1/items/{itemId}/auctions/lowest` | Returns the lowest unit price for the item in the latest snapshot                       |
+| `GET /api/v1/items/{itemId}/price-history`   | Returns per-snapshot lowest price and total quantity for the last 30 days, oldest first |
+| `GET /health`                                | Returns a lightweight `{ "status": "Healthy" }` response                                |
 
-Behavior:
+Invalid or missing inputs return `400 Bad Request`. The item metadata and latest-price endpoints return `404 Not Found` when the item is absent from the latest snapshot. Price history returns `200 OK` with an empty `priceQuantityResponses` collection when no history exists.
 
-- returns `400 Bad Request` when `itemName` is empty or whitespace
-- returns `200 OK` with up to five matches
-
-Example response:
-
-```json
-[
-  {
-    "itemId": 10620,
-    "name": "Thorium Ore"
-  }
-]
-```
-
-### Get Item Metadata
-
-```http
-GET /api/v1/items/{itemId}
-```
-
-Behavior:
-
-- returns `400 Bad Request` when `itemId <= 0`
-- returns `404 Not Found` when the item is not present in the latest auction snapshot result
-- returns `200 OK` with item metadata and latest lowest-price information
-
-Example response:
+Example price-history response:
 
 ```json
 {
-  "itemId": 10620,
-  "unitPrice": 19000,
-  "priceTakenAtUtc": "2026-04-11T08:00:00Z",
-  "name": "Thorium Ore",
-  "qualityType": "COMMON",
-  "qualityName": "Common",
-  "level": 40,
-  "requiredLevel": 0,
-  "itemClassId": 7,
-  "itemClassName": "Tradeskill",
-  "itemSubclassId": 7,
-  "itemSubclassName": "Metal & Stone",
-  "imageUrl": "https://render.worldofwarcraft.com/us/icons/56/inv_ore_thorium_02.jpg",
-  "metadataLastFetchedUtc": "2026-04-11T08:05:00Z"
+  "itemId": 2770,
+  "priceQuantityResponses": [
+    {
+      "commodityAuctionSnapshotId": 42,
+      "fetchedAtUtc": "2026-08-16T03:00:00Z",
+      "lowestUnitPrice": 72500,
+      "totalQuantityPosted": 18420
+    }
+  ]
 }
 ```
 
-### Get Lowest Auction Price
+In Development, Swagger UI is available at `/swagger`. The API requires at least one configured CORS origin and applies a global fixed-window limit of 100 requests per minute.
 
-```http
-GET /api/v1/items/{itemId}/auctions/lowest
-```
+## Local Development
 
-Behavior:
-
-- returns `400 Bad Request` when `itemId <= 0`
-- returns `404 Not Found` when the latest stored snapshot does not contain that item
-- returns `200 OK` with the minimum `UnitPrice` from the latest stored snapshot
-
-Example response:
-
-```json
-{
-  "itemId": 10620,
-  "unitPrice": 19000,
-  "priceTakenAtUtc": "2026-04-11T08:00:00Z"
-}
-```
-
-### Update Missing Item Metadata
-
-```http
-POST /api/v1/items
-```
-
-Behavior:
-
-- triggers `UpdateItemsCommand`
-- fetches metadata only for item ids that have auction rows but no existing metadata row
-- returns `200 OK` after the command completes
-
-This endpoint is currently an operational command exposed through the item collection. It is useful during development, but it is not yet a background job or admin-only maintenance route.
-
-## Data Stored
-
-The EF Core migrations currently define these tables:
-
-- `IngestionRuns`
-  - tracks ingestion lifecycle, status, finish time, and error details
-- `CommodityAuctionSnapshots`
-  - stores one row per fetched commodity snapshot
-  - links to `IngestionRuns`
-  - stores `FetchedAtUtc` and the Blizzard API endpoint used
-- `CommodityAuctions`
-  - stores auction rows for each snapshot
-  - stores `ItemId`, `Quantity`, `UnitPrice`, and `TimeLeft`
-- `ItemMetaData`
-  - stores Blizzard item metadata for item ids observed in auction data
-  - includes item name, quality, item class, subclass, profession requirement fields, prices, stack/equip flags, purchase quantity, image URL, and metadata fetch time
-
-Important scope notes:
-
-- auction data is commodity-only and region-wide
-- the schema does not store realm-specific auction information
-- read APIs are built around the latest commodity snapshot
-- metadata is stored separately from auction rows and may lag behind newly ingested auction item ids until the metadata update command runs
-
-## Local Setup
+Run commands from the repository root unless a step says otherwise.
 
 ### Prerequisites
 
 - .NET 10 SDK
-- SQL Server instance accessible from your machine
-- Blizzard API client credentials
+- Node.js and npm compatible with the checked-in lockfile
+- PostgreSQL accessible from the host machine
+- Docker Desktop for the PostgreSQL integration tests
+- Blizzard API client credentials for ingestion
+- `dotnet-ef` 10.0.9 for applying migrations
 
-### Configure Blizzard Credentials
-
-Both the ingestor and the API use the same user-secrets id. The Blizzard integration requires:
-
-- `Blizzard:ClientId`
-- `Blizzard:ClientSecret`
-
-Example:
+Install the matching EF Core CLI if needed:
 
 ```powershell
-dotnet user-secrets set "Blizzard:ClientId" "<your-client-id>" --project .\WowPaperTrader.Api\WowPaperTrader.Api.csproj
-dotnet user-secrets set "Blizzard:ClientSecret" "<your-client-secret>" --project .\WowPaperTrader.Api\WowPaperTrader.Api.csproj
+dotnet tool install --global dotnet-ef --version 10.0.9
 ```
 
-### Configure Database Connection
+### 1. Configure PostgreSQL
 
-The API and ingestor require `ConnectionStrings:WowPaperTrader`.
-
-Example PowerShell session:
+Create an empty PostgreSQL database and provide its connection string to both backend hosts. The checked-in Development settings use a local `wowpapertrader` database, but environment variables can override them without changing tracked files:
 
 ```powershell
-$env:ConnectionStrings__WowPaperTrader="Server=localhost;Database=WowPaperTrader;Trusted_Connection=True;TrustServerCertificate=True;"
+$env:ConnectionStrings__WowPaperTrader = "Host=localhost;Port=5432;Database=wowpapertrader;Username=<username>;Password=<password>"
 ```
 
-Development settings files also exist at:
-
-- `WowPaperTrader.Api/appsettings.Development.json`
-- `WowPaperTrader.Ingestor/appsettings.Development.json`
-
-### Configure Blizzard API Base URL
-
-Both hosts read `WowApi:BaseUrl`. The default in `appsettings.json` is:
-
-```json
-{
-  "WowApi": {
-    "BaseUrl": "https://us.api.blizzard.com/data/wow/"
-  }
-}
-```
-
-### Apply Database Migrations
-
-If `dotnet-ef` is not installed:
+Apply the migration:
 
 ```powershell
-dotnet tool install --global dotnet-ef
+dotnet ef database update --project .\WowPaperTrader.Persistence\WowPaperTrader.Persistence.csproj --startup-project .\WowPaperTrader.Api\WowPaperTrader.Api.csproj
 ```
 
-Apply the current migrations:
+### 2. Configure Blizzard Credentials
+
+Only the ingestor calls Blizzard. Store its credentials in .NET user secrets:
 
 ```powershell
-dotnet ef database update --project .\WowPaperTrader.Persistence\WowPaperTrader.Persistence.csproj --startup-project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj
+dotnet user-secrets set "Blizzard:ClientId" "<client-id>" --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj
+dotnet user-secrets set "Blizzard:ClientSecret" "<client-secret>" --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj
 ```
 
-## Running the Projects
+The default API base URL targets the US WoW Retail API. It can be overridden with `WowApi__BaseUrl`.
 
-Run the ingestor:
+### 3. Load Auction and Metadata Data
+
+Run an auction snapshot only:
 
 ```powershell
-dotnet run --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj
+dotnet run --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj -- auctions
 ```
 
-Behavior:
-
-- one ingestion run starts immediately when the worker launches
-- subsequent runs happen every hour
-- graceful shutdown timeout is configured to 10 minutes
-
-Run the API:
+Run a fresh auction snapshot followed by enrichment of every missing item ID:
 
 ```powershell
+dotnet run --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj -- metadata
+```
+
+Item search depends on metadata, so a new database needs a successful `metadata` run before search results are available.
+
+### 4. Run the API
+
+The Development CORS configuration already allows Vite's default `http://localhost:5173` origin. Override it when using a different frontend origin:
+
+```powershell
+$env:Cors__AllowedOrigins__0 = "http://localhost:5173"
 dotnet run --project .\WowPaperTrader.Api\WowPaperTrader.Api.csproj
 ```
 
-Default development URLs:
+The default Development addresses are:
 
-- `https://localhost:7033`
 - `http://localhost:5091`
+- `https://localhost:7033`
 
-## Tests
+### 5. Run the Frontend
 
-Run the full solution test suite:
+Create `WowPaperTrader.Frontend/.env.local` with an API base URL that includes the API version prefix:
+
+```dotenv
+VITE_API_BASE_URL=http://localhost:5091/api/v1
+```
+
+Then install and start the frontend:
+
+```powershell
+Set-Location .\WowPaperTrader.Frontend
+npm ci
+npm run dev
+```
+
+## Configuration Reference
+
+| Setting                             | Used by            | Purpose                                                                        |
+| ----------------------------------- | ------------------ | ------------------------------------------------------------------------------ |
+| `ConnectionStrings__WowPaperTrader` | API and ingestor   | PostgreSQL connection string                                                   |
+| `Cors__AllowedOrigins__0`           | API                | First allowed frontend origin; use additional numeric entries for more origins |
+| `Blizzard__ClientId`                | Ingestor           | Battle.net OAuth client ID                                                     |
+| `Blizzard__ClientSecret`            | Ingestor           | Battle.net OAuth client secret                                                 |
+| `WowApi__BaseUrl`                   | Ingestor           | Blizzard data API base URL                                                     |
+| `VITE_API_BASE_URL`                 | Frontend build     | Versioned API base URL, such as `http://localhost:5091/api/v1`                 |
+| `CADDY_SITE_ADDRESS`                | Caddy              | Local address or production API domain                                         |
+| `IMAGE_TAG`                         | Production Compose | GHCR image tag, normally `latest` or a commit SHA for rollback                 |
+
+Container-specific templates are provided in `.env.api.example`, `.env.ingestor.example`, `.env.postgres.example`, `.env.caddy.example`, and `.env.production.example`. Real `.env.*` files are ignored and must not be committed.
+
+## Tests and Checks
+
+Run the .NET test suite from the repository root:
 
 ```powershell
 dotnet test .\WowPaperTrader.sln
 ```
 
-Current test structure:
+`WowPaperTrader.Persistence.Tests` starts a real PostgreSQL 18 container, creates the current EF Core model, and resets data between tests with Respawn. Docker must be running. The suite covers snapshot and metadata writes, latest-price queries, missing metadata IDs, search behavior, 30-day price/quantity history, and schema shape.
 
-- `WowPaperTrader.Persistence.Tests`
-  - repository integration tests
-  - Dapper read-service tests
-  - schema-focused tests
-- `WowPaperTrader.Application.Tests`
-  - project scaffold currently contains no source test files
+The frontend has Jest and Testing Library configured but does not currently contain test files. Use the production build and linter as the available frontend checks:
 
-## Known Gaps
+```powershell
+Push-Location .\WowPaperTrader.Frontend
+npm run build
+npm run lint
+Pop-Location
+```
 
-- retention cleanup is not automated; a manual helper script exists at `manual_delete_data_past_30_days_sql_script.txt`
-- the ingestion interval is hard-coded to one hour in `AuctionDataBackgroundService`
-- Blizzard API calls are fixed to the US region and `en_US` locale
-- metadata update is manual and synchronous through the API
-- no API authentication or authorization is configured
-- read APIs do not expose historical price ranges or aggregates
-- item metadata does not currently enforce a unique database constraint on `ItemId`
+## Containers and Deployment
+
+The base `compose.yml` defines PostgreSQL, an EF Core migration job, the API, a one-shot ingestor job, and Caddy. PostgreSQL initialization creates separate least-privilege roles:
+
+- `wow_api_user` receives read-only table access
+- `wow_ingestor_user` receives read/write table and sequence access
+- `postgres_admin` owns migrations and administrative operations
+
+`compose.override.yml` selects locally built images, while `compose.production.yml` selects versioned images from GHCR. The API image also contains an EF Core migrations bundle used by the `migrator` service. Caddy exposes the API and rejects methods other than `GET`, `HEAD`, and `OPTIONS`.
+
+GitHub Actions currently:
+
+- builds the frontend and deploys it to Azure Static Web Apps when frontend files change on `main`
+- builds API and ingestor images on pushes to `main`
+- publishes both `latest` and commit-SHA image tags to GitHub Container Registry
+
+The production deployment script pulls the selected images, starts PostgreSQL, stops the API while the migration bundle runs, and then starts the updated API behind Caddy. Ingestion scheduling remains an external operational responsibility; `scripts/run-ingestor.ps1` is the Windows/Docker wrapper supplied for scheduled runs.
+
+## Current Limitations
+
+- only the US WoW Retail commodity feed and `en_US` locale are supported
+- commodity data is region-wide rather than realm-specific
+- authentication, user accounts, portfolios, and simulated trading are still roadmap items
+- ingestion is one-shot and depends on an external scheduler
+- old auction data is not deleted automatically; the history query only filters its response to 30 days
+- the existing manual retention script still uses legacy SQL Server syntax and must not be run against PostgreSQL
+- Blizzard HTTP calls do not have retry or backoff policies
+- metadata enrichment is sequential and capped by the job's 50-minute timeout
+- `ItemMetaData.ItemId` does not currently have a unique database constraint
+- application-layer and frontend test coverage have not been added yet
 
 ## Disclaimer
 
@@ -410,4 +302,4 @@ This is a personal educational project and is not affiliated with or endorsed by
 
 ## License
 
-No license file is present in the repository. All rights are reserved by default.
+No license file is present. All rights are reserved by default.
