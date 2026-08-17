@@ -6,7 +6,7 @@ public sealed class UpdateItemMetadataJob (
     IServiceScopeFactory scopeFactory,
     ILogger<UpdateItemMetadataJob> logger)
 {
-    private static readonly TimeSpan JobTimeout = TimeSpan.FromMinutes(50);
+    private static readonly TimeSpan JobTimeout = TimeSpan.FromMinutes(180);
     
     public async Task<int> RunAsync(CancellationToken stoppingToken)
     {
