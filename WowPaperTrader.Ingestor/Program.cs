@@ -91,11 +91,11 @@ try
     {
         "auctions" => await host.Services.GetRequiredService<AuctionDataIngestionJob>().RunAsync(stoppingToken),
 
-        "metadata" => await RunAuctionsAndMetadata.RunAsync(host.Services, stoppingToken),
+        "metadata" => await host.Services.GetRequiredService<UpdateItemMetadataJob>().RunAsync(stoppingToken),
     
         _ => throw new ArgumentException(        $"Invalid mode: {mode}. Choose one of: " +
                                                  "auctions (updates the database with a new auction snapshot), " +
-                                                 "or metadata (updates auctions and then any new item metadata).")
+                                                 "or metadata (updates any new item metadata but must be run after auctions. This is usually only required once a day).")
     };
 
     Environment.ExitCode = exitCode;
