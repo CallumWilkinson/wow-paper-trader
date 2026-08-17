@@ -1,12 +1,14 @@
 # WowPaperTrader
 
+[Click here to view the hosted project](https://www.goblineconomics.com/)
+
 WowPaperTrader is a full-stack World of Warcraft commodity auction analytics application. It collects region-wide WoW Retail auction snapshots from Blizzard's API, enriches observed item IDs with item metadata and media, stores the results in PostgreSQL, and presents current pricing plus 30-day market history through a .NET API and React frontend.
 
 I am currently in the process of deploying and hosting the project on a private VPS.
 
 The repository currently delivers the market-data foundation of the wider paper-trading idea described in [Requirements.md](Requirements.md). User accounts, portfolios, and simulated trades are not implemented yet.
 
-## Demo
+## Demo Screenshot
 
 ![WowPaperTrader item search, item details, and market history](appDemo.jpg)
 
