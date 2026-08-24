@@ -89,6 +89,13 @@ builder.Services.AddCors(options =>
     });
 });
 
+//health check end points
+builder.Services
+    .AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>(
+        name: "database",
+        tags: ["database"]);
+
 var app = builder.Build();
 
 //Middleware
@@ -112,13 +119,6 @@ app.MapHealthChecks(
     new HealthCheckOptions
     {
         Predicate = check => check.Tags.Contains("database")
-    });
-
-app.MapHealthChecks(
-    "/health/ingestion",
-    new HealthCheckOptions
-    {
-        Predicate = check => check.Tags.Contains("ingestion")
     });
 
 app.Run();
