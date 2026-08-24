@@ -1,24 +1,67 @@
-name: Publish container images
+name: Run tests, build/publish images and deploy backend to vps
 
 on:
   push:
     branches:
       - main
-    
+
+  pull_request:
+    branches:
+      - main
+
   workflow_dispatch:
 
 permissions:
   contents: read
-  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   API_IMAGE: ghcr.io/callumwilkinson/wow-paper-trader-api
   INGESTOR_IMAGE: ghcr.io/callumwilkinson/wow-paper-trader-ingestor
 
 jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore WowPaperTrader.sln
+
+      - name: Build
+        run: |
+          dotnet build WowPaperTrader.sln \
+            --configuration Release \
+            --no-restore
+
+      - name: Test
+        run: |
+          dotnet test WowPaperTrader.sln \
+            --configuration Release \
+            --no-build
+
   publish:
     name: Build and publish images
     runs-on: ubuntu-latest
+
+    needs: test
+
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Check out repository
@@ -59,3 +102,64 @@ jobs:
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
+
+  deploy:
+    name: Deploy backend to vps
+    runs-on: ubuntu-latest
+
+    needs: publish
+
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: ${{ secrets.VPS_HOST }}
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh \
+            -o BatchMode=yes \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" << 'EOF'
+
+          set -Eeuo pipefail
+
+          cd /opt/wow-paper-trader
+
+          git fetch origin main
+          git checkout main
+          git reset --hard "${{ github.sha }}"
+
+          IMAGE_TAG="${{ github.sha }}" bash scripts/deploy-production.sh
+          EOF
+
+      - name: Check API health
+        run: |
+          curl \
+            --fail \
+            --show-error \
+            --silent \
+            --retry 5 \
+            --retry-delay 2 \
+            --retry-all-errors \
+            https://api.goblineconomics.com/health/database
+
+          echo "Production API health check passed."
