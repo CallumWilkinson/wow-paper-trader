@@ -7,6 +7,7 @@ using WowPaperTrader.Application.Features.Read.MonthlyPriceQuantity;
 using WowPaperTrader.Persistence;
 using WowPaperTrader.Persistence.ReadServices;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,9 +106,19 @@ app.UseRateLimiter();
 
 app.MapControllers();
 
-app.MapGet("/health", () => Results.Ok(new
-{
-    status = "Healthy"
-}));
+app.MapHealthChecks("/health");
+app.MapHealthChecks(
+    "/health/database",
+    new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("database")
+    });
+
+app.MapHealthChecks(
+    "/health/ingestion",
+    new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("ingestion")
+    });
 
 app.Run();
