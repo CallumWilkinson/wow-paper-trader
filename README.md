@@ -1,10 +1,10 @@
 # WowPaperTrader
 
-[Click here to view the hosted project](https://www.goblineconomics.com/)
+[View the hosted project](https://www.goblineconomics.com/)
 
 WowPaperTrader is a full-stack World of Warcraft commodity auction analytics application. It collects region-wide WoW Retail auction snapshots from Blizzard's API, enriches observed item IDs with item metadata and media, stores the results in PostgreSQL, and presents current pricing plus 30-day market history through a .NET API and React frontend.
 
-I am currently in the process of deploying and hosting the project on a private VPS.
+The React frontend is hosted on Vercel. The containerized API and PostgreSQL database run on a private VPS behind Caddy, with GitHub Actions providing the tested deployment path for both parts of the application.
 
 The repository currently delivers the market-data foundation of the wider paper-trading idea described in [Requirements.md](Requirements.md). User accounts, portfolios, and simulated trades are not implemented yet.
 
@@ -21,7 +21,7 @@ The repository currently delivers the market-data foundation of the wider paper-
 - discovers auctioned item IDs without metadata and enriches them through Blizzard's item and media APIs
 - records ingestion lifecycle state and failure details
 - keeps write paths in EF Core and read-optimized queries in Dapper
-- exposes a read-only, rate-limited REST API with CORS and a health endpoint
+- exposes a read-only, rate-limited REST API with CORS and aggregate and database health endpoints
 - provides PostgreSQL integration tests backed by disposable Testcontainers databases
 - includes container images, Docker Compose services, Caddy configuration, and GitHub Actions deployment assets
 
@@ -61,18 +61,18 @@ Infrastructure -> Application
 
 ### Solution Layout
 
-| Project or directory               | Responsibility                                                                                      |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `WowPaperTrader.Api`               | Read-only ASP.NET Core API, dependency injection, CORS, rate limiting, Swagger, and health endpoint |
-| `WowPaperTrader.Application`       | CQRS-style read/write features, contracts, handlers, response models, and ingestion entities        |
-| `WowPaperTrader.Infrastructure`    | Battle.net OAuth, Blizzard HTTP clients, DTOs, adapters, and contract mapping                       |
-| `WowPaperTrader.Persistence`       | EF Core context and migrations, write repositories, Dapper read services, and database helpers      |
-| `WowPaperTrader.Ingestor`          | One-shot auction and metadata ingestion modes intended to be run by an external scheduler           |
-| `WowPaperTrader.Persistence.Tests` | PostgreSQL repository, query, and schema integration tests                                          |
-| `WowPaperTrader.Application.Tests` | Application test project scaffold; it does not contain test cases yet                               |
-| `WowPaperTrader.Frontend`          | React single-page application for search, item details, and market history                          |
-| `docker` and `compose*.yml`        | PostgreSQL roles, runtime services, migration job, and local/production image selection             |
-| `scripts`                          | Ingestor runner, deployment helpers, and maintenance utilities                                      |
+| Project or directory               | Responsibility                                                                                       |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `WowPaperTrader.Api`               | Read-only ASP.NET Core API, dependency injection, CORS, rate limiting, Swagger, and health endpoints |
+| `WowPaperTrader.Application`       | CQRS-style read/write features, contracts, handlers, response models, and ingestion entities         |
+| `WowPaperTrader.Infrastructure`    | Battle.net OAuth, Blizzard HTTP clients, DTOs, adapters, and contract mapping                        |
+| `WowPaperTrader.Persistence`       | EF Core context and migrations, write repositories, Dapper read services, and database helpers       |
+| `WowPaperTrader.Ingestor`          | One-shot auction and metadata ingestion modes intended to be run by an external scheduler            |
+| `WowPaperTrader.Persistence.Tests` | PostgreSQL repository, query, and schema integration tests                                           |
+| `WowPaperTrader.Application.Tests` | Application test project scaffold; it does not contain test cases yet                                |
+| `WowPaperTrader.Frontend`          | React single-page application for search, item details, and market history                           |
+| `docker` and `compose*.yml`        | PostgreSQL roles, runtime services, migration job, and local/production image selection              |
+| `scripts`                          | Ingestor runner, deployment helpers, and maintenance utilities                                       |
 
 ## Runtime Flows
 
@@ -89,12 +89,14 @@ Each one-shot auction job has a 50-minute timeout and returns a process exit cod
 
 ### Metadata Enrichment
 
-The `metadata` ingestor mode first performs a fresh auction ingestion, then:
+The `metadata` ingestor mode runs independently of auction ingestion. It should be scheduled after an `auctions` run so that newly observed item IDs are available, then it:
 
 1. finds distinct auction item IDs missing from `ItemMetaData`
 2. fetches item metadata and item media from Blizzard's `static-us` namespace
 3. skips and logs Blizzard 404 responses and per-item HTTP failures
 4. saves the successfully mapped metadata records through EF Core
+
+The metadata job has its own three-hour timeout because it can make multiple Blizzard API calls for every new item. Auction and metadata schedules remain separate so frequent snapshots do not have to wait for the slower enrichment process.
 
 ### Read Path
 
@@ -121,7 +123,8 @@ The item API is rooted at `/api/v1/items`.
 | `GET /api/v1/items/{itemId}`                 | Returns item metadata and the lowest price from the latest snapshot                     |
 | `GET /api/v1/items/{itemId}/auctions/lowest` | Returns the lowest unit price for the item in the latest snapshot                       |
 | `GET /api/v1/items/{itemId}/price-history`   | Returns per-snapshot lowest price and total quantity for the last 30 days, oldest first |
-| `GET /health`                                | Returns a lightweight `{ "status": "Healthy" }` response                                |
+| `GET /health`                                | Runs all registered health checks; this currently includes the PostgreSQL connection    |
+| `GET /health/database`                       | Runs the PostgreSQL health check used to verify a production deployment                 |
 
 Invalid or missing inputs return `400 Bad Request`. The item metadata and latest-price endpoints return `404 Not Found` when the item is absent from the latest snapshot. Price history returns `200 OK` with an empty `priceQuantityResponses` collection when no history exists.
 
@@ -195,13 +198,13 @@ Run an auction snapshot only:
 dotnet run --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj -- auctions
 ```
 
-Run a fresh auction snapshot followed by enrichment of every missing item ID:
+Enrich every observed item ID that is still missing metadata:
 
 ```powershell
 dotnet run --project .\WowPaperTrader.Ingestor\WowPaperTrader.Ingestor.csproj -- metadata
 ```
 
-Item search depends on metadata, so a new database needs a successful `metadata` run before search results are available.
+The `metadata` mode does not fetch an auction snapshot. Run `auctions` first on a new database, then run `metadata`; item search is unavailable until metadata has been loaded successfully.
 
 ### 4. Run the API
 
@@ -267,6 +270,50 @@ npm run lint
 Pop-Location
 ```
 
+## Continuous Integration and Deployment Pipeline
+
+The backend workflow uses the test job as a deployment gate. Pull requests are validated without publishing artifacts, while successful runs for `main` continue through commit-SHA-tagged image publication, VPS deployment, and a live database health check. The frontend has a separate path-filtered workflow so it can be built and deployed independently.
+
+```mermaid
+flowchart TD
+    subgraph Backend[Backend pipeline]
+        PullRequest[Pull request to main] --> DotNetChecks[Restore, Release build, and .NET tests]
+        MainPush[Push to main] --> DotNetChecks
+        ManualBackend[Manual run on main] --> DotNetChecks
+        DotNetChecks -->|Pull request| ValidationComplete[Validation complete]
+        DotNetChecks -->|Push or manual run on main| PublishImages[Build API and ingestor images]
+        PublishImages --> Ghcr[Publish latest and commit SHA tags to GHCR]
+        Ghcr --> VpsConnection[Connect to the VPS through Tailscale and SSH]
+        VpsConnection --> ProductionDeploy[Deploy the exact commit and image SHA]
+        ProductionDeploy --> Migration[Validate configuration, pull images, and apply migrations]
+        Migration --> StartServices[Start the API and Caddy]
+        StartServices --> HealthCheck[Verify /health/database]
+    end
+
+    subgraph Frontend[Frontend pipeline]
+        FrontendPush[Frontend change on main] --> FrontendBuild[Build with Vite]
+        ManualFrontend[Manual run] --> FrontendBuild
+        FrontendBuild --> StaticWebApp[Deploy to Azure Static Web Apps]
+    end
+```
+
+### Backend pipeline
+
+The backend workflow, [`.github/workflows/publish-images.yml`](.github/workflows/publish-images.yml), runs for pull requests targeting `main`, pushes to `main`, and manual dispatches. Its jobs execute in this order:
+
+1. **Test** checks out the repository, restores the .NET 10 solution, builds it in Release mode, and runs the full .NET test suite. Pull-request runs stop here.
+2. **Publish** runs only for `main` after the tests pass. It builds the API and ingestor Dockerfiles and publishes each image to GHCR with both `latest` and `${{ github.sha }}` tags.
+3. **Deploy** connects to the private network through Tailscale, uses SSH to synchronize the VPS checkout to the exact workflow commit, and invokes [`scripts/deploy-production.sh`](scripts/deploy-production.sh) with that commit SHA as `IMAGE_TAG`.
+4. **Verify** requests `https://api.goblineconomics.com/health/database`. A failed PostgreSQL health check fails the deployment job.
+
+The production script validates the Compose configuration and the active Caddy configuration before changing services. It pulls the API, migrator, and ingestor images, waits for PostgreSQL, stops the API while the EF Core migrations bundle runs, starts the updated API and Caddy, and reloads the reverse-proxy configuration.
+
+Backend workflow runs use a per-ref concurrency group and do not cancel an in-progress deployment. Commit-SHA image tags keep deployed artifacts traceable and provide a stable image reference for rollback.
+
+### Frontend pipeline
+
+The frontend workflow, [`.github/workflows/deploy-frontend.yml`](.github/workflows/deploy-frontend.yml), runs when `WowPaperTrader.Frontend` or the workflow itself changes on `main`, and it can also be started manually. Azure's deployment action runs `npm run build` with the repository's `VITE_API_BASE_URL` variable and publishes the generated `dist` directory to Azure Static Web Apps.
+
 ## Containers and Deployment
 
 The base `compose.yml` defines PostgreSQL, an EF Core migration job, the API, a one-shot ingestor job, and Caddy. PostgreSQL initialization creates separate least-privilege roles:
@@ -277,13 +324,7 @@ The base `compose.yml` defines PostgreSQL, an EF Core migration job, the API, a 
 
 `compose.override.yml` selects locally built images, while `compose.production.yml` selects versioned images from GHCR. The API image also contains an EF Core migrations bundle used by the `migrator` service. Caddy exposes the API and rejects methods other than `GET`, `HEAD`, and `OPTIONS`.
 
-GitHub Actions currently:
-
-- builds the frontend and deploys it to Azure Static Web Apps when frontend files change on `main`
-- builds API and ingestor images on pushes to `main`
-- publishes both `latest` and commit-SHA image tags to GitHub Container Registry
-
-The production deployment script pulls the selected images, starts PostgreSQL, stops the API while the migration bundle runs, and then starts the updated API behind Caddy. Ingestion scheduling remains an external operational responsibility; `scripts/run-ingestor.ps1` is the Windows/Docker wrapper supplied for scheduled runs.
+The production deployment script is called by the backend pipeline described above. Ingestion scheduling remains an external operational responsibility; `scripts/run-ingestor.ps1` is the Windows/Docker wrapper supplied for separate `auctions` and `metadata` scheduled runs.
 
 ## Current Limitations
 
@@ -294,7 +335,7 @@ The production deployment script pulls the selected images, starts PostgreSQL, s
 - old auction data is not deleted automatically; the history query only filters its response to 30 days
 - the existing manual retention script still uses legacy SQL Server syntax and must not be run against PostgreSQL
 - Blizzard HTTP calls do not have retry or backoff policies
-- metadata enrichment is sequential and capped by the job's 50-minute timeout
+- metadata enrichment is sequential and capped by the job's three-hour timeout
 - `ItemMetaData.ItemId` does not currently have a unique database constraint
 - application-layer and frontend test coverage have not been added yet
 
