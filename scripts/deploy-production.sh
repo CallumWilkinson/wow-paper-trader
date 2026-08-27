@@ -4,6 +4,11 @@ set -Eeuo pipefail
 
 cd /opt/wow-paper-trader
 
+echo "Waiting for job lock..."
+exec 9>/opt/wow-paper-trader/.job.lock
+flock 9
+echo "Job lock acquired."
+
 compose=(
     docker compose
     --env-file .env.production
