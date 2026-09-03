@@ -1,4 +1,6 @@
 {$CADDY_SITE_ADDRESS:http://localhost} {
+    tls /etc/caddy/certs/api-origin.pem /etc/caddy/certs/api-origin-key.pem
+    
     route {
         @notReadOnly {
             not method GET HEAD OPTIONS
