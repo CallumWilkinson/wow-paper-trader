@@ -121,4 +121,10 @@ app.MapHealthChecks(
         Predicate = check => check.Tags.Contains("database")
     });
 
+app.MapGet("/robots.txt", () =>
+    Results.Text(
+        "User-agent: *\nDisallow: /\n",
+        "text/plain"
+    ));
+
 app.Run();
