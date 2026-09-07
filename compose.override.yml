@@ -18,3 +18,7 @@ services:
     build:
       context: .
       dockerfile: WowPaperTrader.Ingestor/Dockerfile
+    
+  postgres:
+    ports:
+      - "5432:5432"
