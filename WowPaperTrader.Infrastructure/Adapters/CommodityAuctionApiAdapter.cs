@@ -9,7 +9,7 @@ namespace WowPaperTrader.Infrastructure.Adapters;
 public sealed class CommodityAuctionApiAdapter : ICommodityAuctionApiAdapter
 {
     private readonly CommodityAuctionClient _auctionClient;
-    //test
+    
     private readonly BattleNetAuthClient _authClient;
 
     private readonly ILogger<CommodityAuctionApiAdapter> _logger;
