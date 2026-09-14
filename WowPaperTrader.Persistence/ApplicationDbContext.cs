@@ -80,7 +80,7 @@ public sealed class ApplicationDbContext : DbContext
                 .IsUnique()
                 .HasDatabaseName(
                     "UX_AuctionMarkets_Region_ConnectedRealmId")
-                .HasFilter("\"MarketType\" = 2");
+                .HasFilter("\"AuctionMarketType\" = 2");
 
             entity.HasData(new
             {
