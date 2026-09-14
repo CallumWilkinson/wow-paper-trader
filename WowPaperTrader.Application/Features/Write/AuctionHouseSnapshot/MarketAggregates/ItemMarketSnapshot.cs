@@ -11,6 +11,27 @@ public class ItemMarketSnapshot( long auctionMarketId, long itemId, long variant
     
     public DateTime ObservedAtUtc { get; private set; } = observedAtUtc;
     
+    //Unfiltered aggregates
+    public long ListingCount { get; private set; }
+    
+    public long TotalQuantity { get; private set; }
+    
+    public long MinimumUnitPrice { get; private set; }
+    
+    public decimal MeanUnitPrice { get; private set; }
+    
+    public decimal QuantityWeightedMeanUnitPrice { get; private set; }
+    
+    public long P10UnitPrice { get; private set; }
+    
+    public long P25UnitPrice { get; private set; }
+    
+    public long MedianUnitPrice { get; private set; }
+    
+    public long P75UnitPrice { get; private set; }
+    
+    public long P90UnitPrice { get; private set; }
+    
     //Navigation property
     public AuctionMarketSnapshot AuctionMarketSnapshot { get; private set; } = null;
     
