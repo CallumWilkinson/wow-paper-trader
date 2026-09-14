@@ -81,6 +81,15 @@ public sealed class ApplicationDbContext : DbContext
                 .HasDatabaseName(
                     "UX_AuctionMarkets_Region_ConnectedRealmId")
                 .HasFilter("\"MarketType\" = 2");
+
+            entity.HasData(new
+            {
+                Id = 1L,
+                Region = "US",
+                AuctionMarketType = AuctionMarketType.Commodity,
+                ConnectedRealmId = (long?)null,
+                DisplayName = "US Commodities"
+            });
         });
     }
 }
