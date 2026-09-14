@@ -22,6 +22,10 @@ public sealed class ApplicationDbContext : DbContext
 
     public DbSet<AuctionMarket> AuctionMarkets { get; set; } = null!;
 
+    public DbSet<AuctionMarketSnapshot> AuctionMarketSnapshots { get; set; } = null!;
+
+    public DbSet<ItemMarketSnapshot> ItemMarketSnapshots { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -90,6 +94,45 @@ public sealed class ApplicationDbContext : DbContext
                 ConnectedRealmId = (long?)null,
                 DisplayName = "US Commodities"
             });
+        });
+
+        modelBuilder.Entity<AuctionMarketSnapshot>(entity =>
+        {
+            entity.HasKey(snapshot => new
+            {
+                snapshot.AuctionMarketId,
+                snapshot.ObservedAtUtc
+            });
+
+            entity
+                .HasOne(snapshot => snapshot.AuctionMarket)
+                .WithMany(market => market.MarketSnapshots)
+                .HasForeignKey(snapshot => snapshot.AuctionMarketId);
+
+            entity
+                .HasOne(snapshot => snapshot.IngestionRun)
+                .WithMany(run => run.MarketSnapshots)
+                .HasForeignKey(snapshot => snapshot.IngestionRunId);
+        });
+
+        modelBuilder.Entity<ItemMarketSnapshot>(entity =>
+        {
+            entity.HasKey(snapshot => new
+            {
+                snapshot.AuctionMarketId,
+                snapshot.ItemId,
+                snapshot.VariantKey,
+                snapshot.ObservedAtUtc
+            });
+
+            entity
+                .HasOne(snapshot => snapshot.AuctionMarketSnapshot)
+                .WithMany(snapshot => snapshot.ItemMarketSnapshots)
+                .HasForeignKey(snapshot => new
+                {
+                    snapshot.AuctionMarketId,
+                    snapshot.ObservedAtUtc
+                });
         });
     }
 }

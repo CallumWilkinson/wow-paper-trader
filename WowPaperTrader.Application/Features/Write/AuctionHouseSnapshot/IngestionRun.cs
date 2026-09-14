@@ -1,4 +1,5 @@
 namespace WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot;
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates;
 
 public enum IngestionRunStatus
 {
@@ -19,6 +20,9 @@ public sealed class IngestionRun
     public DateTime FinishedAtUtc { get; private set; }
 
     public IngestionRunStatus Status { get; private set; } = IngestionRunStatus.Started;
+
+    //collection navigation property
+    public List<AuctionMarketSnapshot> MarketSnapshots { get; } = new();
 
     public string? ErrorMessage { get; private set; }
 
