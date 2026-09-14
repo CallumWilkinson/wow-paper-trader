@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot;
 using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.WowApiResult;
 using WowPaperTrader.Application.Features.Write.UpdateItems;
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates;
 
 namespace WowPaperTrader.Persistence;
 
@@ -19,9 +20,13 @@ public sealed class ApplicationDbContext : DbContext
 
     public DbSet<ItemMetaData> ItemMetaData { get; set; } = null!;
 
+    public DbSet<AuctionMarket> AuctionMarkets { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        //legacy schema
         modelBuilder.Entity<CommodityAuction>(entity =>
         {
             entity
@@ -37,12 +42,45 @@ public sealed class ApplicationDbContext : DbContext
                     auction.Quantity
                 });
         });
-
+        
+        //legacy schema
         modelBuilder.Entity<CommodityAuctionSnapshot>(entity =>
         {
             entity
                 .HasIndex(snapshot => snapshot.FetchedAtUtc)
                 .HasDatabaseName("IX_CommodityAuctionSnapshots_FetchedAtUtc");
+        });
+        
+        //new schema
+        modelBuilder.Entity<AuctionMarket>(entity =>
+        {
+            entity.Property(auctionMarket => auctionMarket.AuctionMarketType).HasConversion<int>();
+
+            entity.ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_AuctionMarkets_AuctionMarketType_ConnectedRealmId",
+                    """
+                    (
+                        ("AuctionMarketType" = 1 AND "ConnectedRealmId" IS NULL)
+                        OR
+                        ("AuctionMarketType" = 2 AND "ConnectedRealmId" IS NOT NULL)
+                    )
+                    """
+                );
+            });
+
+            entity
+                .HasIndex(auctionMarket => auctionMarket.Region)
+                .IsUnique()
+                .HasDatabaseName("UX_AuctionMarkets_Region_RegionalCommodities")
+                .HasFilter("\"AuctionMarketType\" = 1");
+            
+            entity.HasIndex(auctionMarket => new { auctionMarket.ConnectedRealmId, auctionMarket.Region })
+                .IsUnique()
+                .HasDatabaseName(
+                    "UX_AuctionMarkets_Region_ConnectedRealmId")
+                .HasFilter("\"MarketType\" = 2");
         });
     }
 }
