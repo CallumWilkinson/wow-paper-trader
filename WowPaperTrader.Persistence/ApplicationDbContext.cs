@@ -133,6 +133,22 @@ public sealed class ApplicationDbContext : DbContext
                     snapshot.AuctionMarketId,
                     snapshot.ObservedAtUtc
                 });
+
+            entity
+                .Property(snapshot => snapshot.LowerFenceUnitPrice)
+                .HasPrecision(28, 6);
+            
+            entity
+                .Property(snapshot => snapshot.UpperFenceUnitPrice)
+                .HasPrecision(28, 6);
+
+            entity
+                .Property(snapshot => snapshot.FilteredMeanUnitPrice)
+                .HasPrecision(28, 6);
+
+            entity
+                .Property(snapshot => snapshot.FilteredQuantityWeightedMeanUnitPrice)
+                .HasPrecision(28, 6);
         });
     }
 }
