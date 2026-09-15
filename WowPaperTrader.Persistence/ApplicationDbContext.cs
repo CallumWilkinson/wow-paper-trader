@@ -26,6 +26,8 @@ public sealed class ApplicationDbContext : DbContext
 
     public DbSet<ItemMarketSnapshot> ItemMarketSnapshots { get; set; } = null!;
 
+    public DbSet<CurrentPriceLevel> CurrentPriceLevels { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -150,5 +152,25 @@ public sealed class ApplicationDbContext : DbContext
                 .Property(snapshot => snapshot.FilteredQuantityWeightedMeanUnitPrice)
                 .HasPrecision(28, 6);
         });
+
+        modelBuilder.Entity<CurrentPriceLevel>(entity =>
+            {
+                entity.HasKey(priceLevel => new
+                {
+                    priceLevel.AuctionMarketId,
+                    priceLevel.ItemId,
+                    priceLevel.VariantKey,
+                    priceLevel.UnitPrice
+                });
+
+                entity.HasOne(priceLevel => priceLevel.AuctionMarketSnapshot)
+                    .WithMany(auctionMarketSnapshot => auctionMarketSnapshot.CurrentPriceLevels)
+                    .HasForeignKey(priceLevel => new
+                    {
+                        priceLevel.AuctionMarketId,
+                        priceLevel.ObservedAtUtc
+                    });
+            }
+        );
     }
 }

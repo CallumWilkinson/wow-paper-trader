@@ -22,4 +22,5 @@ public class AuctionMarketSnapshot(long auctionMarketId, DateTime fetchedAtUtc, 
     public List<ItemMarketSnapshot> ItemMarketSnapshots { get; } = new();
 
     public List<CurrentPriceLevel> CurrentPriceLevels { get; } = new();
+    
 }
