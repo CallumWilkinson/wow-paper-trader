@@ -16,6 +16,8 @@ public sealed class ItemMarketSnapshotConfig: IEntityTypeConfiguration<ItemMarke
             snapshot.ObservedAtUtc
         });
 
+        builder.HasIndex(snapshot => snapshot.ObservedAtUtc);
+
         builder
             .HasOne(snapshot => snapshot.AuctionMarketSnapshot)
             .WithMany(snapshot => snapshot.ItemMarketSnapshots)
