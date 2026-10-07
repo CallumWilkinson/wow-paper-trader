@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Respawn;
+using Respawn.Graph;
 using Testcontainers.PostgreSql;
 
 namespace WowPaperTrader.Persistence.Tests.TestFixtures;
@@ -48,7 +49,7 @@ public sealed class PostgreSqlTestDbFixture : IAsyncLifetime
     {
         await using ApplicationDbContext db = CreateDbContext();
         
-        await db.Database.EnsureCreatedAsync();
+        await db.Database.MigrateAsync();
         
     }
     
@@ -64,6 +65,10 @@ public sealed class PostgreSqlTestDbFixture : IAsyncLifetime
                 SchemasToInclude =
                 [
                     "public"
+                ],
+                TablesToIgnore = 
+                [
+                    new Table("public", "__EFMigrationsHistory")
                 ]
             });
     }
