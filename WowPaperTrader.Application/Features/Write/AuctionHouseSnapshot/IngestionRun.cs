@@ -22,7 +22,7 @@ public sealed class IngestionRun
     public IngestionRunStatus Status { get; private set; } = IngestionRunStatus.Started;
 
     //collection navigation property
-    public List<AuctionMarketSnapshot> MarketSnapshots { get; } = new();
+    public List<MarketSnapshot> MarketSnapshots { get; } = new();
 
     public string? ErrorMessage { get; private set; }
 

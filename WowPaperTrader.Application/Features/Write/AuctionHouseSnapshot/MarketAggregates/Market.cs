@@ -1,16 +1,16 @@
 namespace WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates;
 
-public sealed class AuctionMarket(string region, AuctionMarketType auctionMarketType, long? connectedRealmId, string displayName)
+public sealed class Market(string region, MarketType marketType, long? connectedRealmId, string displayName)
 {
     public long Id { get; private set; }
     
     public string Region { get; private set; } = region;
     
-    public AuctionMarketType AuctionMarketType { get; private set; } = auctionMarketType;
+    public MarketType MarketType { get; private set; } = marketType;
     
     public long? ConnectedRealmId { get; private set; } = connectedRealmId;
     
     public string DisplayName { get; private set; } = displayName;
 
-    public List<AuctionMarketSnapshot> MarketSnapshots { get; } = new();
+    public List<MarketSnapshot> MarketSnapshots { get; } = new();
 }

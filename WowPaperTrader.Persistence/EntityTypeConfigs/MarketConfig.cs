@@ -4,13 +4,16 @@ using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggre
 
 namespace WowPaperTrader.Persistence.EntityTypeConfigs;
 
-public sealed class AuctionMarketConfig : IEntityTypeConfiguration<AuctionMarket>
+public sealed class MarketConfig : IEntityTypeConfiguration<Market>
 {
-    public void Configure(EntityTypeBuilder<AuctionMarket> builder)
+    public void Configure(EntityTypeBuilder<Market> builder)
     {
-            builder.Property(auctionMarket => auctionMarket.AuctionMarketType).HasConversion<int>();
+            // Keep the existing schema names so the C# rename does not require a database migration.
+            builder.Property(market => market.MarketType)
+                .HasConversion<int>()
+                .HasColumnName("AuctionMarketType");
 
-            builder.ToTable(table =>
+            builder.ToTable("AuctionMarkets", table =>
             {
                 table.HasCheckConstraint(
                     "CK_AuctionMarkets_AuctionMarketType_ConnectedRealmId",
@@ -25,12 +28,12 @@ public sealed class AuctionMarketConfig : IEntityTypeConfiguration<AuctionMarket
             });
 
             builder
-                .HasIndex(auctionMarket => auctionMarket.Region)
+                .HasIndex(market => market.Region)
                 .IsUnique()
                 .HasDatabaseName("UX_AuctionMarkets_Region_RegionalCommodities")
                 .HasFilter("\"AuctionMarketType\" = 1");
             
-            builder.HasIndex(auctionMarket => new { auctionMarket.ConnectedRealmId, auctionMarket.Region })
+            builder.HasIndex(market => new { market.ConnectedRealmId, market.Region })
                 .IsUnique()
                 .HasDatabaseName(
                     "UX_AuctionMarkets_Region_ConnectedRealmId")
@@ -40,7 +43,7 @@ public sealed class AuctionMarketConfig : IEntityTypeConfiguration<AuctionMarket
             {
                 Id = 1L,
                 Region = "US",
-                AuctionMarketType = AuctionMarketType.Commodity,
+                MarketType = MarketType.Commodity,
                 ConnectedRealmId = (long?)null,
                 DisplayName = "US Commodities"
             });

@@ -8,20 +8,23 @@ public sealed class CurrentPriceLevelConfig: IEntityTypeConfiguration<CurrentPri
 {
     public void Configure(EntityTypeBuilder<CurrentPriceLevel> builder)
     {
+        builder.Property(priceLevel => priceLevel.MarketId).HasColumnName("AuctionMarketId");
+
         builder.HasKey(priceLevel => new
         {
-            priceLevel.AuctionMarketId,
+            priceLevel.MarketId,
             priceLevel.ItemId,
             priceLevel.VariantKey,
             priceLevel.UnitPrice
         });
 
-        builder.HasOne(priceLevel => priceLevel.AuctionMarketSnapshot)
-            .WithMany(auctionMarketSnapshot => auctionMarketSnapshot.CurrentPriceLevels)
+        builder.HasOne(priceLevel => priceLevel.MarketSnapshot)
+            .WithMany(marketSnapshot => marketSnapshot.CurrentPriceLevels)
             .HasForeignKey(priceLevel => new
             {
-                priceLevel.AuctionMarketId,
+                priceLevel.MarketId,
                 priceLevel.ObservedAtUtc
-            });
+            })
+            .HasConstraintName("FK_CurrentPriceLevels_AuctionMarketSnapshots_AuctionMarketId_O~");
     }
 }

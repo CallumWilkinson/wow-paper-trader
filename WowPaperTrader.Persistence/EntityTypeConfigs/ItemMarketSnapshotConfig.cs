@@ -8,9 +8,11 @@ public sealed class ItemMarketSnapshotConfig: IEntityTypeConfiguration<ItemMarke
 {
     public void Configure(EntityTypeBuilder<ItemMarketSnapshot> builder)
     {
+        builder.Property(snapshot => snapshot.MarketId).HasColumnName("AuctionMarketId");
+
         builder.HasKey(snapshot => new
         {
-            snapshot.AuctionMarketId,
+            snapshot.MarketId,
             snapshot.ItemId,
             snapshot.VariantKey,
             snapshot.ObservedAtUtc
@@ -19,13 +21,14 @@ public sealed class ItemMarketSnapshotConfig: IEntityTypeConfiguration<ItemMarke
         builder.HasIndex(snapshot => snapshot.ObservedAtUtc);
 
         builder
-            .HasOne(snapshot => snapshot.AuctionMarketSnapshot)
+            .HasOne(snapshot => snapshot.MarketSnapshot)
             .WithMany(snapshot => snapshot.ItemMarketSnapshots)
             .HasForeignKey(snapshot => new
             {
-                snapshot.AuctionMarketId,
+                snapshot.MarketId,
                 snapshot.ObservedAtUtc
-            });
+            })
+            .HasConstraintName("FK_ItemMarketSnapshots_AuctionMarketSnapshots_AuctionMarketId_~");
 
         builder
             .Property(snapshot => snapshot.LowerFenceUnitPrice)

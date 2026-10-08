@@ -17,9 +17,9 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<ItemMetaData> ItemMetaData { get; set; } = null!;
 
-    public DbSet<AuctionMarket> AuctionMarkets { get; set; } = null!;
+    public DbSet<Market> Markets { get; set; } = null!;
 
-    public DbSet<AuctionMarketSnapshot> AuctionMarketSnapshots { get; set; } = null!;
+    public DbSet<MarketSnapshot> MarketSnapshots { get; set; } = null!;
 
     public DbSet<ItemMarketSnapshot> ItemMarketSnapshots { get; set; } = null!;
 

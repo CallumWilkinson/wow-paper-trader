@@ -1,9 +1,9 @@
 namespace WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates;
 
-public class AuctionMarketSnapshot(long auctionMarketId, DateTime fetchedAtUtc, DateTime observedAtUtc, long ingestionRunId, string apiEndPoint)
+public class MarketSnapshot(long marketId, DateTime fetchedAtUtc, DateTime observedAtUtc, long ingestionRunId, string apiEndPoint)
 
 {
-    public long AuctionMarketId { get; private set; } = auctionMarketId;
+    public long MarketId { get; private set; } = marketId;
     
     public DateTime ObservedAtUtc { get; private set; } = observedAtUtc;   
     
@@ -14,7 +14,7 @@ public class AuctionMarketSnapshot(long auctionMarketId, DateTime fetchedAtUtc, 
     public string ApiEndPoint { get; private set; } = apiEndPoint;
     
     //Navigation property
-    public AuctionMarket AuctionMarket { get; private set; } = null;
+    public Market Market { get; private set; } = null;
 
     //Navigation property
     public IngestionRun IngestionRun { get; private set; } = null;

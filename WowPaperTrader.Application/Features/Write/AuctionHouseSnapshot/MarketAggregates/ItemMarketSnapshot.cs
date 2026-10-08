@@ -1,9 +1,9 @@
 namespace WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates;
 
-public class ItemMarketSnapshot( long auctionMarketId, long itemId, long variantKey, DateTime observedAtUtc)
+public class ItemMarketSnapshot( long marketId, long itemId, long variantKey, DateTime observedAtUtc)
 
 {
-    public long AuctionMarketId { get; private set; } = auctionMarketId;
+    public long MarketId { get; private set; } = marketId;
     
     public long ItemId { get; private set; } = itemId;
     
@@ -51,7 +51,7 @@ public class ItemMarketSnapshot( long auctionMarketId, long itemId, long variant
     public decimal? FilteredQuantityWeightedMeanUnitPrice { get; private set; }
     
     //Navigation property
-    public AuctionMarketSnapshot AuctionMarketSnapshot { get; private set; } = null;
+    public MarketSnapshot MarketSnapshot { get; private set; } = null;
     
     
 }

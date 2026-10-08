@@ -1,11 +1,11 @@
 namespace WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates;
 
-public class CurrentPriceLevel(long auctionMarketId, long itemId, long variantKey, long unitPrice, long totalQuantity, long listingCount, DateTime observedAtUtc)
+public class CurrentPriceLevel(long marketId, long itemId, long variantKey, long unitPrice, long totalQuantity, long listingCount, DateTime observedAtUtc)
 {
-    public long AuctionMarketId { get; private set; } = auctionMarketId;
+    public long MarketId { get; private set; } = marketId;
     
     //Navigation property
-    public AuctionMarketSnapshot AuctionMarketSnapshot { get; private set; } = null;
+    public MarketSnapshot MarketSnapshot { get; private set; } = null;
     
     public long ItemId { get; private set; } = itemId;
     
