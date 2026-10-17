@@ -1,12 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Respawn;
 using Respawn.Graph;
-using Testcontainers.PostgreSql;
 
 namespace WowPaperTrader.Persistence.Tests.TestFixtures;
 
-public abstract class PostgreSqlIntegrationTestDbFixture(string databaseName) : PostgreSqlTestDbFixtureBase("wowpapertrader_test")
+public sealed class PostgreSqlIntegrationTestDbFixture() : PostgreSqlTestDbFixtureBase("wowpapertrader_test")
 {
     private Respawner? _respawner;
     
