@@ -8,7 +8,7 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class ItemSearchReadServiceTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
+public sealed class ItemSearchReadServiceTests(PostgreSqlIntegrationTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
     
     [Fact]

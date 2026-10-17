@@ -4,9 +4,9 @@ using WowPaperTrader.Persistence.Tests.TestFixtures;
 namespace WowPaperTrader.Persistence.Tests.TestHelpers;
 
 [Collection(PostgreSqlDatabaseCollection.Name)]
-public abstract class PostgreSqlIntegrationTestBase(PostgreSqlTestDbFixture db) : IAsyncLifetime
+public abstract class PostgreSqlIntegrationTestBase(PostgreSqlIntegrationTestDbFixture db) : IAsyncLifetime
 {
-    protected PostgreSqlTestDbFixture Db { get; } = db;
+    protected PostgreSqlIntegrationTestDbFixture Db { get; } = db;
     
     public Task InitializeAsync()
     {

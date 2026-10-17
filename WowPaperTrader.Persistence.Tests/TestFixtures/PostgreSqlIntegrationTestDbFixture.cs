@@ -6,7 +6,7 @@ using Testcontainers.PostgreSql;
 
 namespace WowPaperTrader.Persistence.Tests.TestFixtures;
 
-public abstract class PostgreSqlTestDbFixture(string databaseName) : PostgreSqlTestDbFixtureBase("wowpapertrader_test")
+public abstract class PostgreSqlIntegrationTestDbFixture(string databaseName) : PostgreSqlTestDbFixtureBase("wowpapertrader_test")
 {
     private Respawner? _respawner;
     

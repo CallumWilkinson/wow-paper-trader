@@ -7,7 +7,7 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.CommandTests;
 
-public sealed class CommodityAuctionRepositoryTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
+public sealed class CommodityAuctionRepositoryTests(PostgreSqlIntegrationTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
 
 

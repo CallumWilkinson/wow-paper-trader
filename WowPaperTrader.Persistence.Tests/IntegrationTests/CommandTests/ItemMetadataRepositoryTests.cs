@@ -8,7 +8,7 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.CommandTests;
 
-public sealed class ItemMetadataRepositoryTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
+public sealed class ItemMetadataRepositoryTests(PostgreSqlIntegrationTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
     [Fact]
     public async Task SaveItemMetaDataAsync_Should_Save_AllPersistedFields()

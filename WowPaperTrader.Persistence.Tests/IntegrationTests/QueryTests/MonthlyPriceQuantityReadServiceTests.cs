@@ -6,7 +6,7 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
+public sealed class MonthlyPriceQuantityReadServiceTests(PostgreSqlIntegrationTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
     [Fact]
     public async Task

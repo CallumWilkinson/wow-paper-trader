@@ -6,7 +6,7 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.SchemaTests;
 
-public sealed class ItemMetaDataSchemaTests(PostgreSqlTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
+public sealed class ItemMetaDataSchemaTests(PostgreSqlIntegrationTestDbFixture db) : PostgreSqlIntegrationTestBase(db)
 {
     [Fact]
     public async Task ItemMetaData_Table_Should_Have_Expected_Columns()

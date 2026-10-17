@@ -5,7 +5,7 @@ using WowPaperTrader.Persistence.Tests.TestHelpers;
 
 namespace WowPaperTrader.Persistence.Tests.IntegrationTests.QueryTests;
 
-public sealed class ItemIdsWithoutMetadataReadServiceTests(PostgreSqlTestDbFixture db)
+public sealed class ItemIdsWithoutMetadataReadServiceTests(PostgreSqlIntegrationTestDbFixture db)
     : PostgreSqlIntegrationTestBase(db)
 {
     [Fact]
