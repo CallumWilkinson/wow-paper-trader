@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
@@ -26,6 +28,8 @@ public abstract class PostgreSqlTestDbFixtureBase(string databaseName) : IAsyncL
 
     private string ConnectionString => _postgreSqlContainer.GetConnectionString();
 
+    protected virtual string? TargetMigration => null;
+
     public virtual async Task InitializeAsync()
     {
         await _postgreSqlContainer.StartAsync();
@@ -43,7 +47,8 @@ public abstract class PostgreSqlTestDbFixtureBase(string databaseName) : IAsyncL
     {
         await using ApplicationDbContext db = CreateDbContext();
 
-        await db.Database.MigrateAsync();
+        var migrator = db.Database.GetService<IMigrator>();
+        await migrator.MigrateAsync(TargetMigration);
     }
 
     public ApplicationDbContext CreateDbContext()
