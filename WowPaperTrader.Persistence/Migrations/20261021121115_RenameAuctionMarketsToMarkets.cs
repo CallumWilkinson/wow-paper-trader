@@ -1,6 +1,4 @@
-﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -12,31 +10,28 @@ namespace WowPaperTrader.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_CurrentPriceLevels_AuctionMarketSnapshots_AuctionMarketId_O~",
-                table: "CurrentPriceLevels");
+            migrationBuilder.RenameTable(
+                name: "AuctionMarkets",
+                newName: "Markets");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_ItemMarketSnapshots_AuctionMarketSnapshots_AuctionMarketId_~",
-                table: "ItemMarketSnapshots");
+            migrationBuilder.RenameTable(
+                name: "AuctionMarketSnapshots",
+                newName: "MarketSnapshots");
 
-            migrationBuilder.DropTable(
-                name: "AuctionMarketSnapshots");
+            migrationBuilder.RenameColumn(
+                name: "AuctionMarketType",
+                table: "Markets",
+                newName: "MarketType");
 
-            migrationBuilder.DropTable(
-                name: "AuctionMarkets");
-
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_CurrentPriceLevels",
-                table: "CurrentPriceLevels");
-
-            migrationBuilder.DropIndex(
-                name: "IX_CurrentPriceLevels_AuctionMarketId_ObservedAtUtc",
-                table: "CurrentPriceLevels");
-
-            migrationBuilder.DropColumn(
+            migrationBuilder.RenameColumn(
                 name: "AuctionMarketId",
-                table: "CurrentPriceLevels");
+                table: "MarketSnapshots",
+                newName: "MarketId");
+
+            migrationBuilder.RenameColumn(
+                name: "AuctionMarketId",
+                table: "CurrentPriceLevels",
+                newName: "MarketId");
 
             migrationBuilder.RenameColumn(
                 name: "AuctionMarketId",
@@ -44,148 +39,215 @@ namespace WowPaperTrader.Persistence.Migrations
                 newName: "MarketId");
 
             migrationBuilder.RenameIndex(
+                name: "UX_AuctionMarkets_Region_ConnectedRealmId",
+                table: "Markets",
+                newName: "UX_Markets_Region_ConnectedRealmId");
+
+            migrationBuilder.RenameIndex(
+                name: "UX_AuctionMarkets_Region_RegionalCommodities",
+                table: "Markets",
+                newName: "UX_Markets_Region_RegionalCommodities");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_AuctionMarketSnapshots_IngestionRunId",
+                table: "MarketSnapshots",
+                newName: "IX_MarketSnapshots_IngestionRunId");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_CurrentPriceLevels_AuctionMarketId_ObservedAtUtc",
+                table: "CurrentPriceLevels",
+                newName: "IX_CurrentPriceLevels_MarketId_ObservedAtUtc");
+
+            migrationBuilder.RenameIndex(
                 name: "IX_ItemMarketSnapshots_AuctionMarketId_ObservedAtUtc",
                 table: "ItemMarketSnapshots",
                 newName: "IX_ItemMarketSnapshots_MarketId_ObservedAtUtc");
 
-            migrationBuilder.RenameColumn(
-                name: "AuctionMarketSnapshotId",
-                table: "CurrentPriceLevels",
-                newName: "MarketId");
+            migrationBuilder.Sql(
+                """
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "PK_AuctionMarkets" TO "PK_Markets";
 
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_CurrentPriceLevels",
-                table: "CurrentPriceLevels",
-                columns: new[] { "MarketId", "ItemId", "VariantKey", "UnitPrice" });
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "CK_AuctionMarkets_AuctionMarketType_ConnectedRealmId"
+                    TO "CK_Markets_MarketType_ConnectedRealmId";
 
-            migrationBuilder.CreateTable(
-                name: "Markets",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Region = table.Column<string>(type: "text", nullable: false),
-                    MarketType = table.Column<int>(type: "integer", nullable: false),
-                    ConnectedRealmId = table.Column<long>(type: "bigint", nullable: true),
-                    DisplayName = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Markets", x => x.Id);
-                    table.CheckConstraint("CK_Markets_MarketType_ConnectedRealmId", "(\n    (\"MarketType\" = 1 AND \"ConnectedRealmId\" IS NULL)\n    OR\n    (\"MarketType\" = 2 AND \"ConnectedRealmId\" IS NOT NULL)\n)");
-                });
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "AuctionMarkets_Id_not_null" TO "Markets_Id_not_null";
 
-            migrationBuilder.CreateTable(
-                name: "MarketSnapshots",
-                columns: table => new
-                {
-                    MarketId = table.Column<long>(type: "bigint", nullable: false),
-                    ObservedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FetchedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IngestionRunId = table.Column<long>(type: "bigint", nullable: false),
-                    ApiEndPoint = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MarketSnapshots", x => new { x.MarketId, x.ObservedAtUtc });
-                    table.ForeignKey(
-                        name: "FK_MarketSnapshots_IngestionRuns_IngestionRunId",
-                        column: x => x.IngestionRunId,
-                        principalTable: "IngestionRuns",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MarketSnapshots_Markets_MarketId",
-                        column: x => x.MarketId,
-                        principalTable: "Markets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "AuctionMarkets_Region_not_null" TO "Markets_Region_not_null";
 
-            migrationBuilder.InsertData(
-                table: "Markets",
-                columns: new[] { "Id", "ConnectedRealmId", "DisplayName", "MarketType", "Region" },
-                values: new object[] { 1L, null, "US Commodities", 1, "US" });
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "AuctionMarkets_AuctionMarketType_not_null" TO "Markets_MarketType_not_null";
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemMarketSnapshots_ObservedAtUtc",
-                table: "ItemMarketSnapshots",
-                column: "ObservedAtUtc");
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "AuctionMarkets_DisplayName_not_null" TO "Markets_DisplayName_not_null";
 
-            migrationBuilder.CreateIndex(
-                name: "IX_CurrentPriceLevels_MarketId_ObservedAtUtc",
-                table: "CurrentPriceLevels",
-                columns: new[] { "MarketId", "ObservedAtUtc" });
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "PK_AuctionMarketSnapshots" TO "PK_MarketSnapshots";
 
-            migrationBuilder.CreateIndex(
-                name: "UX_Markets_Region_ConnectedRealmId",
-                table: "Markets",
-                columns: new[] { "ConnectedRealmId", "Region" },
-                unique: true,
-                filter: "\"MarketType\" = 2");
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "FK_AuctionMarketSnapshots_AuctionMarkets_AuctionMarketId"
+                    TO "FK_MarketSnapshots_Markets_MarketId";
 
-            migrationBuilder.CreateIndex(
-                name: "UX_Markets_Region_RegionalCommodities",
-                table: "Markets",
-                column: "Region",
-                unique: true,
-                filter: "\"MarketType\" = 1");
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "FK_AuctionMarketSnapshots_IngestionRuns_IngestionRunId"
+                    TO "FK_MarketSnapshots_IngestionRuns_IngestionRunId";
 
-            migrationBuilder.CreateIndex(
-                name: "IX_MarketSnapshots_IngestionRunId",
-                table: "MarketSnapshots",
-                column: "IngestionRunId");
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "AuctionMarketSnapshot_AuctionMarketId_not_null"
+                    TO "MarketSnapshots_MarketId_not_null";
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_CurrentPriceLevels_MarketSnapshots_MarketId_O~",
-                table: "CurrentPriceLevels",
-                columns: new[] { "MarketId", "ObservedAtUtc" },
-                principalTable: "MarketSnapshots",
-                principalColumns: new[] { "MarketId", "ObservedAtUtc" },
-                onDelete: ReferentialAction.Cascade);
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "AuctionMarketSnapshots_ObservedAtUtc_not_null"
+                    TO "MarketSnapshots_ObservedAtUtc_not_null";
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_ItemMarketSnapshots_MarketSnapshots_MarketId_~",
-                table: "ItemMarketSnapshots",
-                columns: new[] { "MarketId", "ObservedAtUtc" },
-                principalTable: "MarketSnapshots",
-                principalColumns: new[] { "MarketId", "ObservedAtUtc" },
-                onDelete: ReferentialAction.Cascade);
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "AuctionMarketSnapshot_FetchedAtUtc_not_null"
+                    TO "MarketSnapshots_FetchedAtUtc_not_null";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "AuctionMarketSnapshot_IngestionRunId_not_null"
+                    TO "MarketSnapshots_IngestionRunId_not_null";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "AuctionMarketSnapshot_ApiEndPoint_not_null"
+                    TO "MarketSnapshots_ApiEndPoint_not_null";
+
+                ALTER TABLE "CurrentPriceLevels"
+                    RENAME CONSTRAINT "FK_CurrentPriceLevels_AuctionMarketSnapshots_AuctionMarketId_O~"
+                    TO "FK_CurrentPriceLevels_MarketSnapshots_MarketId_O~";
+
+                ALTER TABLE "CurrentPriceLevels"
+                    RENAME CONSTRAINT "CurrentPriceLevel_AuctionMarketSnapshotAuctionMarketId_not_null"
+                    TO "CurrentPriceLevels_MarketId_not_null";
+
+                ALTER TABLE "CurrentPriceLevels"
+                    RENAME CONSTRAINT "CurrentPriceLevel_AuctionMarketSnapshotObservedAtUtc_not_null"
+                    TO "CurrentPriceLevels_ObservedAtUtc_not_null";
+
+                ALTER TABLE "ItemMarketSnapshots"
+                    RENAME CONSTRAINT "FK_ItemMarketSnapshots_AuctionMarketSnapshots_AuctionMarketId_~"
+                    TO "FK_ItemMarketSnapshots_MarketSnapshots_MarketId_~";
+
+                ALTER TABLE "ItemMarketSnapshots"
+                    RENAME CONSTRAINT "ItemMarketSnapshot_AuctionMarketSnapshotId_not_null"
+                    TO "ItemMarketSnapshots_MarketId_not_null";
+
+                ALTER SEQUENCE "AuctionMarkets_Id_seq" RENAME TO "Markets_Id_seq";
+                """);
+
+            migrationBuilder.Sql(
+                """
+                SELECT setval(
+                    '"Markets_Id_seq"',
+                    GREATEST(
+                        (SELECT COALESCE(MAX("Id"), 1) FROM "Markets"),
+                        (SELECT last_value FROM "Markets_Id_seq")
+                    ),
+                    true
+                );
+                """);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_CurrentPriceLevels_MarketSnapshots_MarketId_O~",
-                table: "CurrentPriceLevels");
+            migrationBuilder.Sql(
+                """
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "PK_Markets" TO "PK_AuctionMarkets";
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_ItemMarketSnapshots_MarketSnapshots_MarketId_~",
-                table: "ItemMarketSnapshots");
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "CK_Markets_MarketType_ConnectedRealmId"
+                    TO "CK_AuctionMarkets_AuctionMarketType_ConnectedRealmId";
 
-            migrationBuilder.DropTable(
-                name: "MarketSnapshots");
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "Markets_Id_not_null" TO "AuctionMarkets_Id_not_null";
 
-            migrationBuilder.DropTable(
-                name: "Markets");
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "Markets_Region_not_null" TO "AuctionMarkets_Region_not_null";
 
-            migrationBuilder.DropIndex(
-                name: "IX_ItemMarketSnapshots_ObservedAtUtc",
-                table: "ItemMarketSnapshots");
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "Markets_MarketType_not_null" TO "AuctionMarkets_AuctionMarketType_not_null";
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_CurrentPriceLevels",
-                table: "CurrentPriceLevels");
+                ALTER TABLE "Markets"
+                    RENAME CONSTRAINT "Markets_DisplayName_not_null" TO "AuctionMarkets_DisplayName_not_null";
 
-            migrationBuilder.DropIndex(
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "PK_MarketSnapshots" TO "PK_AuctionMarketSnapshots";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "FK_MarketSnapshots_Markets_MarketId"
+                    TO "FK_AuctionMarketSnapshots_AuctionMarkets_AuctionMarketId";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "FK_MarketSnapshots_IngestionRuns_IngestionRunId"
+                    TO "FK_AuctionMarketSnapshots_IngestionRuns_IngestionRunId";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "MarketSnapshots_MarketId_not_null"
+                    TO "AuctionMarketSnapshot_AuctionMarketId_not_null";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "MarketSnapshots_ObservedAtUtc_not_null"
+                    TO "AuctionMarketSnapshots_ObservedAtUtc_not_null";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "MarketSnapshots_FetchedAtUtc_not_null"
+                    TO "AuctionMarketSnapshot_FetchedAtUtc_not_null";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "MarketSnapshots_IngestionRunId_not_null"
+                    TO "AuctionMarketSnapshot_IngestionRunId_not_null";
+
+                ALTER TABLE "MarketSnapshots"
+                    RENAME CONSTRAINT "MarketSnapshots_ApiEndPoint_not_null"
+                    TO "AuctionMarketSnapshot_ApiEndPoint_not_null";
+
+                ALTER TABLE "CurrentPriceLevels"
+                    RENAME CONSTRAINT "FK_CurrentPriceLevels_MarketSnapshots_MarketId_O~"
+                    TO "FK_CurrentPriceLevels_AuctionMarketSnapshots_AuctionMarketId_O~";
+
+                ALTER TABLE "CurrentPriceLevels"
+                    RENAME CONSTRAINT "CurrentPriceLevels_MarketId_not_null"
+                    TO "CurrentPriceLevel_AuctionMarketSnapshotAuctionMarketId_not_null";
+
+                ALTER TABLE "CurrentPriceLevels"
+                    RENAME CONSTRAINT "CurrentPriceLevels_ObservedAtUtc_not_null"
+                    TO "CurrentPriceLevel_AuctionMarketSnapshotObservedAtUtc_not_null";
+
+                ALTER TABLE "ItemMarketSnapshots"
+                    RENAME CONSTRAINT "FK_ItemMarketSnapshots_MarketSnapshots_MarketId_~"
+                    TO "FK_ItemMarketSnapshots_AuctionMarketSnapshots_AuctionMarketId_~";
+
+                ALTER TABLE "ItemMarketSnapshots"
+                    RENAME CONSTRAINT "ItemMarketSnapshots_MarketId_not_null"
+                    TO "ItemMarketSnapshot_AuctionMarketSnapshotId_not_null";
+
+                ALTER SEQUENCE "Markets_Id_seq" RENAME TO "AuctionMarkets_Id_seq";
+                """);
+
+            migrationBuilder.RenameIndex(
+                name: "UX_Markets_Region_ConnectedRealmId",
+                table: "Markets",
+                newName: "UX_AuctionMarkets_Region_ConnectedRealmId");
+
+            migrationBuilder.RenameIndex(
+                name: "UX_Markets_Region_RegionalCommodities",
+                table: "Markets",
+                newName: "UX_AuctionMarkets_Region_RegionalCommodities");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_MarketSnapshots_IngestionRunId",
+                table: "MarketSnapshots",
+                newName: "IX_AuctionMarketSnapshots_IngestionRunId");
+
+            migrationBuilder.RenameIndex(
                 name: "IX_CurrentPriceLevels_MarketId_ObservedAtUtc",
-                table: "CurrentPriceLevels");
-
-            migrationBuilder.RenameColumn(
-                name: "MarketId",
-                table: "ItemMarketSnapshots",
-                newName: "AuctionMarketId");
+                table: "CurrentPriceLevels",
+                newName: "IX_CurrentPriceLevels_AuctionMarketId_ObservedAtUtc");
 
             migrationBuilder.RenameIndex(
                 name: "IX_ItemMarketSnapshots_MarketId_ObservedAtUtc",
@@ -193,110 +255,32 @@ namespace WowPaperTrader.Persistence.Migrations
                 newName: "IX_ItemMarketSnapshots_AuctionMarketId_ObservedAtUtc");
 
             migrationBuilder.RenameColumn(
+                name: "MarketType",
+                table: "Markets",
+                newName: "AuctionMarketType");
+
+            migrationBuilder.RenameColumn(
+                name: "MarketId",
+                table: "MarketSnapshots",
+                newName: "AuctionMarketId");
+
+            migrationBuilder.RenameColumn(
                 name: "MarketId",
                 table: "CurrentPriceLevels",
-                newName: "AuctionMarketSnapshotId");
+                newName: "AuctionMarketId");
 
-            migrationBuilder.AddColumn<long>(
-                name: "AuctionMarketId",
-                table: "CurrentPriceLevels",
-                type: "bigint",
-                nullable: false,
-                defaultValue: 0L);
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_CurrentPriceLevels",
-                table: "CurrentPriceLevels",
-                columns: new[] { "AuctionMarketId", "ItemId", "VariantKey", "UnitPrice" });
-
-            migrationBuilder.CreateTable(
-                name: "AuctionMarkets",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AuctionMarketType = table.Column<int>(type: "integer", nullable: false),
-                    ConnectedRealmId = table.Column<long>(type: "bigint", nullable: true),
-                    DisplayName = table.Column<string>(type: "text", nullable: false),
-                    Region = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuctionMarkets", x => x.Id);
-                    table.CheckConstraint("CK_AuctionMarkets_AuctionMarketType_ConnectedRealmId", "(\n    (\"AuctionMarketType\" = 1 AND \"ConnectedRealmId\" IS NULL)\n    OR\n    (\"AuctionMarketType\" = 2 AND \"ConnectedRealmId\" IS NOT NULL)\n)");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AuctionMarketSnapshots",
-                columns: table => new
-                {
-                    AuctionMarketId = table.Column<long>(type: "bigint", nullable: false),
-                    ObservedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IngestionRunId = table.Column<long>(type: "bigint", nullable: false),
-                    ApiEndPoint = table.Column<string>(type: "text", nullable: false),
-                    FetchedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuctionMarketSnapshots", x => new { x.AuctionMarketId, x.ObservedAtUtc });
-                    table.ForeignKey(
-                        name: "FK_AuctionMarketSnapshots_AuctionMarkets_AuctionMarketId",
-                        column: x => x.AuctionMarketId,
-                        principalTable: "AuctionMarkets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AuctionMarketSnapshots_IngestionRuns_IngestionRunId",
-                        column: x => x.IngestionRunId,
-                        principalTable: "IngestionRuns",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "AuctionMarkets",
-                columns: new[] { "Id", "AuctionMarketType", "ConnectedRealmId", "DisplayName", "Region" },
-                values: new object[] { 1L, 1, null, "US Commodities", "US" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CurrentPriceLevels_AuctionMarketId_ObservedAtUtc",
-                table: "CurrentPriceLevels",
-                columns: new[] { "AuctionMarketId", "ObservedAtUtc" });
-
-            migrationBuilder.CreateIndex(
-                name: "UX_AuctionMarkets_Region_ConnectedRealmId",
-                table: "AuctionMarkets",
-                columns: new[] { "ConnectedRealmId", "Region" },
-                unique: true,
-                filter: "\"AuctionMarketType\" = 2");
-
-            migrationBuilder.CreateIndex(
-                name: "UX_AuctionMarkets_Region_RegionalCommodities",
-                table: "AuctionMarkets",
-                column: "Region",
-                unique: true,
-                filter: "\"AuctionMarketType\" = 1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AuctionMarketSnapshots_IngestionRunId",
-                table: "AuctionMarketSnapshots",
-                column: "IngestionRunId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_CurrentPriceLevels_AuctionMarketSnapshots_AuctionMarketId_O~",
-                table: "CurrentPriceLevels",
-                columns: new[] { "AuctionMarketId", "ObservedAtUtc" },
-                principalTable: "AuctionMarketSnapshots",
-                principalColumns: new[] { "AuctionMarketId", "ObservedAtUtc" },
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ItemMarketSnapshots_AuctionMarketSnapshots_AuctionMarketId_~",
+            migrationBuilder.RenameColumn(
+                name: "MarketId",
                 table: "ItemMarketSnapshots",
-                columns: new[] { "AuctionMarketId", "ObservedAtUtc" },
-                principalTable: "AuctionMarketSnapshots",
-                principalColumns: new[] { "AuctionMarketId", "ObservedAtUtc" },
-                onDelete: ReferentialAction.Cascade);
+                newName: "AuctionMarketId");
+
+            migrationBuilder.RenameTable(
+                name: "MarketSnapshots",
+                newName: "AuctionMarketSnapshots");
+
+            migrationBuilder.RenameTable(
+                name: "Markets",
+                newName: "AuctionMarkets");
         }
     }
 }
