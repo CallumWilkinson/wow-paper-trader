@@ -60,6 +60,25 @@ public sealed class MigrationTests(PostgreSqlMigrationTestFixture db) : IClassFi
     [Fact]
     public async Task SeededMarket_DoesNotConflictWithGeneratedIds()
     {
+        await using var dbContext = db.CreateDbContext();
 
+        await dbContext.Database.OpenConnectionAsync();
+
+        await using var command = dbContext.Database
+            .GetDbConnection()
+            .CreateCommand();
+
+        command.CommandText =
+            """
+            INSERT INTO public."Markets"
+                ("Region", "MarketType", "ConnectedRealmId", "DisplayName")
+            VALUES
+                ('EU', 1, NULL, 'EU Commodities')
+            RETURNING "Id";
+            """;
+
+        var generatedId = (long)(await command.ExecuteScalarAsync())!;
+
+        Assert.NotEqual(1, generatedId);
     }
 }
