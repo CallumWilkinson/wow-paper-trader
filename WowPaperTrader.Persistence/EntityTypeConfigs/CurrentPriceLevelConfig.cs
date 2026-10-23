@@ -8,7 +8,7 @@ public sealed class CurrentPriceLevelConfig: IEntityTypeConfiguration<CurrentPri
 {
     public void Configure(EntityTypeBuilder<CurrentPriceLevel> builder)
     {
-        builder.Property(priceLevel => priceLevel.MarketId).HasColumnName("AuctionMarketId");
+        builder.Property(priceLevel => priceLevel.MarketId).HasColumnName("MarketId");
 
         builder.HasKey(priceLevel => new
         {
@@ -25,6 +25,6 @@ public sealed class CurrentPriceLevelConfig: IEntityTypeConfiguration<CurrentPri
                 priceLevel.MarketId,
                 priceLevel.ObservedAtUtc
             })
-            .HasConstraintName("FK_CurrentPriceLevels_AuctionMarketSnapshots_AuctionMarketId_O~");
+            .HasConstraintName("FK_CurrentPriceLevels_MarketSnapshots_MarketId_O~");
     }
 }

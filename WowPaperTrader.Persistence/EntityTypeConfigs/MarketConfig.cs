@@ -11,17 +11,17 @@ public sealed class MarketConfig : IEntityTypeConfiguration<Market>
             // Keep the existing schema names so the C# rename does not require a database migration.
             builder.Property(market => market.MarketType)
                 .HasConversion<int>()
-                .HasColumnName("AuctionMarketType");
+                .HasColumnName("MarketType");
 
-            builder.ToTable("AuctionMarkets", table =>
+            builder.ToTable("Markets", table =>
             {
                 table.HasCheckConstraint(
-                    "CK_AuctionMarkets_AuctionMarketType_ConnectedRealmId",
+                    "CK_Markets_MarketType_ConnectedRealmId",
                     """
                     (
-                        ("AuctionMarketType" = 1 AND "ConnectedRealmId" IS NULL)
+                        ("MarketType" = 1 AND "ConnectedRealmId" IS NULL)
                         OR
-                        ("AuctionMarketType" = 2 AND "ConnectedRealmId" IS NOT NULL)
+                        ("MarketType" = 2 AND "ConnectedRealmId" IS NOT NULL)
                     )
                     """
                 );
@@ -30,14 +30,14 @@ public sealed class MarketConfig : IEntityTypeConfiguration<Market>
             builder
                 .HasIndex(market => market.Region)
                 .IsUnique()
-                .HasDatabaseName("UX_AuctionMarkets_Region_RegionalCommodities")
-                .HasFilter("\"AuctionMarketType\" = 1");
+                .HasDatabaseName("UX_Markets_Region_RegionalCommodities")
+                .HasFilter("\"MarketType\" = 1");
             
             builder.HasIndex(market => new { market.ConnectedRealmId, market.Region })
                 .IsUnique()
                 .HasDatabaseName(
-                    "UX_AuctionMarkets_Region_ConnectedRealmId")
-                .HasFilter("\"AuctionMarketType\" = 2");
+                    "UX_Markets_Region_ConnectedRealmId")
+                .HasFilter("\"MarketType\" = 2");
 
             builder.HasData(new
             {

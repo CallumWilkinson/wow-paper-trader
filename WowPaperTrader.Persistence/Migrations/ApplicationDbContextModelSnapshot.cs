@@ -53,87 +53,11 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.ToTable("IngestionRuns");
                 });
 
-            modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.Market", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("MarketType")
-                        .HasColumnType("integer")
-                        .HasColumnName("AuctionMarketType");
-
-                    b.Property<long?>("ConnectedRealmId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Region")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Region")
-                        .IsUnique()
-                        .HasDatabaseName("UX_AuctionMarkets_Region_RegionalCommodities")
-                        .HasFilter("\"AuctionMarketType\" = 1");
-
-                    b.HasIndex("ConnectedRealmId", "Region")
-                        .IsUnique()
-                        .HasDatabaseName("UX_AuctionMarkets_Region_ConnectedRealmId")
-                        .HasFilter("\"AuctionMarketType\" = 2");
-
-                    b.ToTable("AuctionMarkets", t =>
-                        {
-                            t.HasCheckConstraint("CK_AuctionMarkets_AuctionMarketType_ConnectedRealmId", "(\r\n    (\"AuctionMarketType\" = 1 AND \"ConnectedRealmId\" IS NULL)\r\n    OR\r\n    (\"AuctionMarketType\" = 2 AND \"ConnectedRealmId\" IS NOT NULL)\r\n)");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            MarketType = 1,
-                            DisplayName = "US Commodities",
-                            Region = "US"
-                        });
-                });
-
-            modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.MarketSnapshot", b =>
-                {
-                    b.Property<long>("MarketId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("AuctionMarketId");
-
-                    b.Property<DateTime>("ObservedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ApiEndPoint")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("FetchedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("IngestionRunId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("MarketId", "ObservedAtUtc");
-
-                    b.HasIndex("IngestionRunId");
-
-                    b.ToTable("AuctionMarketSnapshots");
-                });
-
             modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.CurrentPriceLevel", b =>
                 {
                     b.Property<long>("MarketId")
                         .HasColumnType("bigint")
-                        .HasColumnName("AuctionMarketId");
+                        .HasColumnName("MarketId");
 
                     b.Property<long>("ItemId")
                         .HasColumnType("bigint");
@@ -164,7 +88,7 @@ namespace WowPaperTrader.Persistence.Migrations
                 {
                     b.Property<long>("MarketId")
                         .HasColumnType("bigint")
-                        .HasColumnName("AuctionMarketId");
+                        .HasColumnName("MarketId");
 
                     b.Property<long>("ItemId")
                         .HasColumnType("bigint");
@@ -240,6 +164,82 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.HasIndex("MarketId", "ObservedAtUtc");
 
                     b.ToTable("ItemMarketSnapshots");
+                });
+
+            modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.Market", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("ConnectedRealmId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MarketType")
+                        .HasColumnType("integer")
+                        .HasColumnName("MarketType");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Region")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Markets_Region_RegionalCommodities")
+                        .HasFilter("\"MarketType\" = 1");
+
+                    b.HasIndex("ConnectedRealmId", "Region")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Markets_Region_ConnectedRealmId")
+                        .HasFilter("\"MarketType\" = 2");
+
+                    b.ToTable("Markets", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Markets_MarketType_ConnectedRealmId", "(\n    (\"MarketType\" = 1 AND \"ConnectedRealmId\" IS NULL)\n    OR\n    (\"MarketType\" = 2 AND \"ConnectedRealmId\" IS NOT NULL)\n)");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            DisplayName = "US Commodities",
+                            MarketType = 1,
+                            Region = "US"
+                        });
+                });
+
+            modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.MarketSnapshot", b =>
+                {
+                    b.Property<long>("MarketId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("MarketId");
+
+                    b.Property<DateTime>("ObservedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ApiEndPoint")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FetchedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("IngestionRunId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("MarketId", "ObservedAtUtc");
+
+                    b.HasIndex("IngestionRunId");
+
+                    b.ToTable("MarketSnapshots", (string)null);
                 });
 
             modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.WowApiResult.CommodityAuction", b =>
@@ -395,26 +395,6 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.ToTable("ItemMetaData");
                 });
 
-            modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.MarketSnapshot", b =>
-                {
-                    b.HasOne("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.Market", "Market")
-                        .WithMany("MarketSnapshots")
-                        .HasForeignKey("MarketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_AuctionMarketSnapshots_AuctionMarkets_AuctionMarketId");
-
-                    b.HasOne("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.IngestionRun", "IngestionRun")
-                        .WithMany("MarketSnapshots")
-                        .HasForeignKey("IngestionRunId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Market");
-
-                    b.Navigation("IngestionRun");
-                });
-
             modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.CurrentPriceLevel", b =>
                 {
                     b.HasOne("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.MarketSnapshot", "MarketSnapshot")
@@ -422,7 +402,7 @@ namespace WowPaperTrader.Persistence.Migrations
                         .HasForeignKey("MarketId", "ObservedAtUtc")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_CurrentPriceLevels_AuctionMarketSnapshots_AuctionMarketId_O~");
+                        .HasConstraintName("FK_CurrentPriceLevels_MarketSnapshots_MarketId_O~");
 
                     b.Navigation("MarketSnapshot");
                 });
@@ -434,9 +414,29 @@ namespace WowPaperTrader.Persistence.Migrations
                         .HasForeignKey("MarketId", "ObservedAtUtc")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_ItemMarketSnapshots_AuctionMarketSnapshots_AuctionMarketId_~");
+                        .HasConstraintName("FK_ItemMarketSnapshots_MarketSnapshots_MarketId_~");
 
                     b.Navigation("MarketSnapshot");
+                });
+
+            modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.MarketSnapshot", b =>
+                {
+                    b.HasOne("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.IngestionRun", "IngestionRun")
+                        .WithMany("MarketSnapshots")
+                        .HasForeignKey("IngestionRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.Market", "Market")
+                        .WithMany("MarketSnapshots")
+                        .HasForeignKey("MarketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_MarketSnapshots_Markets_MarketId");
+
+                    b.Navigation("IngestionRun");
+
+                    b.Navigation("Market");
                 });
 
             modelBuilder.Entity("WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.WowApiResult.CommodityAuction", b =>

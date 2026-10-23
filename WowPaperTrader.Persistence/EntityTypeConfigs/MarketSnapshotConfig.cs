@@ -8,8 +8,8 @@ public sealed class MarketSnapshotConfig: IEntityTypeConfiguration<MarketSnapsho
 {
     public void Configure(EntityTypeBuilder<MarketSnapshot> builder)
     {
-        builder.ToTable("AuctionMarketSnapshots");
-        builder.Property(snapshot => snapshot.MarketId).HasColumnName("AuctionMarketId");
+        builder.ToTable("MarketSnapshots");
+        builder.Property(snapshot => snapshot.MarketId).HasColumnName("MarketId");
 
         builder.HasKey(snapshot => new
         {
@@ -21,7 +21,7 @@ public sealed class MarketSnapshotConfig: IEntityTypeConfiguration<MarketSnapsho
             .HasOne(snapshot => snapshot.Market)
             .WithMany(market => market.MarketSnapshots)
             .HasForeignKey(snapshot => snapshot.MarketId)
-            .HasConstraintName("FK_AuctionMarketSnapshots_AuctionMarkets_AuctionMarketId");
+            .HasConstraintName("FK_MarketSnapshots_Markets_MarketId");
 
         builder
             .HasOne(snapshot => snapshot.IngestionRun)
