@@ -60,11 +60,11 @@ public sealed class MigrationTests(PostgreSqlMigrationTestFixture db) : IClassFi
     [Fact]
     public async Task SeededMarket_DoesNotConflictWithGeneratedIds()
     {
-        await using var dbContext = db.CreateDbContext();
+        await using var arrangeDbContext = db.CreateDbContext();
 
-        await dbContext.Database.OpenConnectionAsync();
+        await arrangeDbContext.Database.OpenConnectionAsync();
 
-        await using var command = dbContext.Database
+        await using var command = arrangeDbContext.Database
             .GetDbConnection()
             .CreateCommand();
 
@@ -80,5 +80,19 @@ public sealed class MigrationTests(PostgreSqlMigrationTestFixture db) : IClassFi
         var generatedId = (long)(await command.ExecuteScalarAsync())!;
 
         Assert.NotEqual(1, generatedId);
+    }
+
+    [Fact]
+    public void EfModel_HasNoPendingChanges()
+    {
+        //arrange
+        using var arrangeDbContext = db.CreateDbContext();
+        
+        //act
+        var hasPendingChanges = arrangeDbContext.Database.HasPendingModelChanges();
+        
+        //assert
+        Assert.False(hasPendingChanges);
+
     }
 }
