@@ -20,29 +20,29 @@ public class ItemMarketSnapshot( long marketId, long itemId, long variantKey, Da
     
     public decimal MeanUnitPrice { get; private set; }
     
-    public decimal QuantityWeightedMeanUnitPrice { get; private set; }
+    public decimal? QuantityWeightedMeanUnitPrice { get; private set; }
     
-    public long P10UnitPrice { get; private set; }
+    public long? P10UnitPrice { get; private set; }
     
-    public long P25UnitPrice { get; private set; }
+    public long? P25UnitPrice { get; private set; }
     
     public long MedianUnitPrice { get; private set; }
     
-    public long P75UnitPrice { get; private set; }
+    public long? P75UnitPrice { get; private set; }
     
-    public long P90UnitPrice { get; private set; }
+    public long? P90UnitPrice { get; private set; }
     
     //Filtering
-    public decimal LowerFenceUnitPrice { get; private set; }
+    public decimal? LowerFenceUnitPrice { get; private set; }
     
-    public decimal UpperFenceUnitPrice { get; private set; }
+    public decimal? UpperFenceUnitPrice { get; private set; }
     
-    public bool FilterApplied { get; private set; }
+    public bool? FilterApplied { get; private set; }
     
     //Filtered aggregates
-    public long FilteredListingCount { get; private set; }
+    public long? FilteredListingCount { get; private set; }
     
-    public long FilteredTotalQuantity { get; private set; }
+    public long? FilteredTotalQuantity { get; private set; }
     
     public long? FilteredMinimumUnitPrice { get; private set; }
     
