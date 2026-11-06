@@ -99,10 +99,10 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.Property<DateTime>("ObservedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("FilterApplied")
+                    b.Property<bool?>("FilterApplied")
                         .HasColumnType("boolean");
 
-                    b.Property<long>("FilteredListingCount")
+                    b.Property<long?>("FilteredListingCount")
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("FilteredMeanUnitPrice")
@@ -116,13 +116,13 @@ namespace WowPaperTrader.Persistence.Migrations
                         .HasPrecision(28, 6)
                         .HasColumnType("numeric(28,6)");
 
-                    b.Property<long>("FilteredTotalQuantity")
+                    b.Property<long?>("FilteredTotalQuantity")
                         .HasColumnType("bigint");
 
                     b.Property<long>("ListingCount")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("LowerFenceUnitPrice")
+                    b.Property<decimal?>("LowerFenceUnitPrice")
                         .HasPrecision(28, 6)
                         .HasColumnType("numeric(28,6)");
 
@@ -135,25 +135,25 @@ namespace WowPaperTrader.Persistence.Migrations
                     b.Property<long>("MinimumUnitPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("P10UnitPrice")
+                    b.Property<long?>("P10UnitPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("P25UnitPrice")
+                    b.Property<long?>("P25UnitPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("P75UnitPrice")
+                    b.Property<long?>("P75UnitPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("P90UnitPrice")
+                    b.Property<long?>("P90UnitPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("QuantityWeightedMeanUnitPrice")
+                    b.Property<decimal?>("QuantityWeightedMeanUnitPrice")
                         .HasColumnType("numeric");
 
                     b.Property<long>("TotalQuantity")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("UpperFenceUnitPrice")
+                    b.Property<decimal?>("UpperFenceUnitPrice")
                         .HasPrecision(28, 6)
                         .HasColumnType("numeric(28,6)");
 
