@@ -126,10 +126,10 @@ namespace WowPaperTrader.Persistence.Migrations
                         .HasPrecision(28, 6)
                         .HasColumnType("numeric(28,6)");
 
-                    b.Property<decimal>("MeanUnitPrice")
+                    b.Property<decimal?>("MeanUnitPrice")
                         .HasColumnType("numeric");
 
-                    b.Property<long>("MedianUnitPrice")
+                    b.Property<long?>("MedianUnitPrice")
                         .HasColumnType("bigint");
 
                     b.Property<long>("MinimumUnitPrice")

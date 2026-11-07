@@ -1,3 +1,5 @@
+using WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates.AggregateResult;
+
 namespace WowPaperTrader.Application.Features.Write.AuctionHouseSnapshot.MarketAggregates;
 
 public class ItemMarketSnapshot( long marketId, long itemId, long variantKey, DateTime observedAtUtc)
@@ -18,7 +20,7 @@ public class ItemMarketSnapshot( long marketId, long itemId, long variantKey, Da
     
     public long MinimumUnitPrice { get; private set; }
     
-    public decimal MeanUnitPrice { get; private set; }
+    public decimal? MeanUnitPrice { get; private set; }
     
     public decimal? QuantityWeightedMeanUnitPrice { get; private set; }
     
@@ -26,7 +28,7 @@ public class ItemMarketSnapshot( long marketId, long itemId, long variantKey, Da
     
     public long? P25UnitPrice { get; private set; }
     
-    public long MedianUnitPrice { get; private set; }
+    public long? MedianUnitPrice { get; private set; }
     
     public long? P75UnitPrice { get; private set; }
     
@@ -52,6 +54,23 @@ public class ItemMarketSnapshot( long marketId, long itemId, long variantKey, Da
     
     //Navigation property
     public MarketSnapshot MarketSnapshot { get; private set; } = null;
+
+    private ItemMarketSnapshot FromAggregate(
+        long marketId,
+        DateTime observedAtUtc,
+        CommodityAggregate aggregate)
+    {
+        return new ItemMarketSnapshot(
+            marketId,
+            aggregate.ItemId,
+            aggregate.VariantKey,
+            observedAtUtc)
+        {
+            MinimumUnitPrice = aggregate.MinimumUnitPrice,
+            TotalQuantity = aggregate.TotalQuantity,
+            ListingCount = aggregate.ListingCount
+        };
+    }
     
     
 }
