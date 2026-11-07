@@ -25,4 +25,8 @@
         <ProjectReference Include="..\WowPaperTrader.Application\WowPaperTrader.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UnitTests\Read\" />
+    </ItemGroup>
+
 </Project>
