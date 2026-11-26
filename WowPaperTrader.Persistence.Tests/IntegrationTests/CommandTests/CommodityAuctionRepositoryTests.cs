@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using WowPaperTrader.Persistence.Repositories;
+using WowPaperTrader.Persistence.Tests.TestBases;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
 using WowPaperTrader.Persistence.Tests.TestHelpers;
 

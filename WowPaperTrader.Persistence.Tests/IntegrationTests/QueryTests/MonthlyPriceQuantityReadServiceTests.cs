@@ -1,6 +1,7 @@
 using FluentAssertions;
 using WowPaperTrader.Application.Features.Read.MonthlyPriceQuantity;
 using WowPaperTrader.Persistence.ReadServices;
+using WowPaperTrader.Persistence.Tests.TestBases;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
 using WowPaperTrader.Persistence.Tests.TestHelpers;
 

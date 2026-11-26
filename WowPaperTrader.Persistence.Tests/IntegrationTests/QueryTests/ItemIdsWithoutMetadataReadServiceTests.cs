@@ -1,5 +1,6 @@
 using FluentAssertions;
 using WowPaperTrader.Persistence.ReadServices;
+using WowPaperTrader.Persistence.Tests.TestBases;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
 using WowPaperTrader.Persistence.Tests.TestHelpers;
 

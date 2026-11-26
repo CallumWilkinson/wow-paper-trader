@@ -1,6 +1,7 @@
 using System.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using WowPaperTrader.Persistence.Tests.TestBases;
 using WowPaperTrader.Persistence.Tests.TestFixtures;
 using WowPaperTrader.Persistence.Tests.TestHelpers;
 
